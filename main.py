@@ -6,8 +6,6 @@ rho_0 = 1.225 #kg m^-3
 R_air = 287.05 #J kg^-1 K^-1
 T_0 = 288.15 #K
 
-
-
 #Airplane constraints
 M_p_max = 49442 #kg
 M_cr = 0.82
@@ -27,7 +25,3 @@ assumed_max_CL=2
 assumed_maximum_takeoff_mass=150000 #kg
 assumed_aproach_speed=74.163 #aproach speed
 assumed_landing_mass_fraction=0.8 #just assumed, no calculations
-
-sssssss
-
-ssss
