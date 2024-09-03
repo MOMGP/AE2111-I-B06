@@ -16,3 +16,5 @@ lapse_rate = -0.0065 #K m^-1
 rho_0 = 1.225 #kg m^-3
 R_air = 287.05 #J kg^-1 K^-1
 T_0 = 288.15 #K
+
+hello =1
