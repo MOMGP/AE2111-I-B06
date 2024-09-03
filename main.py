@@ -28,6 +28,6 @@ assumed_maximum_takeoff_mass=150000 #kg
 assumed_aproach_speed=74.163 #aproach speed
 assumed_landing_mass_fraction=0.8 #just assumed, no calculations
 
-
+sssssss
 
 
