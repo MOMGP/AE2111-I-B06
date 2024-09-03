@@ -12,4 +12,3 @@ range_MTOW_full_fuel = 13983 #km
 M_p_max_full_fuel = 26308 #km
 r_ferry = 15811 #km
 
-test=12
