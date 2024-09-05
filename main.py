@@ -1,12 +1,14 @@
 import numpy
 from matplotlib import pyplot as plt
+#Plotting settings
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+
 #CONSTANTS
 lapse_rate = -0.0065 #K m^-1
 rho_0 = 1.225 #kg m^-3
 R_air = 287.05 #J kg^-1 K^-1
 T_0 = 288.15 #K
-
-
 
 #Airplane constraints
 M_p_max = 49442 #kg
@@ -19,7 +21,7 @@ payload_dm = 27669 #kg
 range_MTOW_full_fuel = 13983 #km
 M_p_max_full_fuel = 26308 #km
 r_ferry = 15811 #km
-landing_field_len=1856 #m
+
 
 
 #ASSUMPTIONS
@@ -27,5 +29,3 @@ assumed_max_CL=2
 assumed_maximum_takeoff_mass=150000 #kg
 assumed_aproach_speed=74.163 #aproach speed
 assumed_landing_mass_fraction=0.8 #just assumed, no calculations
-assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
-
