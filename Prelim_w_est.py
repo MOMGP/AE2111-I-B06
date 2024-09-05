@@ -4,6 +4,8 @@ import numpy as np
 import scipy as sp
 import sklearn
 font_size_full_scr=12
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
 
 C_f=0.0026
 Swet_to_S=6
@@ -24,8 +26,7 @@ import numpy
 from matplotlib import pyplot as plt
 from Prelim_w_est import *
 #Plotting things
-plt.rcParams['mathtext.fontset'] = 'stix'
-plt.rcParams['font.family'] = 'STIXGeneral'
+
 
 #CONSTANTS
 lapse_rate = -0.0065 #K m^-1
