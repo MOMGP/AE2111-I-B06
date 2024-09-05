@@ -21,3 +21,4 @@ plt.axvline(x=approach_speed_req,color='r',label='Approach Speed Requirement')
 plt.axvline(x=landing_field_req,color='g',label='Landing Field Requirement')
 plt.xlim([0,10000])
 plt.show()
+
