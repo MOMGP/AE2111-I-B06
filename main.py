@@ -9,13 +9,17 @@ lapse_rate = -0.0065 #K m^-1
 rho_0 = 1.225 #kg m^-3
 R_air = 287.05 #J kg^-1 K^-1
 T_0 = 288.15 #K
-
+p_0=101325 #Pa
+gamma=1.4
+theta_t_break=1.07
 
 
 #Airplane constraints
 M_p_max = 49442 #kg
 M_cr = 0.82
+speed_sound_cr=295.07 #m/s
 h_cr = 39000 #ft
+cruise_alt=11887.2#m
 d_to = 2790 #m
 d_ld = 1856 #m
 range_dm = 13797 #km
@@ -24,7 +28,11 @@ range_MTOW_full_fuel = 13983 #km
 M_p_max_full_fuel = 26308 #km
 r_ferry = 15811 #km
 landing_field_len=1856 #m
-
+Bypass_ratio=5
+Ar=10.6#Aspect ratio
+e=0.819#Oswald efficiency factor
+CD_0=0.018#during cruise
+assumed_mass_fraction_cruise=0.95
 
 #ASSUMPTIONS
 assumed_max_CL=2
