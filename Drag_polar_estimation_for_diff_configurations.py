@@ -1,0 +1,14 @@
+from main import *
+flap_deflection_angle_landing=30
+flap_deflection_angle_take_off=15
+oswald_diff_landing=flap_deflection_angle_landing*0.0026
+oswald_diff_take_off=flap_deflection_angle_take_off*0.0026
+cd0_diff_landing=flap_deflection_angle_landing*0.0013
+cd0_diff_take_off=flap_deflection_angle_take_off*0.0013
+cd0_landing_gear_diff=0.0100
+e_landing=e+oswald_diff_landing
+e_take_off=e+oswald_diff_take_off
+cd_0_landing_landing_gear_on=CD_0+cd0_diff_landing+cd0_landing_gear_diff
+cd_0_landing_landing_gear_off=CD_0+cd0_diff_landing
+cd_0_take_off_landing_gear_on=CD_0+cd0_diff_take_off+cd0_landing_gear_diff
+cd_0_take_off_landing_gear_off=CD_0+cd0_diff_take_off
