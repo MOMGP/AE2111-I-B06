@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from main import *
+#Plotting settings
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
 
 
 #start of the matching diagram
