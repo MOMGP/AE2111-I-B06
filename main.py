@@ -1,5 +1,9 @@
 import numpy
 from matplotlib import pyplot as plt
+#Plotting settings
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+
 #CONSTANTS
 lapse_rate = -0.0065 #K m^-1
 rho_0 = 1.225 #kg m^-3
