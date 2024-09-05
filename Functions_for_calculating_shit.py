@@ -16,7 +16,7 @@ def isa_calc(altitude):
     p=101325
 
     for i in range (1,8):
-        c=b[i];
+        c=b[i]
         b[i]=min(altitude,b[i])
         if c!=b[i]: sf=i; break
         T_0=T
@@ -38,9 +38,10 @@ def isa_calc(altitude):
     rho = p / (R * T)
     return p,T,rho
 
-def thrust_lapse_calc(T,p,M):
+def thrust_lapse_calc(altitude,M):
+        p,T,rho=isa_calc(altitude)
         Temp=T*(1+(gamma-1)/2*(M**2))
-        Pressure=p(1+(gamma-1)/2*(M**2))**(gamma/(gamma-1))
+        Pressure=p*(1+(gamma-1)/2*(M**2))**(gamma/(gamma-1))
         sigma_t=Pressure/p_0
         theta_t=Temp/T_0
         if Bypass_ratio<5:
