@@ -1,5 +1,6 @@
 import numpy
 from matplotlib import pyplot as plt
+from Prelim_w_est import *
 #Plotting things
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
@@ -28,14 +29,18 @@ range_MTOW_full_fuel = 13983 #km
 M_p_max_full_fuel = 26308 #km
 r_ferry = 15811 #km
 landing_field_len=1856 #m
-Bypass_ratio=5
-Ar=10.6#Aspect ratio
-e=0.819#Oswald efficiency factor
-CD_0=0.018#during cruise
-assumed_mass_fraction_cruise=0.95
+V_cr=speed_sound_cr*M_cr
 
 #ASSUMPTIONS
 assumed_max_CL=2
+C_f=0.0026
+Swet_to_S=6
+CD_0=CD_0_est
+Bypass_ratio=7.4
+Ar=9.1#Aspect ratio
+oswald_e=0.7829#Oswald efficiency factor
+TSFC=TSFC_est
+assumed_mass_fraction_cruise=0.95
 assumed_maximum_takeoff_mass=150000 #kg
 assumed_aproach_speed=74.163 #aproach speed
 assumed_landing_mass_fraction=0.8 #just assumed, no calculations
