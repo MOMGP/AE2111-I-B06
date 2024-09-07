@@ -3,7 +3,7 @@ from main import *
 import numpy as np
 import scipy as sp
 import sklearn
-font_size_full_scr=12
+font_size_full_scr=14
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
 
@@ -86,7 +86,7 @@ lin_MTOM_pay=sklearn.linear_model.LinearRegression()
 reg_MTOM_pay=lin_MTOM_pay.fit(MTOM_vals, Payload_vals)
 lin_pay_OEM=sklearn.linear_model.LinearRegression()
 reg_pay_OEM=lin_pay_OEM.fit(Payload_vals, OEM_vals)
-"""
+
 #MTOM - OEM
 ax=plt.subplot()
 ax.scatter(MTOM_vals, OEM_vals, rasterized=True)
@@ -134,4 +134,3 @@ ax.set_ylabel("OEW [kg]", fontsize=font_size_full_scr)
 ax.grid(linestyle = '-', linewidth=0.1)
 plt.savefig("$M_{pl}$ vs. OEW Prelim.pdf", format="pdf")
 plt.close()
-"""
