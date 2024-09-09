@@ -47,3 +47,10 @@ assumed_aproach_speed=68 #aproach speed
 assumed_landing_mass_fraction=0.87 #just assumed, no calculations
 assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
 assumed_mass_fraction_climb=0.95
+
+#CS FAR 119 and 121(a-d) climb gradient req
+c_119=3.2/100
+c_121_a=0
+c_121_b=2.4/100
+c_121_c=1.2/100
+c_121_d=2.1/100
