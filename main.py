@@ -14,14 +14,15 @@ T_0 = 288.15 #K
 p_0=101325 #Pa
 gamma=1.4
 theta_t_break=1.07
+g_0=9.81
 
 
 #Airplane constraints
 M_p_max = 49442 #kg
-M_cr = 0.77
-speed_sound_cr=299.46 #m/s
+M_cr = 0.82
+speed_sound_cr=295.07#m/s
 h_cr = 39000 #ft
-cruise_alt=10000#m
+cruise_alt=11887#m
 V_cruise=M_cr*speed_sound_cr
 d_to = 2790 #m
 d_ld = 1856 #m
@@ -30,21 +31,22 @@ payload_dm = 27669 #kg
 range_MTOW_full_fuel = 13983 #km
 M_p_max_full_fuel = 26308 #km
 r_ferry = 15811 #km
-landing_field_len=1480 #m
-Bypass_ratio=11
-Ar=10.6#Aspect ratio
-e=0.78#Oswald efficiency factor
-CD_0=0.018#during cruise
+landing_field_len=1865 #m
+Bypass_ratio=7.4 # As from REQ-PRP-01
+Ar=9.1#Aspect ratio as from REQ-WNG-01
+e=0.78#Oswald efficiency factor as from REQ-WNG-02
+CD_0=0.0156#during cruise as from REQ-WNG-03
 assumed_mass_fraction_cruise=0.95
-ROC=4.7#m/s requirement
-climb_alt_req=7400#m
+ROC=0.8#m/s requirement
+climb_alt_req=11500#m
 CL_highest_climb=math.sqrt(CD_0*math.pi*Ar*e)
 CD_highest_climb=2*CD_0
+take_off_field_len=2790#m
 #ASSUMPTIONS
 assumed_max_CL=2.3#when landing
 assumed_maximum_takeoff_mass=150000 #kg
-assumed_aproach_speed=68 #aproach speed
-assumed_landing_mass_fraction=0.87 #just assumed, no calculations
+assumed_aproach_speed=73 #aproach speed
+assumed_landing_mass_fraction=0.63 #just assumed, no calculations
 assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
 assumed_mass_fraction_climb=0.95
 
@@ -55,6 +57,6 @@ c_121_b=2.4/100
 c_121_c=1.2/100
 c_121_d=2.1/100
 
-#Landing field assumptions
+#take off assumptions
 kt=0.85 #for jet airplanes the value is assumed to be
-
+obstacle_h=20

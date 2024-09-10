@@ -39,6 +39,7 @@ def isa_calc(altitude):
     return p,T,rho
 
 def thrust_lapse_calc(altitude,M):
+        lapse_rate=0
         p,T,rho=isa_calc(altitude)
         Temp=T*(1+(gamma-1)/2*(M**2))
         Pressure=p*(1+(gamma-1)/2*(M**2))**(gamma/(gamma-1))
@@ -55,3 +56,4 @@ def thrust_lapse_calc(altitude,M):
             else:
                 lapse_rate=sigma_t*(1-(0.43+0.014*Bypass_ratio)*math.sqrt(M)-3*(theta_t-theta_t_break)/(1.5+M))
         return lapse_rate
+
