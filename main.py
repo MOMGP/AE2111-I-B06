@@ -54,3 +54,7 @@ c_121_a=0
 c_121_b=2.4/100
 c_121_c=1.2/100
 c_121_d=2.1/100
+
+#Landing field assumptions
+kt=0.85 #for jet airplanes the value is assumed to be
+
