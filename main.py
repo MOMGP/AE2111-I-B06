@@ -36,17 +36,17 @@ Bypass_ratio=7.4 # As from REQ-PRP-01
 Ar=9.1#Aspect ratio as from REQ-WNG-01
 e=0.78#Oswald efficiency factor as from REQ-WNG-02
 CD_0=0.0156#during cruise as from REQ-WNG-03
-assumed_mass_fraction_cruise=0.95
+assumed_mass_fraction_cruise=0.93
 ROC=0.5#m/s requirement
-climb_alt_req=12500#m
+climb_alt_req=12000#m
 CL_highest_climb=math.sqrt(CD_0*math.pi*Ar*e)
 CD_highest_climb=2*CD_0
 take_off_field_len=2790#m
 #ASSUMPTIONS
 assumed_max_CL=2.5#when landing
 assumed_maximum_takeoff_mass=359339 #kg
-assumed_aproach_speed=73 #aproach speed
-assumed_landing_mass_fraction=0.6 #just assumed, no calculations
+assumed_aproach_speed=70 #aproach speed
+assumed_landing_mass_fraction=0.66 #just assumed, no calculations
 assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
 assumed_mass_fraction_climb=0.95
 

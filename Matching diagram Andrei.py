@@ -15,11 +15,32 @@ cs_far_121_b_req=[]
 cs_far_121_c_req=[]
 cs_far_121_d_req=[]
 take_off_len_req=[]
+
+#Reference aircraft data points
+Wing_loading_ref=[6565,
+6565,
+5930,
+6627,
+6471,
+6822,
+7470,
+6943,]
+TW_ref_aircraft=[0.261160395,
+0.265372659,
+0.250480946,
+0.256142723,
+0.298883713,
+0.285765682,
+0.223044353,
+0.220532531]
+
+
+
 #start of the matching diagram
 
 #Wing loading range
 
-Wing_loading=np.arange(100,10100,100)
+Wing_loading=np.arange(100,12100,100)
 
 
 
@@ -120,26 +141,37 @@ for i in range (0,len(Wing_loading)):
 
 
 
-
-
-#Ploting the req curves
-plt.figure()
-plt.axvline(x=approach_speed_req,color='r',label='Approach Speed Requirement')
-plt.axvline(x=landing_field_req,color='g',label='Landing Field Requirement')
-plt.plot(Wing_loading,cruise_req_thrust_over_weight,color='b',label='Cruise speed requirement')
-plt.plot(Wing_loading,climb_req_thrust_over_weight,color='y',label='Climb rate requirement')
-plt.plot(Wing_loading,cs_far_119_req,color='purple',label='CS Far 119 requirement')
-plt.plot(Wing_loading,cs_far_121_a_req,color='black',label='CS Far 121 a_requirement')
-plt.plot(Wing_loading,cs_far_121_b_req,color='orange',label='CS Far 121 b_requirement')
-plt.plot(Wing_loading,cs_far_121_c_req,color='brown',label='CS Far 121 c_requirement')
-plt.plot(Wing_loading,cs_far_121_d_req,color='pink',label='CS Far 121 d_requirement')
-plt.plot(Wing_loading,take_off_len_req,color='grey',label='Take off len requirement')
-plt.xlim([0,10000])
-plt.ylim([0,0.7])
-plt.show()
-
+#Finding the design point
 bound_right=float(min(approach_speed_req,landing_field_req))
+print(bound_right)
 bound_right=int(bound_right/100)*100
 pos=int(bound_right/100)-1
 bound_low=max(cruise_req_thrust_over_weight[pos],climb_req_thrust_over_weight[pos],cs_far_119_req[pos],cs_far_121_a_req[pos],cs_far_121_b_req[pos],cs_far_121_c_req[pos],cs_far_121_d_req[pos],take_off_len_req[pos])
+print(bound_low)
+bound_low=round(bound_low,3)
 print(bound_low,bound_right)
+#Ploting the req curves
+plt.figure(figsize=(8,6))
+plt.axvline(x=approach_speed_req,color='r',label='Approach Speed')
+plt.axvline(x=landing_field_req,color='g',label='Landing Field')
+plt.plot(Wing_loading,cruise_req_thrust_over_weight,color='b',label='Cruise Speed')
+plt.plot(Wing_loading,climb_req_thrust_over_weight,color='y',label='Climb Rate')
+plt.plot(Wing_loading,cs_far_119_req,color='purple',label='CS Far 119')
+plt.plot(Wing_loading,cs_far_121_a_req,color='black',label='CS Far 121(a)')
+plt.plot(Wing_loading,cs_far_121_b_req,color='orange',label='CS Far 121(b)')
+plt.plot(Wing_loading,cs_far_121_c_req,color='brown',label='CS Far 121(c)')
+plt.plot(Wing_loading,cs_far_121_d_req,color='pink',label='CS Far 121(d)')
+plt.plot(Wing_loading,take_off_len_req,color='grey',label='Take off length')
+plt.plot(bound_right,bound_low,'o')
+plt.plot(Wing_loading_ref,TW_ref_aircraft,'o',label='Reference aircrafts',color='black')
+plt.xlim([0,10000])
+plt.ylim([0,0.5])
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15),
+          ncol=3, fancybox=True, shadow=True)
+plt.xlabel('W/S-[N/m2]')
+plt.ylabel('T/W=[N/N]')
+plt.show()
+
+print('Take off thrust is equal to',bound_low*assumed_maximum_takeoff_mass*9.81)
+print('Wing area is equal to',assumed_maximum_takeoff_mass*9.81/bound_right)
+
