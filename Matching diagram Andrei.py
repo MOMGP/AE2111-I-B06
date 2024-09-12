@@ -122,7 +122,6 @@ for i in range (0,len(Wing_loading)):
 
 
 
-
 #Ploting the req curves
 plt.figure()
 plt.axvline(x=approach_speed_req,color='r',label='Approach Speed Requirement')
@@ -143,4 +142,4 @@ bound_right=float(min(approach_speed_req,landing_field_req))
 bound_right=int(bound_right/100)*100
 pos=int(bound_right/100)-1
 bound_low=max(cruise_req_thrust_over_weight[pos],climb_req_thrust_over_weight[pos],cs_far_119_req[pos],cs_far_121_a_req[pos],cs_far_121_b_req[pos],cs_far_121_c_req[pos],cs_far_121_d_req[pos],take_off_len_req[pos])
-print(bound_low)
+print(bound_low,bound_right)

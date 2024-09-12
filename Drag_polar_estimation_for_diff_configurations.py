@@ -1,6 +1,6 @@
 from main import *
-flap_deflection_angle_landing=30
-flap_deflection_angle_take_off=15
+flap_deflection_angle_landing=40
+flap_deflection_angle_take_off=20
 oswald_diff_landing=flap_deflection_angle_landing*0.0026
 oswald_diff_take_off=flap_deflection_angle_take_off*0.0026
 cd0_diff_landing=flap_deflection_angle_landing*0.0013

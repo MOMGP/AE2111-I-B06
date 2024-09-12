@@ -37,16 +37,16 @@ Ar=9.1#Aspect ratio as from REQ-WNG-01
 e=0.78#Oswald efficiency factor as from REQ-WNG-02
 CD_0=0.0156#during cruise as from REQ-WNG-03
 assumed_mass_fraction_cruise=0.95
-ROC=0.8#m/s requirement
-climb_alt_req=11500#m
+ROC=0.5#m/s requirement
+climb_alt_req=12500#m
 CL_highest_climb=math.sqrt(CD_0*math.pi*Ar*e)
 CD_highest_climb=2*CD_0
 take_off_field_len=2790#m
 #ASSUMPTIONS
-assumed_max_CL=2.3#when landing
-assumed_maximum_takeoff_mass=150000 #kg
+assumed_max_CL=2.5#when landing
+assumed_maximum_takeoff_mass=359339 #kg
 assumed_aproach_speed=73 #aproach speed
-assumed_landing_mass_fraction=0.63 #just assumed, no calculations
+assumed_landing_mass_fraction=0.6 #just assumed, no calculations
 assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
 assumed_mass_fraction_climb=0.95
 
@@ -59,4 +59,4 @@ c_121_d=2.1/100
 
 #take off assumptions
 kt=0.85 #for jet airplanes the value is assumed to be
-obstacle_h=20
+obstacle_h=30#assumed
