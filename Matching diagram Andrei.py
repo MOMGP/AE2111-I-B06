@@ -40,7 +40,7 @@ TW_ref_aircraft=[0.261160395,
 
 #Wing loading range
 
-Wing_loading=np.arange(100,12100,100)
+Wing_loading=np.arange(100,10100,100)
 
 
 
@@ -53,7 +53,7 @@ approach_speed_req=1/2*rho_0/assumed_landing_mass_fraction*(assumed_aproach_spee
 
 landing_field_req=1/assumed_landing_mass_fraction*(landing_field_len)/assumed_landing_field_coeff*rho_0*assumed_max_CL/2
 
-
+print(landing_field_req)
 #Cruise speed requirement
 
 lapse_rate_req=thrust_lapse_calc(cruise_alt,M_cr)
@@ -65,6 +65,7 @@ for i in range(0,len(Wing_loading)):
 #Climb rate requirement
 
 p,T,rho=isa_calc(climb_alt_req)
+T=T+15 #Hot conditions
 a=math.sqrt(gamma*R_air*T)
 for i in range (0,len(Wing_loading)):
     V_climb=math.sqrt(Wing_loading[i]*2/(rho*CL_highest_climb))

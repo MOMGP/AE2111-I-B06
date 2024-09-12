@@ -48,7 +48,7 @@ assumed_maximum_takeoff_mass=359339 #kg
 assumed_aproach_speed=70 #aproach speed
 assumed_landing_mass_fraction=0.66 #just assumed, no calculations
 assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
-assumed_mass_fraction_climb=0.95
+assumed_mass_fraction_climb=0.93
 
 #CS FAR 119 and 121(a-d) climb gradient req
 c_119=3.2/100
