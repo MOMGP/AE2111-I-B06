@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from main import *
-from Functions_for_calculating_shit import *
+from Functions_for_isa_and_alphat import *
 from Drag_polar_estimation_for_diff_configurations import *
 
 #Plotting settings
@@ -136,6 +136,9 @@ for i in range (0,len(Wing_loading)):
 
 #Landing field length req
 for i in range (0,len(Wing_loading)):
+    V_lf=math.sqrt(Wing_loading[i] * 2 / (rho * CL_to))
+    M_lf= V_lf / a
+    lapse_rate_req=thrust_lapse_calc(0,M_lf)
     req=1.15*math.sqrt(Wing_loading[i]/(take_off_field_len*kt*rho_0*g_0*math.pi*Ar*e_take_off))+4*obstacle_h/take_off_field_len
     take_off_len_req.append(req)
 
@@ -152,7 +155,7 @@ print(bound_low)
 bound_low=round(bound_low,3)
 print(bound_low,bound_right)
 #Ploting the req curves
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(6,4))
 plt.axvline(x=approach_speed_req,color='r',label='Approach Speed')
 plt.axvline(x=landing_field_req,color='g',label='Landing Field')
 plt.plot(Wing_loading,cruise_req_thrust_over_weight,color='b',label='Cruise Speed')
