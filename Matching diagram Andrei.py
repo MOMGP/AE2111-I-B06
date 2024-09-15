@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from main import *
-from Functions_for_calculating_shit import *
+from Functions_for_isa_and_alphat import *
 from Drag_polar_estimation_for_diff_configurations import *
 
 #Plotting settings
@@ -41,7 +41,7 @@ TW_ref_aircraft=[0.261160395,
 
 #Wing loading range
 
-Wing_loading=np.arange(100,12100,100)
+Wing_loading=np.arange(100,10100,100)
 
 
 
@@ -54,7 +54,7 @@ approach_speed_req=1/2*rho_0/assumed_landing_mass_fraction*(assumed_aproach_spee
 
 landing_field_req=1/assumed_landing_mass_fraction*(landing_field_len)/assumed_landing_field_coeff*rho_0*assumed_max_CL/2
 
-
+print(landing_field_req)
 #Cruise speed requirement
 
 lapse_rate_req=thrust_lapse_calc(cruise_alt,M_cr)
@@ -66,6 +66,7 @@ for i in range(0,len(Wing_loading)):
 #Climb rate requirement
 
 p,T,rho=isa_calc(climb_alt_req)
+T=T+15 #Hot conditions
 a=math.sqrt(gamma*R_air*T)
 for i in range (0,len(Wing_loading)):
     V_climb=math.sqrt(Wing_loading[i]*2/(rho*CL_highest_climb))
@@ -136,6 +137,9 @@ for i in range (0,len(Wing_loading)):
 
 #Landing field length req
 for i in range (0,len(Wing_loading)):
+    V_lf=math.sqrt(Wing_loading[i] * 2 / (rho * CL_to))
+    M_lf= V_lf / a
+    lapse_rate_req=thrust_lapse_calc(0,M_lf)
     req=1.15*math.sqrt(Wing_loading[i]/(take_off_field_len*kt*rho_0*g_0*math.pi*Ar*e_take_off))+4*obstacle_h/take_off_field_len
     take_off_len_req.append(req)
 

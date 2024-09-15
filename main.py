@@ -42,13 +42,14 @@ climb_alt_req=12000#m
 CL_highest_climb=math.sqrt(CD_0*math.pi*Ar*e)
 CD_highest_climb=2*CD_0
 take_off_field_len=2790#m
+CL_to=2.1
 #ASSUMPTIONS
 assumed_max_CL=2.5#when landing
 assumed_maximum_takeoff_mass=359339 #kg
 assumed_aproach_speed=70 #aproach speed
-assumed_landing_mass_fraction=0.66 #just assumed, no calculations
+assumed_landing_mass_fraction=0.66
 assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
-assumed_mass_fraction_climb=0.95
+assumed_mass_fraction_climb=0.93
 
 #CS FAR 119 and 121(a-d) climb gradient req
 c_119=3.2/100
@@ -58,5 +59,5 @@ c_121_c=1.2/100
 c_121_d=2.1/100
 
 #take off assumptions
-kt=0.85 #for jet airplanes the value is assumed to be
-obstacle_h=30#assumed
+kt=0.85 #for jet airplanes
+obstacle_h=15#m, assumed
