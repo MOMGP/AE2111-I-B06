@@ -5,6 +5,7 @@ from Functions_for_calculating_shit import *
 from Drag_polar_estimation_for_diff_configurations import *
 
 #Plotting settings
+font_size_full_scr=14
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
 cruise_req_thrust_over_weight=[]
@@ -151,27 +152,49 @@ print(bound_low)
 bound_low=round(bound_low,3)
 print(bound_low,bound_right)
 #Ploting the req curves
-plt.figure(figsize=(8,6))
-plt.axvline(x=approach_speed_req,color='r',label='Approach Speed')
-plt.axvline(x=landing_field_req,color='g',label='Landing Field')
-plt.plot(Wing_loading,cruise_req_thrust_over_weight,color='b',label='Cruise Speed')
-plt.plot(Wing_loading,climb_req_thrust_over_weight,color='y',label='Climb Rate')
-plt.plot(Wing_loading,cs_far_119_req,color='purple',label='CS Far 119')
-plt.plot(Wing_loading,cs_far_121_a_req,color='black',label='CS Far 121(a)')
-plt.plot(Wing_loading,cs_far_121_b_req,color='orange',label='CS Far 121(b)')
-plt.plot(Wing_loading,cs_far_121_c_req,color='brown',label='CS Far 121(c)')
-plt.plot(Wing_loading,cs_far_121_d_req,color='pink',label='CS Far 121(d)')
-plt.plot(Wing_loading,take_off_len_req,color='grey',label='Take off length')
-plt.plot(bound_right,bound_low,'o')
-plt.plot(Wing_loading_ref,TW_ref_aircraft,'o',label='Reference aircrafts',color='black')
-plt.xlim([0,10000])
-plt.ylim([0,0.5])
-plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15),
-          ncol=3, fancybox=True, shadow=True)
-plt.xlabel('W/S-[N/m2]')
-plt.ylabel('T/W=[N/N]')
-plt.show()
+import matplotlib.pyplot as plt
 
-print('Take off thrust is equal to',bound_low*assumed_maximum_takeoff_mass*9.81)
-print('Wing area is equal to',assumed_maximum_takeoff_mass*9.81/bound_right)
+# Create a figure with a specific size (width, height) in inches
+fig, ax = plt.subplots(figsize=(12, 6))  # Adjust the size as needed
+font_size_full_scr=19
+# Plotting data
+ax.axvline(x=approach_speed_req, color='r', label='Approach Speed')
+ax.axvline(x=landing_field_req, color='g', label='Landing Field')
+ax.plot(Wing_loading, cruise_req_thrust_over_weight, color='b', label='Cruise Speed')
+ax.plot(Wing_loading, climb_req_thrust_over_weight, color='y', label='Climb Rate')
+ax.plot(Wing_loading, cs_far_119_req, color='purple', label='CS Far 119')
+ax.plot(Wing_loading, cs_far_121_a_req, color='black', label='CS Far 121(a)')
+ax.plot(Wing_loading, cs_far_121_b_req, color='orange', label='CS Far 121(b)')
+ax.plot(Wing_loading, cs_far_121_c_req, color='brown', label='CS Far 121(c)')
+ax.plot(Wing_loading, cs_far_121_d_req, color='pink', label='CS Far 121(d)')
+ax.plot(Wing_loading, take_off_len_req, color='grey', label='Take off length')
+ax.plot(Wing_loading_ref, TW_ref_aircraft, 'o', label='Reference aircrafts', color='black')
+ax.plot(bound_right, bound_low, 'o', label="Design point")
 
+# Set x and y axis limits
+ax.set_xlim([0, 10000])
+ax.set_ylim([0, 0.5])
+
+# Set x and y ticks font size
+ax.tick_params(axis='x', labelsize=font_size_full_scr)
+ax.tick_params(axis='y', labelsize=font_size_full_scr)
+
+# Set legend with adjusted position and number of columns
+ax.legend(loc="upper left", bbox_to_anchor=(1, 1.05), ncol=1, fancybox=True, shadow=True, fontsize=font_size_full_scr)
+
+# Set axis labels
+ax.set_xlabel(r"W/S $\left[{N}/{m^2}\right]$", fontsize=font_size_full_scr)
+ax.set_ylabel(r"T/W $\left[{N}/{N}\right]$", fontsize=font_size_full_scr)
+
+# Adjust layout to ensure everything fits well
+plt.subplots_adjust(right=0.65, top=0.9, bottom=0.16)  # Adjust this value to reduce right space
+
+# Save the figure
+plt.savefig("TW-WS Diagram.pdf", format='pdf')
+
+# Close the plot
+plt.close()
+
+# Print additional information
+print('Take off thrust is equal to', bound_low * assumed_maximum_takeoff_mass * 9.81)
+print('Wing area is equal to', assumed_maximum_takeoff_mass * 9.81 / bound_right)
