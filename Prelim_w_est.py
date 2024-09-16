@@ -111,10 +111,10 @@ ax.plot(
     [reg_MTOM_pay.coef_[0] * MTOM_vals.min() + reg_MTOM_pay.intercept_,
      reg_MTOM_pay.coef_[0] * MTOM_vals.max() + reg_MTOM_pay.intercept_],
     '--', color='black')
-formula_text = "Regression: $M_{Pl, max}$" +f" = {reg_MTOM_pay.coef_[0][0]:.3f} * "+"$m_{MTO}$ + "+f"{reg_MTOM_pay.intercept_[0]:.0f}\n$r^2$ = {np.round(sp.stats.pearsonr(MTOM_vals.flatten(), Payload_vals.flatten())[0]**2,2)}"
+formula_text = "Regression: $m_{pl, max}$" +f" = {reg_MTOM_pay.coef_[0][0]:.3f} * "+"$m_{MTO}$ + "+f"{reg_MTOM_pay.intercept_[0]:.0f}\n$r^2$ = {np.round(sp.stats.pearsonr(MTOM_vals.flatten(), Payload_vals.flatten())[0]**2,2)}"
 ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_full_scr, verticalalignment='top')
 ax.set_xlabel("$m_{MTO}$ [kg]", fontsize=font_size_full_scr)
-ax.set_ylabel("$M_{Pl, max}$ [kg]", fontsize=font_size_full_scr)
+ax.set_ylabel("$m_{pl, max}$ [kg]", fontsize=font_size_full_scr)
 ax.grid(linestyle = '-', linewidth=0.1)
 plt.savefig("$m_{MTO}$ vs. $M_{pl, max}$ Prelim.pdf", format="pdf")
 plt.close()
@@ -127,9 +127,9 @@ ax.plot(
     [reg_pay_OEM.coef_[0] * Payload_vals.min() + reg_pay_OEM.intercept_,
      reg_pay_OEM.coef_[0] * Payload_vals.max() + reg_pay_OEM.intercept_],
     '--', color='black')
-formula_text = "Regression: $m_{OE}$" +f"= {reg_pay_OEM.coef_[0][0]:.3f} *"+ "$M_{Pl, max}$"+f" + {reg_pay_OEM.intercept_[0]:.0f}\n$r^2$ = {np.round(sp.stats.pearsonr(Payload_vals.flatten(), OEM_vals.flatten())[0]**2,2)}"
+formula_text = "Regression: $m_{OE}$" +f"= {reg_pay_OEM.coef_[0][0]:.3f} *"+ "$m_{pl, max}$"+f" + {reg_pay_OEM.intercept_[0]:.0f}\n$r^2$ = {np.round(sp.stats.pearsonr(Payload_vals.flatten(), OEM_vals.flatten())[0]**2,2)}"
 ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_full_scr, verticalalignment='top')
-ax.set_xlabel("$M_{Pl, max}$ [kg]", fontsize=font_size_full_scr)
+ax.set_xlabel("$m_{pl, max}$ [kg]", fontsize=font_size_full_scr)
 ax.set_ylabel("$m_{OE}$ [kg]", fontsize=font_size_full_scr)
 ax.grid(linestyle = '-', linewidth=0.1)
 plt.savefig("$m_{pl,max}$ vs. $m_{OE}$ Prelim.pdf", format="pdf")
