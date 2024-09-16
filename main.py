@@ -60,4 +60,4 @@ c_121_d=2.1/100
 
 #take off assumptions
 kt=0.85 #for jet airplanes
-obstacle_h=15#m, assumed
+obstacle_h=11#m, assumed

@@ -4,6 +4,7 @@ import numpy as np
 import scipy as sp
 import sklearn
 font_size_full_scr=14
+font_size_p6 = 17
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
 
@@ -88,6 +89,7 @@ lin_pay_OEM=sklearn.linear_model.LinearRegression()
 reg_pay_OEM=lin_pay_OEM.fit(Payload_vals, OEM_vals)
 
 #MTOM - OEM
+font_size_act=font_size_p6
 ax=plt.subplot()
 ax.scatter(MTOM_vals, OEM_vals, rasterized=True)
 ax.plot(
@@ -96,10 +98,13 @@ ax.plot(
      reg_MTOM_OEM.coef_[0] * MTOM_vals.max() + reg_MTOM_OEM.intercept_],
     '--', color='black')
 formula_text = "Regression: $m_{OE}$ = "+f"{reg_MTOM_OEM.coef_[0][0]:.3f} * "+"$m_{MTO}$" +f" + {reg_MTOM_OEM.intercept_[0]:.0f}\n$r^2$ = {np.round(sp.stats.pearsonr(MTOM_vals.flatten(), OEM_vals.flatten())[0]**2,2)}"
-ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_full_scr, verticalalignment='top')
-ax.set_xlabel("$m_{MTO}$ [kg]", fontsize=font_size_full_scr)
-ax.set_ylabel("$m_{OE}$ [kg]", fontsize=font_size_full_scr)
+ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_act, verticalalignment='top')
+ax.set_xlabel("$m_{MTO}$ [kg]", fontsize=font_size_act)
+ax.set_ylabel("$m_{OE}$ [kg]", fontsize=font_size_act)
 ax.grid(linestyle = '-', linewidth=0.1)
+ax.tick_params(axis='x', labelsize=font_size_act)
+ax.tick_params(axis='y', labelsize=font_size_act)
+plt.subplots_adjust(left=0.2, right=0.95, top=0.9, bottom=0.16)  # Adjust this value to reduce right space
 plt.savefig("$m_{MTO}$ vs. $m_{OE}$ Prelim.pdf", format="pdf")
 plt.close()
 
@@ -112,10 +117,13 @@ ax.plot(
      reg_MTOM_pay.coef_[0] * MTOM_vals.max() + reg_MTOM_pay.intercept_],
     '--', color='black')
 formula_text = "Regression: $m_{pl, max}$" +f" = {reg_MTOM_pay.coef_[0][0]:.3f} * "+"$m_{MTO}$ + "+f"{reg_MTOM_pay.intercept_[0]:.0f}\n$r^2$ = {np.round(sp.stats.pearsonr(MTOM_vals.flatten(), Payload_vals.flatten())[0]**2,2)}"
-ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_full_scr, verticalalignment='top')
-ax.set_xlabel("$m_{MTO}$ [kg]", fontsize=font_size_full_scr)
-ax.set_ylabel("$m_{pl, max}$ [kg]", fontsize=font_size_full_scr)
+ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_act, verticalalignment='top')
+ax.set_xlabel("$m_{MTO}$ [kg]", fontsize=font_size_act)
+ax.set_ylabel("$m_{pl, max}$ [kg]", fontsize=font_size_act)
 ax.grid(linestyle = '-', linewidth=0.1)
+ax.tick_params(axis='x', labelsize=font_size_act)
+ax.tick_params(axis='y', labelsize=font_size_act)
+plt.subplots_adjust(left=0.17, right=0.95, top=0.9, bottom=0.16)  # Adjust this value to reduce right space
 plt.savefig("$m_{MTO}$ vs. $M_{pl, max}$ Prelim.pdf", format="pdf")
 plt.close()
 
@@ -128,9 +136,12 @@ ax.plot(
      reg_pay_OEM.coef_[0] * Payload_vals.max() + reg_pay_OEM.intercept_],
     '--', color='black')
 formula_text = "Regression: $m_{OE}$" +f"= {reg_pay_OEM.coef_[0][0]:.3f} *"+ "$m_{pl, max}$"+f" + {reg_pay_OEM.intercept_[0]:.0f}\n$r^2$ = {np.round(sp.stats.pearsonr(Payload_vals.flatten(), OEM_vals.flatten())[0]**2,2)}"
-ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_full_scr, verticalalignment='top')
-ax.set_xlabel("$m_{pl, max}$ [kg]", fontsize=font_size_full_scr)
-ax.set_ylabel("$m_{OE}$ [kg]", fontsize=font_size_full_scr)
+ax.text(0.025, 0.975, formula_text, transform=ax.transAxes, fontsize=font_size_act, verticalalignment='top')
+ax.set_xlabel("$m_{pl, max}$ [kg]", fontsize=font_size_act)
+ax.set_ylabel("$m_{OE}$ [kg]", fontsize=font_size_act)
 ax.grid(linestyle = '-', linewidth=0.1)
-plt.savefig("$m_{pl,max}$ vs. $m_{OE}$ Prelim.pdf", format="pdf")
+ax.tick_params(axis='x', labelsize=font_size_act)
+ax.tick_params(axis='y', labelsize=font_size_act)
+plt.subplots_adjust(left=0.2, right=0.95, top=0.9, bottom=0.16)  # Adjust this value to reduce right space
+plt.savefig("$m_{pl, max}$ vs. $m_{OE}$ Prelim.pdf", format="pdf")
 plt.close()
