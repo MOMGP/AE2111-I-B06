@@ -1,4 +1,4 @@
-from main import *
+from main import CD_0, e
 flap_deflection_angle_landing=40
 flap_deflection_angle_take_off=20
 oswald_diff_landing=flap_deflection_angle_landing*0.0026

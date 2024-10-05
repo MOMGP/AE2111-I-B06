@@ -47,54 +47,78 @@ Wing_loading=np.arange(100,10100,100)
 
 #Approach speed requirement
 
-approach_speed_req=1/2*rho_0/assumed_landing_mass_fraction*(assumed_aproach_speed/1.23)**2*assumed_max_CL
+#Approach speed requirement
+def approach_speed_req(landing_mass_fraction, approach_speed, CL_max_landing, Wing_loading=np.arange(100,10100,100), rho_0=1.225):
+    return 1/2*rho_0/landing_mass_fraction*(approach_speed/1.23)**2*CL_max_landing
+approach_speed_req = approach_speed_req(assumed_landing_mass_fraction, assumed_aproach_speed, assumed_max_CL)
 
 
 #Landing field length requirement
+def landing_field_req(landing_mass_fraction, landing_field_len, landing_field_coeff, CL_max_landing, rho_0=1.225):
+    return 1/landing_mass_fraction*(landing_field_len)/landing_field_coeff*rho_0*CL_max_landing/2
+landing_field_req = landing_field_req(assumed_landing_mass_fraction, landing_field_len, assumed_landing_field_coeff, assumed_max_CL)
 
-landing_field_req=1/assumed_landing_mass_fraction*(landing_field_len)/assumed_landing_field_coeff*rho_0*assumed_max_CL/2
-
-print(landing_field_req)
 #Cruise speed requirement
-
-lapse_rate_req=thrust_lapse_calc(cruise_alt,M_cr)
-p,T,rho=isa_calc(cruise_alt)
-for i in range(0,len(Wing_loading)):
-    req=(assumed_mass_fraction_cruise/lapse_rate_req*((CD_0*rho*(V_cruise)**2)/(assumed_mass_fraction_cruise*2*Wing_loading[i])+assumed_mass_fraction_cruise*Wing_loading[i]*2/(math.pi*Ar*e*rho*V_cruise**2)))
-    cruise_req_thrust_over_weight.append(req)
+def cruise_req_thrust_over_weight(mass_fraction_cruise, AR, e, cruise_alt = 11887.2, M_cr=0.82, V_cruise = 241.956, Wing_loading = np.arange(100,10100,100)):
+    cruise_req=[]
+    lapse_rate_req=thrust_lapse_calc(cruise_alt,M_cr)
+    p,T,rho=isa_calc(cruise_alt)
+    for i in range(0,len(Wing_loading)):
+        req=(mass_fraction_cruise/lapse_rate_req*((CD_0*rho*(V_cruise)**2)/(mass_fraction_cruise*2*Wing_loading[i])+mass_fraction_cruise*Wing_loading[i]*2/(math.pi*AR*e*rho*V_cruise**2)))
+        cruise_req.append(req)
+    return cruise_req
+cruise_req_thrust_over_weight = cruise_req_thrust_over_weight(assumed_mass_fraction_cruise, Ar, e)
 
 #Climb rate requirement
-
-p,T,rho=isa_calc(climb_alt_req)
-T=T+15 #Hot conditions
-a=math.sqrt(gamma*R_air*T)
-for i in range (0,len(Wing_loading)):
-    V_climb=math.sqrt(Wing_loading[i]*2/(rho*CL_highest_climb))
-    M_climb=V_climb/a
-    lapse_rate_req=thrust_lapse_calc(climb_alt_req,M_climb)
-    req=assumed_mass_fraction_climb/lapse_rate_req*(math.sqrt(ROC**2*rho/(2*assumed_mass_fraction_climb*Wing_loading[i])*math.sqrt(CD_0*math.pi*Ar*e))+2*math.sqrt(CD_0/(math.pi*Ar*e)))
-    climb_req_thrust_over_weight.append(req)
-
+def climb_req_thrust_over_weight(mass_fraction_climb, e, AR,  climb_alt_req=12000, Wing_loading=np.arange(100,10100,100), CD_0=0.0156):
+    p,T,rho=isa_calc(climb_alt_req)
+    gamma=1.4
+    R_air = 287.05
+    CL_highest_climb=math.sqrt(CD_0*math.pi*AR*e)
+    T=T+15 #Hot conditions
+    a=math.sqrt(gamma*R_air*T)
+    climb_req=[]
+    for i in range (0,len(Wing_loading)):
+        V_climb=math.sqrt(Wing_loading[i]*2/(rho*CL_highest_climb))
+        M_climb=V_climb/a
+        lapse_rate_req=thrust_lapse_calc(climb_alt_req,M_climb)
+        req=mass_fraction_climb/lapse_rate_req*(math.sqrt(ROC**2*rho/(2*mass_fraction_climb*Wing_loading[i])*CL_highest_climb)+2*math.sqrt(CD_0/(math.pi*AR*e)))
+        climb_req.append(req)
+    return climb_req
+climb_req_thrust_over_weight= climb_req_thrust_over_weight(assumed_mass_fraction_climb, e, Ar)
 
 #Climb gradient requirements
 
 #Climb gradient CS25.119
 #segment=landing flaps=landing gear=down
-CL_119=math.sqrt(cd_0_landing_landing_gear_on*math.pi*Ar*e_landing)
-p,T,rho=isa_calc(0)
-a=math.sqrt(gamma*R_air*T_0)
-for i in range (0,len(Wing_loading)):
-    V_grad= math.sqrt(Wing_loading[i] * 2 / (rho * CL_119))
-    M_grad= V_grad / a
-    lapse_rate_req=thrust_lapse_calc(0,M_grad)
-    #We use one instead of other mass fractions because the requirements specify that for CS FAR 119 and CS FAR 121 (a-c) should be taken at max takeoff mass
-    req=1/lapse_rate_req*(c_119+2*math.sqrt(cd_0_landing_landing_gear_on/(math.pi*Ar*e_landing)))
-    cs_far_119_req.append(req)
+def climb_gradient_CS25119(AR, e, CD_0 = 0.0156):
+    Wing_loading=np.arange(100,10100,100)
+    gamma=1.4
+    R_air = 287.05
+    flap_deflection_angle_landing=40
+    cd0_landing_gear_diff=0.0100
+    cd0_diff_landing=flap_deflection_angle_landing*0.0013
+    cd_0_landing_landing_gear_on=CD_0+cd0_diff_landing+cd0_landing_gear_diff
+    oswald_diff_landing=flap_deflection_angle_landing*0.0026
+    e_landing=e+oswald_diff_landing
+    CL_119=math.sqrt(cd_0_landing_landing_gear_on*math.pi*AR*e_landing)
+    cs_far_119_req_list = []
+    p,T,rho=isa_calc(0)
+    a=math.sqrt(gamma*R_air*T)
+    for i in range (0,len(Wing_loading)):
+        V_grad= math.sqrt(Wing_loading[i] * 2 / (rho * CL_119))
+        M_grad= V_grad / a
+        lapse_rate_req=thrust_lapse_calc(0,M_grad)
+        #We use one instead of other mass fractions because the requirements specify that for CS FAR 119 and CS FAR 121 (a-c) should be taken at max takeoff mass
+        req=1/lapse_rate_req*(c_119+2*math.sqrt(cd_0_landing_landing_gear_on/(math.pi*Ar*e_landing)))
+        cs_far_119_req_list.append(req)
+    return cs_far_119_req_list
+cs_far_119_req = climb_gradient_CS25119(Ar, e, CD_0 = 0.0156)
 
 #Climb gradient CS 25.121(a)
 CL_121_a=math.sqrt(cd_0_take_off_landing_gear_on*math.pi*Ar*e_take_off)
 p,T,rho=isa_calc(0)
-a=math.sqrt(gamma*R_air*T_0)
+a=math.sqrt(gamma*R_air*T)
 for i in range (0,len(Wing_loading)):
     V_grad=math.sqrt(Wing_loading[i] * 2 / (rho * CL_121_a))
     M_grad= V_grad / a
@@ -144,8 +168,6 @@ for i in range (0,len(Wing_loading)):
     take_off_len_req.append(req)
 
 
-
-
 #Finding the design point
 bound_right=float(min(approach_speed_req,landing_field_req))
 print(bound_right)
@@ -155,6 +177,8 @@ bound_low=max(cruise_req_thrust_over_weight[pos],climb_req_thrust_over_weight[po
 print(bound_low)
 bound_low=round(bound_low,3)
 print(bound_low,bound_right)
+def returns_for_optimization():
+    return (bound_low,bound_right)
 #Ploting the req curves
 import matplotlib.pyplot as plt
 
