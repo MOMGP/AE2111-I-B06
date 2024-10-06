@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-#from Matching_diagram_Andrei #FINISH 
+from Matching_diagram_Andrei import * #FINISH 
 
 #Data
 file_path_CL_alpha = "C:\\Users\\Equipo\\Downloads\\Polar_Graph_cl_alpha.csv"
@@ -50,6 +50,7 @@ m_pl = np.array([27669, 26308, 0])
 m_f_to_MTOM = 1-np.exp(-R_eq*g/(eta_j*e_f*10**6*L_to_D_CR))
 MTOM = np.array([m_pl[0]/(1-m_f_to_MTOM[0]-OEM_to_MTOM), m_pl[1]/(1-m_f_to_MTOM[1]-OEM_to_MTOM), m_pl[1]/(1-m_f_to_MTOM[1]-OEM_to_MTOM)-m_pl[1]])
 m_f = m_f_to_MTOM*MTOM
+MTOM_crit_case = np.max(MTOM)
 V_f_req = np.max(m_f)/rho_kerosene
 Lambda_c4 = np.rad2deg(np.arccos(1.16/(M_CR+0.5)))
 taper = 0.2*(2-np.deg2rad(Lambda_c4))
@@ -57,9 +58,12 @@ eta_tank = 0.55
 C_l_max = 2.12
 C_L_max_to_C_l_max = 0.8
 C_L_max = C_L_max_to_C_l_max*C_l_max
-C_d_cruise = None
-alpha_CR = None
-print(V_CR)
+C_d_cruise = None #determined below
+alpha_CR = None #determined below  
+landing_fuel_fraction = np.max(1-m_f_to_MTOM+(1-np.exp(-(1.2*R_div+R_endu)*g/(eta_j*e_f*10**6*L_to_D_CR)))*(1-m_f_to_MTOM+1-np.exp(-(1.2*R_div+R_endu)*g/(eta_j*e_f*10**6*L_to_D_CR))))
+#ADD TO CL_max_TO, CL/CD, CL_max_Landing
+
+
 #Formulas
 def SAR(S, C_D):
     return V_CR/(0.5*rho_CR*V_CR**2*S*C_D*C_T)
@@ -80,6 +84,25 @@ def C_L_alpha(AR, Lambda_c2):
 def Oswald_eff_factor(AR, Lambda_LE):
     return 4.61*(1-0.045*AR**0.68)*(np.cos(np.deg2rad(Lambda_LE)))**0.15-3.1
 
+def get_wing_area_and_TtoW(AR, e, CD_0, CL_max_landing, CL_to, landing_mass_fraction):
+    #Andrei formulas
+    approach_speed_req = approach_speed_req(landing_mass_fraction, CL_max_landing)
+    landing_field_req = landing_field_req(landing_mass_fraction, CL_max_landing)
+    cruise_req_thrust_over_weight = cruise_req_thrust_over_weight(AR, e, CD_0)
+    climb_req_thrust_over_weight= climb_req_thrust_over_weight(e, AR, CD_0)
+    cs_far_119_req = climb_gradient_CS25119(AR, e, CD_0)
+    cs_far_119_req = climb_gradient_CS25119(AR, e, CD_0)
+    cs_far_121_b_req = climb_gradient_CS25121b(AR, e, CD_0)
+    cs_far_121_c_req = climb_gradient_CS25121c(AR, e, CD_0)
+    cs_far_121_d_req= climb_gradient_CS25121d(Ar, e, CD_0, landing_mass_fraction)
+    take_off_len_req = landing_field_length_req(Ar, e, CL_to)
+    bound_low,bound_right= returns_for_optimization(approach_speed_req, landing_field_req, cruise_req_thrust_over_weight, climb_req_thrust_over_weight, cs_far_119_req, cs_far_121_b_req, cs_far_121_c_req, cs_far_121_d_req, take_off_len_req)
+    S = assumed_maximum_takeoff_mass * 9.81 / bound_right
+    T_to_W = bound_low
+    return S, T_to_W
+
+    
+
 #Variables
 AR = 10.2
 S = 363.53
@@ -87,6 +110,8 @@ e = 0.764
 Lambda_c2 = Lambda_n(AR, 50)
 Lambda_LE = Lambda_n(AR, 0)
 Lambda_TE = Lambda_n(AR, 100)
+CL_max_landing = None
+CL_max_TO = None
 
 #Requirements
 reqs=[]

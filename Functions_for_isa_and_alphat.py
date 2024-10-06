@@ -1,5 +1,5 @@
 import math
-from main import *
+#from main import *
 def isa_calc(altitude):
 
     #constants
@@ -14,6 +14,7 @@ def isa_calc(altitude):
     T=288.15
     rho=1.225
     p=101325
+
 
     for i in range (1,8):
         c=b[i]
@@ -39,7 +40,12 @@ def isa_calc(altitude):
     return p,T,rho
 
 def thrust_lapse_calc(altitude,M):
+        Bypass_ratio = 10
+        gamma=1.4
         lapse_rate=0
+        p_0=101325
+        T_0=288.15
+        theta_t_break=1.07
         p,T,rho=isa_calc(altitude)
         Temp=T*(1+(gamma-1)/2*(M**2))
         Pressure=p*(1+(gamma-1)/2*(M**2))**(gamma/(gamma-1))
