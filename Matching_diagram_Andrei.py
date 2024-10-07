@@ -8,14 +8,6 @@ from Functions_for_isa_and_alphat import *
 font_size_full_scr=14
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
-cruise_req_thrust_over_weight=[]
-climb_req_thrust_over_weight=[]
-cs_far_119_req=[]
-cs_far_121_a_req=[]
-cs_far_121_b_req=[]
-cs_far_121_c_req=[]
-cs_far_121_d_req=[]
-take_off_len_req=[]
 
 #Reference aircraft data points
 Wing_loading_ref=[6565,
@@ -42,7 +34,7 @@ TW_ref_aircraft=[0.261160395,
 #Wing loading range
 
 Wing_loading=np.arange(100,10100,100)
-assumed_landing_mass_fraction=0.66
+assumed_landing_mass_fraction=0.7
 assumed_max_CL=2.5#when landing
 assumed_mass_fraction_cruise=0.93
 Ar=10.2
@@ -59,7 +51,7 @@ def approach_speed_req(landing_mass_fraction, CL_max_landing):
     approach_speed = 70 # approach speed
     rho_0=1.225
     return 1/2*rho_0/landing_mass_fraction*(approach_speed/1.23)**2*CL_max_landing
-approach_speed_req = approach_speed_req(assumed_landing_mass_fraction, assumed_max_CL)
+approach_speed_req_val = approach_speed_req(assumed_landing_mass_fraction, assumed_max_CL)
 
 
 #Landing field length requirement
@@ -68,7 +60,7 @@ def landing_field_req(landing_mass_fraction, CL_max_landing):
     rho_0=1.225
     assumed_landing_field_coeff=0.45 #Fromn adsee book, eq 7.9, for CS/FAR-25
     return 1/landing_mass_fraction*(landing_field_len)/assumed_landing_field_coeff*rho_0*CL_max_landing/2
-landing_field_req = landing_field_req(assumed_landing_mass_fraction, assumed_max_CL)
+landing_field_req_val =landing_field_req(assumed_landing_mass_fraction, assumed_max_CL)
 
 #Cruise speed requirement
 def cruise_req_thrust_over_weight(AR, e, CD_0):
@@ -84,7 +76,7 @@ def cruise_req_thrust_over_weight(AR, e, CD_0):
         req=(mass_fraction_cruise/lapse_rate_req*((CD_0*rho*(V_cruise)**2)/(mass_fraction_cruise*2*Wing_loading[i])+mass_fraction_cruise*Wing_loading[i]*2/(math.pi*AR*e*rho*V_cruise**2)))
         cruise_req.append(req)
     return cruise_req
-cruise_req_thrust_over_weight = cruise_req_thrust_over_weight(Ar, e, CD_0)
+cruise_req_thrust_over_weight_val = cruise_req_thrust_over_weight(Ar, e, CD_0)
 
 #Climb rate requirement
 def climb_req_thrust_over_weight(e, AR,  CD_0):
@@ -106,7 +98,7 @@ def climb_req_thrust_over_weight(e, AR,  CD_0):
         req=mass_fraction_climb/lapse_rate_req*(math.sqrt(ROC**2*rho/(2*mass_fraction_climb*Wing_loading[i])*CL_highest_climb)+2*math.sqrt(CD_0/(math.pi*AR*e)))
         climb_req.append(req)
     return climb_req
-climb_req_thrust_over_weight= climb_req_thrust_over_weight(e, Ar, CD_0)
+climb_req_thrust_over_weight_val= climb_req_thrust_over_weight(e, Ar, CD_0)
 
 #Climb gradient requirements
 
@@ -135,7 +127,7 @@ def climb_gradient_CS25119(AR, e, CD_0 = 0.0156):
         req=1/lapse_rate_req*(c_119+2*math.sqrt(cd_0_landing_landing_gear_on/(math.pi*AR*e_landing)))
         cs_far_119_req_list.append(req)
     return cs_far_119_req_list
-cs_far_119_req = climb_gradient_CS25119(Ar, e, CD_0 = 0.0156)
+cs_far_119_req_val = climb_gradient_CS25119(Ar, e, CD_0 = 0.0156)
 
 #Climb gradient CS 25.121(a)
 def climb_gradient_CS25121a(AR, e, CD_0):
@@ -160,7 +152,7 @@ def climb_gradient_CS25121a(AR, e, CD_0):
         req=2*1/lapse_rate_req*(c_121_a+2*math.sqrt((cd_0_take_off_landing_gear_on)/(math.pi*AR*e_take_off)))
         cs_far_121_a_req_list.append(req)
     return cs_far_121_a_req_list
-cs_far_121_a_req = climb_gradient_CS25121a(Ar,e, CD_0)
+cs_far_121_a_req_val =climb_gradient_CS25121a(Ar,e, CD_0)
 
 #Climb gradient CS 25.121(b)
 def climb_gradient_CS25121b(AR, e, CD_0):
@@ -184,7 +176,7 @@ def climb_gradient_CS25121b(AR, e, CD_0):
         req=2*1/lapse_rate_req*(c_121_b+2*math.sqrt((cd_0_take_off_landing_gear_off)/(math.pi*AR*e_take_off)))
         cs_far_121_b_req_list.append(req)
     return cs_far_121_b_req_list
-cs_far_121_b_req = climb_gradient_CS25121b(Ar, e, CD_0)
+cs_far_121_b_req_val =climb_gradient_CS25121b(Ar, e, CD_0)
 
 #Climb gradient CS 25.121(c)
 def climb_gradient_CS25121c(AR, e, CD_0):
@@ -203,7 +195,7 @@ def climb_gradient_CS25121c(AR, e, CD_0):
         req=2*1/lapse_rate_req*(c_121_c+2*math.sqrt((CD_0)/(math.pi*AR*e)))
         cs_far_121_c_req_list.append(req)
     return cs_far_121_c_req_list
-cs_far_121_c_req = climb_gradient_CS25121c(Ar, e, CD_0)
+cs_far_121_c_req_val =climb_gradient_CS25121c(Ar, e, CD_0)
 
 #Climb gradient CS 25.121(d)
 def climb_gradient_CS25121d(AR, e, CD_0, landing_mass_fraction):
@@ -227,7 +219,7 @@ def climb_gradient_CS25121d(AR, e, CD_0, landing_mass_fraction):
         req=2*landing_mass_fraction/lapse_rate_req*(c_121_d+2*math.sqrt((cd_0_landing_landing_gear_off)/(math.pi*AR*e_landing)))
         cs_far_121_d_req_list.append(req)
     return cs_far_121_d_req_list
-cs_far_121_d_req= climb_gradient_CS25121d(Ar, e, CD_0, assumed_landing_mass_fraction)
+cs_far_121_d_req_val= climb_gradient_CS25121d(Ar, e, CD_0, assumed_landing_mass_fraction)
 
 #Landing field length req
 def landing_field_length_req(AR, e, CL_to):
@@ -240,6 +232,7 @@ def landing_field_length_req(AR, e, CL_to):
     gamma=1.4
     g_0=9.80665
     p,T,rho=isa_calc(0)
+    take_off_len_req=[]
     obstacle_h=11#m, assumed
     take_off_field_len=2790#m
     a=math.sqrt(gamma*R_air*T)
@@ -250,17 +243,17 @@ def landing_field_length_req(AR, e, CL_to):
         req=1.15*math.sqrt(Wing_loading[i]/(take_off_field_len*kt*rho*g_0*math.pi*AR*e_take_off))+4*obstacle_h/take_off_field_len
         take_off_len_req.append(req)
     return take_off_len_req
-take_off_len_req = landing_field_length_req(Ar, e, assumed_CL_to)
+take_off_len_req_val =landing_field_length_req(Ar, e, assumed_CL_to)
 
 #Finding the design point
-def returns_for_optimization(approach_speed_req, landing_field_req, cruise_req_thrust_over_weight, climb_req_thrust_over_weight, cs_far_119_req, cs_far_121_b_req, cs_far_121_c_req, cs_far_121_d_req, take_off_len_req):
-    bound_right=float(min(approach_speed_req,landing_field_req))
+def returns_for_optimization(approach_speed_req_val, landing_field_req_val, cruise_req_thrust_over_weight_val, climb_req_thrust_over_weight_val, cs_far_119_req_val, cs_far_121_b_req_val, cs_far_121_c_req_val, cs_far_121_d_req_val, take_off_len_req_val):
+    bound_right=float(min(approach_speed_req_val,landing_field_req_val))
     bound_right=int(bound_right/100)*100
     pos=int(bound_right/100)-1
-    bound_low=max(cruise_req_thrust_over_weight[pos],climb_req_thrust_over_weight[pos],cs_far_119_req[pos],cs_far_121_a_req[pos],cs_far_121_b_req[pos],cs_far_121_c_req[pos],cs_far_121_d_req[pos],take_off_len_req[pos])
+    bound_low=max(cruise_req_thrust_over_weight_val[pos],climb_req_thrust_over_weight_val[pos],cs_far_119_req_val[pos],cs_far_121_a_req_val[pos],cs_far_121_b_req_val[pos],cs_far_121_c_req_val[pos],cs_far_121_d_req_val[pos],take_off_len_req_val[pos])
     bound_low=round(bound_low,3)
     return (bound_low,bound_right)
-bound_low,bound_right= returns_for_optimization(approach_speed_req, landing_field_req, cruise_req_thrust_over_weight, climb_req_thrust_over_weight, cs_far_119_req, cs_far_121_b_req, cs_far_121_c_req, cs_far_121_d_req, take_off_len_req)
+bound_low,bound_right= returns_for_optimization(approach_speed_req_val, landing_field_req_val, cruise_req_thrust_over_weight_val, climb_req_thrust_over_weight_val, cs_far_119_req_val, cs_far_121_b_req_val, cs_far_121_c_req_val, cs_far_121_d_req_val, take_off_len_req_val)
 #Ploting the req curves
 import matplotlib.pyplot as plt
 
@@ -268,16 +261,16 @@ import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(12, 6))  # Adjust the size as needed
 font_size_full_scr=19
 # Plotting data
-ax.axvline(x=approach_speed_req, color='r', label='Approach Speed')
-ax.axvline(x=landing_field_req, color='g', label='Landing Field')
-ax.plot(Wing_loading, cruise_req_thrust_over_weight, color='b', label='Cruise Speed')
-ax.plot(Wing_loading, climb_req_thrust_over_weight, color='y', label='Climb Rate')
-ax.plot(Wing_loading, cs_far_119_req, color='purple', label='CS Far 119')
-ax.plot(Wing_loading, cs_far_121_a_req, color='black', label='CS Far 121(a)')
-ax.plot(Wing_loading, cs_far_121_b_req, color='orange', label='CS Far 121(b)')
-ax.plot(Wing_loading, cs_far_121_c_req, color='brown', label='CS Far 121(c)')
-ax.plot(Wing_loading, cs_far_121_d_req, color='pink', label='CS Far 121(d)')
-ax.plot(Wing_loading, take_off_len_req, color='grey', label='Take off length')
+ax.axvline(x=approach_speed_req_val, color='r', label='Approach Speed')
+ax.axvline(x=landing_field_req_val, color='g', label='Landing Field')
+ax.plot(Wing_loading, cruise_req_thrust_over_weight_val, color='b', label='Cruise Speed')
+ax.plot(Wing_loading, climb_req_thrust_over_weight_val, color='y', label='Climb Rate')
+ax.plot(Wing_loading, cs_far_119_req_val, color='purple', label='CS Far 119')
+ax.plot(Wing_loading, cs_far_121_a_req_val, color='black', label='CS Far 121(a)')
+ax.plot(Wing_loading, cs_far_121_b_req_val, color='orange', label='CS Far 121(b)')
+ax.plot(Wing_loading, cs_far_121_c_req_val, color='brown', label='CS Far 121(c)')
+ax.plot(Wing_loading, cs_far_121_d_req_val, color='pink', label='CS Far 121(d)')
+ax.plot(Wing_loading, take_off_len_req_val, color='grey', label='Take off length')
 ax.plot(Wing_loading_ref, TW_ref_aircraft, 'o', label='Reference aircrafts', color='black')
 ax.plot(bound_right, bound_low, 'o', label="Design point")
 
