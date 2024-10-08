@@ -121,10 +121,11 @@ def lift_to_drag(C_L, C_D):
 
 def wingspan(S, AR):
     return np.sqrt(S*AR)
-def V2_val(C_D, S, TtoW):
-    return np.sqrt(TtoW/2*MTOM_crit_case*2/(1.225*C_D*S))
+def V2_val(C_L_maxTO, S, TtoW):
+    #return np.sqrt(TtoW*MTOM_crit_case*g/(1.225*drag_coeff(AR, e, C_D0, C_L_maxTO)*S))
+    return  82.19
 def rollrate(b, V2):
-    return 0.1132/0.4347*np.pi/9*V2/b
+    return 0.0454/0.4347*np.pi/9*V2/b*2
 
 
 #Variables
@@ -169,6 +170,7 @@ for i in range(len(C_l_v_alpha[0])-1):
         break
 
 print("SAR original is "+str(SAR(S, C_D)))
+"""
 AR_range=np.arange(5, 15, 0.01)
 vals =[]
 for i in AR_range:
@@ -178,7 +180,7 @@ for i in AR_range:
     C_D = drag_coeff(i, e, C_D0, C_L_cruise)
     L_over_D = lift_to_drag(C_L_cruise, C_D)
     b = wingspan(S, i)
-    V2 = V2_val(C_D, S, T_to_W)
+    V2 = V2_val(CL_max_TO, S, T_to_W)
     P= rollrate(b, V2)*180/np.pi
     V_fuel = wing_fuel_volume(eta_tank, t_to_c, S, i)
     SAR_val = SAR(S, C_D)
@@ -233,15 +235,15 @@ plt.ylim(0, 200)
 plt.grid()
 plt.savefig("Optimization_plot.pdf", format = "pdf")
 plt.close()
-
-
+"""
+AR=10.82
 e= Oswald_eff_factor(AR)
 S, T_to_W = get_wing_area_and_TtoW(AR, e, C_D0, CL_max_landing, CL_max_TO, 0.7)
 C_L_cruise = cruise_lift(S)
 C_D = drag_coeff(AR, e, C_D0, C_L_cruise)
 L_over_D = lift_to_drag(C_L_cruise, C_D)
 b = wingspan(S, AR)
-V2 = V2_val(C_D, S, T_to_W)
+V2 = V2_val(CL_max_TO, S, T_to_W)
 P= rollrate(b, V2)*180/np.pi
 V_fuel = wing_fuel_volume(eta_tank, t_to_c, S, AR)
 SAR_val = SAR(S, C_D)
