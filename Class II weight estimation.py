@@ -9,7 +9,7 @@ b_wing = 62.72 * 3.2808399 #ft
 l_wing_to_tail = 31.1233 * 3.2808399 #ft
 
 S_wing = 363.54 * 10.7639104 #ft2
-S_control_surface = #ft2
+S_control_surface = 109.76658 * 10.7639104 #ft2
 S_htail = 86.482 * 10.7639104 #ft2
 S_vtail = 69.45789 * 10.7639104 #ft2
 
