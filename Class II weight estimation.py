@@ -26,7 +26,7 @@ load_factor = 2.5 # constant
 ultimate_load_factor = 1.5*load_factor #constant
 taper_ratio = 0.3 #constant
 
-W_wing = 0.0051 * (W_MTO * load_factor)**0.557 * S_wing**0.649 * aspect_ratio**0.5 * thickness_ratio**-0.4 (1+)**0.1 * math.cos(quarter_chord_sweep)**-1*
+W_wing = 0.0051 * (W_MTO * load_factor)**0.557 * S_wing**0.649 * aspect_ratio**0.5 * thickness_ratio**-0.4 (1+S_control_surface)**0.1 * math.cos(quarter_chord_sweep)**-1*
 
 
 
