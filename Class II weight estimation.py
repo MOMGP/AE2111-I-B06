@@ -5,7 +5,7 @@ W_MTO = 259403.4 * 2.205 #lb
 W_ZF = W_MTO*0.5886 #lb
 W_l=0.7 * W_MTO#lb
 W_en= 9.630 * 2.205 #lb
-W_apu = 730.0 #could not find apu_uninstalled so I took this value from reference apu
+W_apu = 730.0 #could not find apu_uninstalled, so I took this value from reference apu
 W_uav=1200.0 #lb
 W_c=49442 * 2.205 #lb
 
@@ -56,7 +56,7 @@ L_n =L_m #in
 N_lt= 7*3.2808399#ft
 N_w=4.17*3.2808399#ft
 S_n=105.36*10.7639104 #ft2
-L_ec=40*3.2808399#ft assumed wing position 20m in and 10 m tobith sides to each engine
+L_ec=40*3.2808399#ft assumed wing position 20m in and 10 m to both sides to each engine
 
 #fuel
 V_t=130.1158546*264.172 #gallons
@@ -64,8 +64,8 @@ V_i=0.33*V_t#gallons based on reference
 V_p=0.67*V_t#gallons based on reference
 
 #controls
-N_f=6.0 #based on the raymer statement
-N_m=2.0 #based on raymer
+N_f=6.0 #based on the Raymer statement
+N_m=2.0 #based on Raymer
 I_y= (((b_wing+ L_fus)/2)**2)* (W_MTO/4)*(0.46**2) #lb ft2
 L_a= 2*L_ec #ft
 V_pr = 100
@@ -73,7 +73,7 @@ V_pr = 100
 #constants
 K_uht =1.0 #constant
 K_y= 0.3 * l_wing_to_tail #constant
-H_tH_v =0.0 #for no Ttail
+H_tH_v =0.0 #for no T-tail
 K_z = l_wing_to_tail #constant
 K_door =1.0
 K_lg = 1.0
