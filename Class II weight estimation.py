@@ -4,11 +4,11 @@ import math
 W_MTO = 259403.4 * 2.205 #lb
 W_ZF = W_MTO*0.5886 #lb
 W_l=0.7 * W_MTO#lb
-W_en= 9.630 * 2.205 #lb
+W_en= 9630 * 2.205 #lb
 W_apu = 730.0 #could not find apu_uninstalled, so I took this value from reference apu
 W_uav=1200.0 #lb
-W_c=49442 * 2.205 #lb
-
+W_c=27669 * 2.205 #lb (changed this number because in our scenario we are not at max payload)
+print("W_en",W_en)
 #fuselage lengths
 D_fus = 5.727 * 3.2808399 #ft
 L_fus = 55.982 * 3.2808399 #ft
@@ -97,50 +97,50 @@ N_gen=N_en#raymer correlation
 N_p= 280 + N_c #based on calcs by fuselage team
 
 
-W_wing = 0.0051 * (W_MTO * load_factor)**0.557 * S_wing**0.649 * aspect_ratio**0.5 * thickness_ratio**-0.4 * (1+taper_ratio)**0.1 * math.cos(quarter_chord_sweep)**-1.0 * S_control_surface**0.1
-
-W_htail = 0.0379 * K_uht * (1+ D_fus / b_wing)**-0.25 * W_MTO**0.639 * load_factor**0.10 * S_htail**0.75 * l_wing_to_tail**-1.0 * K_y**0.704 * math.cos(htail_sweep)**-1.0 * A_htail**0.166 * (1+S_elevator/S_htail)**0.1
-
-W_vtail = 0.0026 * (1 + H_tH_v)**0.225 * W_MTO**0.556 * load_factor**0.536 * l_wing_to_tail**-0.5 * S_vtail**0.5 * K_z**0.875 * math.cos(vtail_sweep)**-1.0 * A_vtail**0.35 * tc_vtail**-0.5
-
-W_fuselage = 0.3280 * K_door * K_lg * (W_MTO * load_factor)**0.5 * L_fus**0.25 * S_fus**0.302 * (1+K_ws)**0.04 * L_over_D**0.10
-
+W_wing = 0.0051 * (W_MTO * ultimate_load_factor)**0.557 * S_wing**0.649 * aspect_ratio**0.5 * thickness_ratio**-0.4 * (1+taper_ratio)**0.1 * math.cos(quarter_chord_sweep)**-1.0 * S_control_surface**0.1
+print("W_wing",W_wing)
+W_htail = 0.0379 * K_uht * (1+ D_fus / b_wing)**-0.25 * W_MTO**0.639 * ultimate_load_factor**0.10 * S_htail**0.75 * l_wing_to_tail**-1.0 * K_y**0.704 * math.cos(htail_sweep)**-1.0 * A_htail**0.166 * (1+S_elevator/S_htail)**0.1
+print("W_htail",W_htail)
+W_vtail = 0.0026 * (1 + H_tH_v)**0.225 * W_MTO**0.556 * ultimate_load_factor**0.536 * l_wing_to_tail**-0.5 * S_vtail**0.5 * K_z**0.875 * math.cos(vtail_sweep)**-1.0 * A_vtail**0.35 * tc_vtail**-0.5
+print("W_vtail",W_vtail)
+W_fuselage = 0.3280 * K_door * K_lg * (W_MTO * ultimate_load_factor)**0.5 * L_fus**0.25 * S_fus**0.302 * (1+K_ws)**0.04 * L_over_D**0.10
+print("W_fuselage",W_fuselage)
 W_mlg = 0.0106 * K_mp * W_l**0.888 * N_l**0.25 * L_m**0.4 * N_mw**0.321 * N_mss**-0.5 ** V_stall**0.1
-
+print("W_mlg",W_mlg)
 W_nlg = 0.032 * K_np * W_l**0.646 * N_l**0.25 * L_n**0.5 **N_nw**0.45
-
+print("W_nlg",W_nlg)
 W_ec = 2.331 * W_en**0.901 * K_p * K_tr #prelim for equation below
-
-W_nacelle = 0.6724 * K_ng * N_lt**0.1 * N_w**0.294 * ultimate_load_factor**0.119 * W_ec**0.611 * N_en**0.984 * S_n * 0.224
-
+print("W_ec",W_ec)
+W_nacelle = 0.6724 * K_ng * N_lt**0.1 * N_w**0.294 * ultimate_load_factor**0.119 * W_ec**0.611 * N_en**0.984 * S_n**0.224
+print("W_nacelle",W_nacelle)
 W_engine_controls = 5*N_en + 0.8*L_ec
-
+print("W_engine_controls",W_engine_controls)
 W_starter = 49.19 * (N_en * W_en/1000)**0.541
-
+print("W_starter",W_starter)
 W_fuel_system = 2.405 * V_t**0.606 * (1+V_i/V_t)**-1.0 * (1+V_p/V_t)*N_t**0.5
-
+print("W_fuel_system",W_fuel_system)
 W_flight_controls = 145.9 * N_f**0.554 * (1+N_m/N_f)**-1.0 * S_cs**0.20 * (I_y * 10**-6)**0.07
-
+print("W_flight_controls",W_flight_controls)
 W_apu = 2.2 * W_apu
-
+print("W_apu",W_apu)
 W_instruments = 4.509 * K_r * K_tp * N_c**0.541 * N_en * (L_fus + b_wing)**0.5
-
+print("W_instruments",W_instruments)
 W_hydraulics = 0.2673 * N_f * (L_fus + b_wing)**0.937
-
+print("W_hydraulics",W_hydraulics)
 W_electrical = 7.291 * R_kva**0.782 * L_a **0.346 * N_gen**0.10
-
+print("W_electrical",W_electrical)
 W_avionics = 1.73 * W_uav**0.983
-
+print("W_avionics",W_avionics)
 W_furnishings = 0.0577 * N_c**0.1 * W_c**0.393 * S_fus**0.75
-
+print("W_furnishings",W_furnishings)
 W_air_conditioning = 62.36 * N_p**0.25 * (V_pr/1000)**0.604 * W_uav**0.10
-
+print("W_air_conditioning",W_air_conditioning)
 W_anti_ice = 0.002* W_MTO
-
+print("W_anti_ice",W_anti_ice)
 W_handling_gear = 3.0 * 10**-4 * W_MTO
-
+print("W_handling_gear",W_handling_gear)
 #W_military_cargo_handling_system ?
 
 print("old weight: ", W_ZF/2.205, " in kg")
-W_ZF = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle + W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu + W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings + W_air_conditioning + W_anti_ice + W_handling_gear
+W_ZF = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle + W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu + W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings + W_air_conditioning + W_anti_ice + W_handling_gear+W_c
 print("new weight: ", W_ZF/2.205, " in kg")
