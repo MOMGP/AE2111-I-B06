@@ -4,8 +4,19 @@ from Functions_for_isa_and_alphat import *
 from Matching_diagram_Andrei import *
 from optimization import *
 from C_D0_iteration import *
+def fuel_mass_fraction(L_over_D):
+    R_nom = np.array([13797000, 13983000, 15811000])
+    R_lost = 1 / 0.7 * L_over_D * (h_cr + V_CR ** 2 / (2 * g))
+    f_con = 0.05
+    R_div = 400000
+    R_endu = V_CR * t_E
+    R_eq = (R_nom + R_lost) * (1 + f_con) + 1.2 * R_div + R_endu
+    m_pl = np.array([27669, 26308, 0])
+    m_f_to_MTOM = 1 - np.exp(-R_eq * g / (eta_j * e_f * 10 ** 6 * L_over_D))
+    return m_f_to_MTOM
+
 n=1
-C_D0=0.04451
+C_D0=0.01924
 S = 363.53
 AR=10.82
 V2=82.09
@@ -13,7 +24,8 @@ W_fin.append(259403.4*0.5886-27669)
 W_fin.append(73604.51611408788)
 m_f_to_MTOM = 1-np.exp(-R_eq*g/(eta_j*e_f*10**6*L_to_D_CR))
 m_f=[71843]
-while W_fin[n]>66800:
+while abs(W_fin[n]-W_fin[n-1])>0.01*W_fin[n-1]:
+    print(n)
     print("Diff",W_fin[n-1]-W_fin[n])
     print("%",W_fin[n-1]/100)
     #Getting the new value for the wing area
@@ -27,20 +39,14 @@ while W_fin[n]>66800:
     C_D = drag_coeff(AR, e, C_D0, C_L_cruise)
     P = rollrate(b, V2)
     L_over_D = lift_to_drag(C_L_cruise, C_D)
-    R_nom = np.array([13797000, 13983000, 15811000])
-    R_lost = 1 / 0.7 * L_over_D * (h_cr + V_CR ** 2 / (2 * g))
-    f_con = 0.05
-    R_div = 400000
-    R_endu = V_CR * t_E
-    R_eq = (R_nom + R_lost) * (1 + f_con) + 1.2 * R_div + R_endu
-    m_pl = np.array([27669, 26308, 0])
-    m_f_to_MTOM = 1 - np.exp(-R_eq * g / (eta_j * e_f * 10 ** 6 * L_over_D))
+    m_f_to_MTOM = fuel_mass_fraction(L_over_D)
     print(L_over_D,m_f_to_MTOM)
     m_crit = (W_fin[n] * (1) + 27669) / (1 - m_f_to_MTOM[0])
     m_f[0]=m_crit*m_f_to_MTOM[0]
     S, T_to_W = get_wing_area_and_TtoW(AR, e, C_D0, CL_max_landing, CL_max_TO, 0.7, m_crit)
     print("S is",S)
     print(m_crit)
+
     W_MTO = m_crit * 2.205  # lb
     W_ZF = W_MTO * 0.5886  # lb
     W_l = 0.7 * W_MTO  # lb
@@ -63,7 +69,7 @@ while W_fin[n]>66800:
     S_fus = 819.22 * 10.7639104  # ft2
     S_cs = S_control_surface  # ft2
 
-    S_elevator = 0  # ft2
+    S_elevator = 0.33*S_htail  # ft2
 
     b_htail = 19.21 * 3.2808399 # ft
     b_vtail = 11.02 * 3.2808399  # ft
@@ -86,7 +92,7 @@ while W_fin[n]>66800:
     ultimate_load_factor = 1.5 * load_factor  # constant
     taper_ratio = 0.3  # constant
     tc_vtail = 0.1  # constant
-    L_over_D = 19.65*W_fin[n-1]/W_fin[n]  # unitless
+    # unitless
 
     # landing gear
     L_m = 3.97 * 39.3701  # in
@@ -106,9 +112,9 @@ while W_fin[n]>66800:
     # controls
     N_f = 6.0  # based on the Raymer statement
     N_m = 2.0  # based on Raymer
-    I_y = (((b_wing + L_fus) / 2) ** 2) * (W_MTO / 4) * (0.46 ** 2)  # lb ft2
+    I_y = (((b_wing + L_fus) / 2) ** 2) * (W_fin[n] / 4) * (0.46 ** 2)  # lb ft2
     L_a = 2 * L_ec  # ft
-    V_pr = 100
+    V_pr = 920.823*35.315 #ft^3
 
     # constants
     K_uht = 1.0  # constant

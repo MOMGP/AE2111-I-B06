@@ -24,7 +24,7 @@ S_vtail = 69.45789 * 10.7639104 #ft2
 S_fus =819.22 *10.7639104#ft2
 S_cs= S_control_surface#ft2
 
-S_elevator = 0 #ft2
+S_elevator = 0.33*S_htail #ft2
 
 b_htail = 19.21 * 3.2808399#ft
 b_vtail = 11.02 * 3.2808399#ft
@@ -69,7 +69,7 @@ N_f=6.0 #based on the Raymer statement
 N_m=2.0 #based on Raymer
 I_y= (((b_wing+ L_fus)/2)**2)* (W_MTO/4)*(0.46**2) #lb ft2
 L_a= 2*L_ec #ft
-V_pr = 100
+V_pr = 920.823*35.315 #ft^2
 
 #constants
 K_uht =1.0 #constant
