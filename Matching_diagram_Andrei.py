@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 #from main import *
 from Functions_for_isa_and_alphat import *
 #from Drag_polar_estimation_for_diff_configurations import *
-
+W_fin=[]
 #Plotting settings
 font_size_full_scr=14
 plt.rcParams['mathtext.fontset'] = 'stix'
@@ -39,7 +39,7 @@ assumed_max_CL=2.5#when landing
 assumed_mass_fraction_cruise=0.93
 Ar=10.2
 e=0.78#Oswald efficiency factor as from REQ-WNG-02
-CD_0=0.0156#during cruise as from REQ-WNG-03
+CD_0=0.04451#during cruise as from REQ-WNG-03
 assumed_CL_to=2.1
 assumed_maximum_takeoff_mass=259033 #kg
 

@@ -1,5 +1,6 @@
 import math
-
+from Matching_diagram_Andrei import *
+W_fin.append(259403.4*0.5886-27669)
 #weights
 W_MTO = 259403.4 * 2.205 #lb
 W_ZF = W_MTO*0.5886 #lb
@@ -141,6 +142,6 @@ W_handling_gear = 3.0 * 10**-4 * W_MTO
 print("W_handling_gear",W_handling_gear)
 #W_military_cargo_handling_system ?
 
-print("old weight: ", W_ZF/2.205, " in kg")
-W_ZF = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle + W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu + W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings + W_air_conditioning + W_anti_ice + W_handling_gear+W_c
-print("new weight: ", W_ZF/2.205, " in kg")
+print("old weight: ", (W_ZF-W_c)/2.205, " in kg")
+W_OEW = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle + W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu + W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings + W_air_conditioning + W_anti_ice + W_handling_gear
+print("new weight: ", W_OEW/2.205, " in kg")

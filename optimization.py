@@ -8,6 +8,7 @@ plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
 
 #Data
+'''
 file_path_CL_alpha = "C:\\Users\\Equipo\\Downloads\\Polar_Graph_cl_alpha.csv"
 C_l_v_alpha = pd.read_csv(file_path_CL_alpha).to_numpy()
 C_l_v_alpha = np.array([C_l_v_alpha[:,0], C_l_v_alpha[:,1]])
@@ -19,7 +20,7 @@ CL_v_CD = np.array([CL_v_CD[:,0], CL_v_CD[:,1]])
 file_path_CM_v_alpha = "C:\\Users\\Equipo\\Downloads\\Polar_Graph_CM.csv"
 CM_v_alpha = pd.read_csv(file_path_CM_v_alpha).to_numpy()
 CM_v_alpha = np.array([CM_v_alpha[:,0], CM_v_alpha[:,1]])
-
+'''
 #Parameters - constants
 M_CR = 0.82
 B = 10
@@ -88,7 +89,7 @@ def C_L_alpha(AR, Lambda_c2):
 def Oswald_eff_factor(AR):
     return ((1 + 0.12 * M_CR**6) * (1 + (0.142 + (0.005 * (1 + 1.5 * (taper - 0.6)**2)) * AR * (10 * t_to_c)**0.33) / (np.cos(np.radians(Lambda_c4))**2) + 0.1 * (3 * N_eng + 1) / (4 + AR)**0.8))**-1
 
-def get_wing_area_and_TtoW(AR, e, CD_0, CL_max_landing, CL_to, landing_mass_fraction):
+def get_wing_area_and_TtoW(AR, e, CD_0, CL_max_landing, CL_to, landing_mass_fraction,m_crit):
     #Andrei formulas
     approach_speed_result = approach_speed_req(landing_mass_fraction, CL_max_landing)
     landing_field_result = landing_field_req(landing_mass_fraction, CL_max_landing)
@@ -106,12 +107,12 @@ def get_wing_area_and_TtoW(AR, e, CD_0, CL_max_landing, CL_to, landing_mass_frac
         cs_far_121_c_result, cs_far_121_d_result, take_off_len_result
     )
     
-    S = MTOM_crit_case * 9.81 / bound_right
+    S = m_crit * 9.81 / bound_right
     T_to_W = bound_low
     return S, T_to_W
 
-def cruise_lift(S):
-    return 1.1/(0.5*rho_CR*V_CR**2)*0.5*((MTOM_crit_case-m_f[0]*0.05)*g/S+(MTOM_crit_case-(1-0.118)*m_f[0])*g/S)
+def cruise_lift(S,m_crit,m_f):
+    return 1.1/(0.5*rho_CR*V_CR**2)*0.5*((m_crit-m_f[0]*0.05)*g/S+(m_crit-(1-0.118)*m_f[0])*g/S)
 
 def drag_coeff(AR, e, CD_0, C_L):
     return CD_0+C_L**2/(np.pi*AR*e)
@@ -136,7 +137,7 @@ b = wingspan(S, AR)
 Lambda_c2 = Lambda_n(AR, 50)
 Lambda_LE = Lambda_n(AR, 0)
 Lambda_TE = Lambda_n(AR, 100)
-CL_des = cruise_lift(S)
+CL_des = cruise_lift(S,259403.4,m_f)
 C_D = drag_coeff(AR, e, C_D0, CL_des)
 V2 = V2_val(C_D, S, T_to_W)
 P = rollrate(b, V2)
@@ -144,9 +145,9 @@ P = rollrate(b, V2)
 reqs=np.array([130.1, 0.71, 338.7, 16.4, 60/11, 0]) #V, e, S, L/D, P, SAR
 current=[]
 
-file_path_CL_alpha = "C:\\Users\\Equipo\\Downloads\\Polar_Graph_cl_alpha.csv"
-C_l_v_alpha = pd.read_csv(file_path_CL_alpha).to_numpy()
-C_l_v_alpha = np.array([C_l_v_alpha[:,0], C_l_v_alpha[:,1]])
+#file_path_CL_alpha = "C:\\Users\\Equipo\\Downloads\\Polar_Graph_cl_alpha.csv"
+#C_l_v_alpha = pd.read_csv(file_path_CL_alpha).to_numpy()
+#C_l_v_alpha = np.array([C_l_v_alpha[:,0], C_l_v_alpha[:,1]])
 
 
 # plt.plot(C_l_v_alpha[0], C_l_v_alpha[1])
@@ -158,7 +159,7 @@ C_l_v_alpha = np.array([C_l_v_alpha[:,0], C_l_v_alpha[:,1]])
 # plt.plot(CM_v_alpha[0], CM_v_alpha[1])
 # plt.show()
 
-
+'''
 for i in range(len(CL_v_CD[0])-1):
     if (CL_v_CD[1,i]-0.857)*(CL_v_CD[1,i+1]-0.857)<0:
         C_d_cruise=CL_v_CD[0,i] #gives cruise airfoil drag
@@ -168,7 +169,7 @@ for i in range(len(C_l_v_alpha[0])-1):
     if (C_l_v_alpha[1,i]-0.857)*(C_l_v_alpha[1,i+1]-0.857)<0:
         alpha_CR= (C_l_v_alpha[0,i]) #gives cruise angle
         break
-
+'''
 print("SAR original is "+str(SAR(S, C_D)))
 """
 AR_range=np.arange(5, 15, 0.01)
@@ -238,8 +239,8 @@ plt.close()
 """
 AR=10.82
 e= Oswald_eff_factor(AR)
-S, T_to_W = get_wing_area_and_TtoW(AR, e, C_D0, CL_max_landing, CL_max_TO, 0.7)
-C_L_cruise = cruise_lift(S)
+S, T_to_W = get_wing_area_and_TtoW(AR, e, C_D0, CL_max_landing, CL_max_TO, 0.7,259403.4)
+C_L_cruise = cruise_lift(S,MTOM_crit_case,m_f)
 C_D = drag_coeff(AR, e, C_D0, C_L_cruise)
 L_over_D = lift_to_drag(C_L_cruise, C_D)
 b = wingspan(S, AR)
