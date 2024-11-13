@@ -39,7 +39,7 @@ assumed_max_CL=2.5#when landing
 assumed_mass_fraction_cruise=0.93
 Ar=10.2
 e=0.78#Oswald efficiency factor as from REQ-WNG-02
-CD_0=0.04451#during cruise as from REQ-WNG-03
+CD_0=0.02#during cruise as from REQ-WNG-03
 assumed_CL_to=2.1
 assumed_maximum_takeoff_mass=259033 #kg
 
@@ -77,7 +77,6 @@ def cruise_req_thrust_over_weight(AR, e, CD_0):
         cruise_req.append(req)
     return cruise_req
 cruise_req_thrust_over_weight_val = cruise_req_thrust_over_weight(Ar, e, CD_0)
-
 #Climb rate requirement
 def climb_req_thrust_over_weight(e, AR,  CD_0):
     climb_alt_req=12000
@@ -272,7 +271,7 @@ ax.plot(Wing_loading, cs_far_121_c_req_val, color='brown', label='CS Far 121(c)'
 ax.plot(Wing_loading, cs_far_121_d_req_val, color='pink', label='CS Far 121(d)')
 ax.plot(Wing_loading, take_off_len_req_val, color='grey', label='Take off length')
 ax.plot(Wing_loading_ref, TW_ref_aircraft, 'o', label='Reference aircrafts', color='black')
-ax.plot(bound_right, bound_low, 'o', label="Design point")
+ax.plot(bound_right, bound_low, 'o', label="Design point",color='blue')
 
 # Set x and y axis limits
 ax.set_xlim([0, 10000])
@@ -294,7 +293,6 @@ plt.subplots_adjust(right=0.65, top=0.9, bottom=0.16)  # Adjust this value to re
 
 # Save the figure
 plt.savefig("TW-WS Diagram.pdf", format='pdf')
-
 # Close the plot
 plt.close()
 

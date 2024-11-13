@@ -100,9 +100,9 @@ N_p= 280 + N_c #based on calcs by fuselage team
 
 W_wing = 0.0051 * (W_MTO * ultimate_load_factor)**0.557 * S_wing**0.649 * aspect_ratio**0.5 * thickness_ratio**-0.4 * (1+taper_ratio)**0.1 * math.cos(quarter_chord_sweep)**-1.0 * S_control_surface**0.1
 print("W_wing",W_wing)
-W_htail = 0.0379 * K_uht * (1+ D_fus / b_wing)**-0.25 * W_MTO**0.639 * ultimate_load_factor**0.10 * S_htail**0.75 * l_wing_to_tail**-1.0 * K_y**0.704 * math.cos(htail_sweep)**-1.0 * A_htail**0.166 * (1+S_elevator/S_htail)**0.1
+W_htail = 0.0379 * K_uht * (1+ D_fus / b_wing)**-0.25 * W_MTO**0.639 * ultimate_load_factor**0.10 * S_htail**0.75 * 26.677312206304176**-1.0 * K_y**0.704 * math.cos(htail_sweep)**-1.0 * A_htail**0.166 * (1+S_elevator/S_htail)**0.1
 print("W_htail",W_htail)
-W_vtail = 0.0026 * (1 + H_tH_v)**0.225 * W_MTO**0.556 * ultimate_load_factor**0.536 * l_wing_to_tail**-0.5 * S_vtail**0.5 * K_z**0.875 * math.cos(vtail_sweep)**-1.0 * A_vtail**0.35 * tc_vtail**-0.5
+W_vtail = 0.0026 * (1 + H_tH_v)**0.225 * W_MTO**0.556 * ultimate_load_factor**0.536 * 24.177312206304176**-0.5 * S_vtail**0.5 * K_z**0.875 * math.cos(vtail_sweep)**-1.0 * A_vtail**0.35 * tc_vtail**-0.5
 print("W_vtail",W_vtail)
 W_fuselage = 0.3280 * K_door * K_lg * (W_MTO * ultimate_load_factor)**0.5 * L_fus**0.25 * S_fus**0.302 * (1+K_ws)**0.04 * L_over_D**0.10
 print("W_fuselage",W_fuselage)
@@ -143,5 +143,5 @@ print("W_handling_gear",W_handling_gear)
 #W_military_cargo_handling_system ?
 
 print("old weight: ", (W_ZF-W_c)/2.205, " in kg")
-W_OEW = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle + W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu + W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings + W_air_conditioning + W_anti_ice + W_handling_gear
+W_OEW = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle + W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu + W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings + W_air_conditioning + W_anti_ice + W_handling_gear+2*W_en
 print("new weight: ", W_OEW/2.205, " in kg")
