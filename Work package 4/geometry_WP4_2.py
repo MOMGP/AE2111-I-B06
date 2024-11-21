@@ -1,4 +1,5 @@
 import numpy as np
+
 # format for wing_box = [(start), (end), thickness]
 #format of stringers = [pos, area]
 def centroid(wing_box, stringers):
@@ -44,6 +45,18 @@ def moments_of_inertia(wing_box, stringers):
 
     return I_xx, I_yy
 
-def get_mass():
+def Lambda_n(n_percent):
+    AR = 10.82
+    M_CR = 0.82
+    Lambda_c4 = np.rad2deg(np.arccos(1.16 / (M_CR + 0.5)))
+    taper = 0.2 * (2 - np.deg2rad(Lambda_c4))
+    return np.rad2deg(np.arctan(np.tan(np.deg2rad(Lambda_c4))-(4/AR)*((n_percent-25)/100*(1-taper)/(1+taper))))
+
+def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root, stringers_tip):
+    mass = 0
+    sweep = Lambda_n()
+    dihedral = 4.75 #deg
+
+
 
     return mass
