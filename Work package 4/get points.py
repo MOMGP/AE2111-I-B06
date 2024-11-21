@@ -1,7 +1,5 @@
 import math
 import csv
-import pandas as pd
-import numpy as np
 airfoil_chords_list = 'AE2111-I-B06-Cracked-AF\Work package 4\Airfoil Chord List.csv'
 import pandas as pd
 import numpy as np
