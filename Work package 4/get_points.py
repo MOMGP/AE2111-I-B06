@@ -64,5 +64,4 @@ def get_points(length_1, length_2, length_3, chord):
             bottom_surface = (1 - l) * airfoil_geometry[i][2] + l * airfoil_geometry[i + 1][2]
             wingbox_chords.append(top_surface)
             wingbox_chords.append(bottom_surface)
-
     return wingbox_chords
