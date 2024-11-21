@@ -23,7 +23,7 @@ def centroid(wing_box, stringers):
     centroid_y = centroid_sum_y/area_sum
     return centroid_x, centroid_y
         
-def moment_of_inertia(wing_box, stringers):
+def moments_of_inertia(wing_box, stringers):
     centroid_x, centroid_y = centroid(wing_box, stringers)
     I_xx = 0
     I_yy = 0
