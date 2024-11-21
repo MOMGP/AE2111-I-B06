@@ -3,7 +3,6 @@ import csv
 import pandas as pd
 import numpy as np
 airfoil_chords_list = 'AE2111-I-B06-Cracked-AF\Work package 4\Airfoil Chord List.csv'
-
 import pandas as pd
 import numpy as np
 
@@ -31,7 +30,7 @@ def get_airfoil(input_file):
 
 
 
-print(get_airfoil(airfoil_chords_list))
+np.save("Airfoil_geom.npy",get_airfoil(airfoil_chords_list))
 
 
 
