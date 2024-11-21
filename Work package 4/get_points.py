@@ -35,7 +35,7 @@ def get_airfoil(input_file):
 
 
 def get_points(length_1, length_2, length_3):
-    airfoil_geometry = np.load('AE2111-I-B06-Cracked-AF\\Airfoil_geom.npy') #get airfoil geometry
+    airfoil_geometry = np.load('C:\\Users\\koppe\\PycharmProjects\\AE2111-I-B06-Cracked-AF\\Airfoil_geom.npy') #get airfoil geometry
 
     for i in range(len(airfoil_geometry)-1):  #input values for length 1
         j = airfoil_geometry[i][0]
@@ -71,11 +71,11 @@ def get_points(length_1, length_2, length_3):
             x2 = length_2
             a = (x2 - x1) / (y2 - y1)
             b = y1 - a * x1
-            x = np.array(np.round(length_1, 2), np.round(length_2, 2), 0.01)
-            for j in range(x):
+            x = np.arange(np.round(length_1, 2), np.round(length_2, 2), 0.01)
+            for j in range(len(x)):
                 y = a * x[j] + b
-                yref1 = airfoil_geometry[airfoil_geometry.index(x)][1]
-                yref2 = airfoil_geometry[airfoil_geometry.index(x)][2]
+                yref1 = airfoil_geometry[np.where(airfoil_geometry[:,0] == x[j])][1]
+                yref2 = airfoil_geometry[np.where(airfoil_geometry[:,0] == x[j])][2]
                 if not yref2 < y <yref1:
                     intersect = True
 
@@ -85,14 +85,16 @@ def get_points(length_1, length_2, length_3):
             x2 = length_3
             a = (x2 - x1) / (y2 - y1)
             b = y1 - a * x1
-            x = np.array(np.round(length_2, 2), np.round(length_3, 2), 0.01)
+            x = np.arange(np.round(length_2, 2), np.round(length_3, 2), 0.01)
             for j in range(x):
                 y = a * x[j] + b
-                yref1 = airfoil_geometry[airfoil_geometry.index(x)][1]
-                yref2 = airfoil_geometry[airfoil_geometry.index(x)][2]
+                yref1 = airfoil_geometry[np.where(airfoil_geometry[:,0] == x[j])][1]
+                yref2 = airfoil_geometry[np.where(airfoil_geometry[:,0] == x[j])][2]
                 if not yref2 < y < yref1:
                     intersect = True
 
     return wingbox_chords(), intersect
 
 winbox_chords, intersect  = get_points(0.2, 0.5, -1)
+print(winbox_chords)
+print(intersect)
