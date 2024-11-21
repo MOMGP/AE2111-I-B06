@@ -25,9 +25,9 @@ def centroid(wing_box, stringers):
         
 def moment_of_inertia(wing_box, stringers):
     centroid_x, centroid_y = centroid(wing_box, stringers)
-    I_xx =0
-    I_yy =0
-    I_xy =0
+    I_xx = 0
+    I_yy = 0
+    I_xy = 0
     for i in range(len(wing_box)):
         start= wing_box[i,0]
         end= wing_box[i,1]
@@ -36,10 +36,11 @@ def moment_of_inertia(wing_box, stringers):
         angle = np.arctan((start[1]-end[1])/(start[0]-end[0]))
         thickness = wing_box[i,2]
         I_xx+=thickness*length**3*np.sin(angle)**2/12 #reg
-        I_xx+=thickness*length*midpoint[1]**2
+        I_xx+=thickness*length*(midpoint[1]-centroid_y)**2
         I_yy+=thickness*length**3*np.cos(angle)**2/12 #reg
-        I_xx+=thickness*length*midpoint[0]**2
-        I_xy+=thickness*length**3*np.cos(angle)*np.sin(angle)/12
+        I_yy+=thickness*length*(midpoint[0]-centroid_x)**2
+        #PAT for I_xy?
         
 
-    return I_xx, I_yy, I_xy
+    return I_xx, I_yy
+
