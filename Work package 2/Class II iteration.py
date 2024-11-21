@@ -2,7 +2,9 @@ import math
 import matplotlib.pyplot as plt
 from Functions_for_isa_and_alphat import *
 from Matching_diagram_Andrei import *
-from optimization import Lambda_n,Oswald_eff_factor, get_wing_area_and_TtoW,cruise_lift,drag_coeff,lift_to_drag,wingspan,V2_val,rollrate
+from optimization import Lambda_n,Oswald_eff_factor,get_wing_area_and_TtoW,cruise_lift,drag_coeff,lift_to_drag,wingspan,V2_val,rollrate,wing_fuel_volume
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+import matplotlib.ticker as ticker
 from C_D0_iteration import *
 from Empennage_sizing import X_Lemac_calc,cg,S_h_calc,B_h_calc,Cr_h_calc,LE_sweep_h_calc,X_LEMAC_h_calc,L_wing_to_tail_calc_h,S_v_calc,B_v_calc,Cr_v_calc,LE_Sweep_V_calc,X_LEMAC_v_calc,L_wing_to_tail_calc_v
 #constants
@@ -25,7 +27,7 @@ def fuel_mass_fraction(L_over_D):
 
 
 def Control_surface(c_L_MAX, S):
-    S_control_surface = 0.3 * (0.4975 * (2.5 - c_L_MAX)*S) / (0.9 * 1.8 * math.cos(0.442965)) + 0.3*(0.1866 * (2.5 - c_L_MAX)*S) / (0.9 * 1.3 * math.cos(0.442965)) + 0.2*(0.3159 * (2.5 - c_L_MAX) * S) / (0.9 * 0.46 * math.cos(0.525518638)) + 14
+    S_control_surface = 0.3 *(0.4975 * (2.5 - c_L_MAX)*S) /(0.9 * 1.8 * math.cos(0.442965)) +0.3*(0.1866 * (2.5 - c_L_MAX)*S) /(0.9 * 1.3 * math.cos(0.442965)) +0.2*(0.3159 * (2.5 - c_L_MAX) * S) /(0.9 * 0.46 * math.cos(0.525518638)) + 14
     return S_control_surface
 n=1
 C_D0=0.020253
@@ -46,6 +48,8 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
     Lambda_c2 = Lambda_n(AR, 50)
     Lambda_LE = Lambda_n(AR, 0)
     Lambda_TE = Lambda_n(AR, 100)
+    print(Lambda_LE)
+    print(Lambda_TE)
     m_crit=(W_fin[n-1]+27669)/(1-m_f_to_MTOM[0])
     Cr=2*S/(b*(1+taper))
     C_L_cruise = cruise_lift(S, m_crit,m_f)
@@ -53,19 +57,24 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
     P = rollrate(b, V2)
     L_over_D = lift_to_drag(C_L_cruise, C_D)
     m_f_to_MTOM = fuel_mass_fraction(L_over_D)
+    print("C_L_cruise",C_L_cruise)
     print(L_over_D,m_f_to_MTOM)
     m_crit = (W_fin[n] * (1) + 27669) / (1 - m_f_to_MTOM[0])
     m_f[0]=m_crit*m_f_to_MTOM[0]
-    S, T_to_W = get_wing_area_and_TtoW(AR, e, C_D0, CL_max_landing, CL_max_TO, 0.7, m_crit)
+    S, T_to_W = get_wing_area_and_TtoW(AR, e,
+    C_D0, CL_max_landing, CL_max_TO, 0.7,
+    m_crit)
     print("S is",S)
     print(m_crit)
-
+    print("T_TO_W",T_to_W)
+    print("CD",C_D)
     #Empenage sizing
     OEW_fraction=W_fin[n]/m_crit
     Fuel_fraction=m_f_to_MTOM[0]
     Payload_fraction=1-OEW_fraction-Fuel_fraction
     MAC=2/3*Cr*(1+taper+taper**2)/(1+taper)
-    cg_aft, cg_for = cg(MAC,MiXi,Mj,Mi,xc_OEW,OEW_fraction,Fuel_fraction,Payload_fraction)
+    cg_aft, cg_for = cg(MAC,MiXi,Mj,Mi,xc_OEW,OEW_fraction,
+    Fuel_fraction,Payload_fraction)
     S_h = S_h_calc(MAC, S, cg_aft)
     B_h = B_h_calc(S_h)
     Cr_h = Cr_h_calc(S_h, B_h)
@@ -79,17 +88,26 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
     LE_Sweep_V = LE_Sweep_V_calc(Cr_v, B_v)
     X_LEMAC_v = X_LEMAC_v_calc(LE_Sweep_V, Cr_v)
     L_wing_to_tail_v = L_wing_to_tail_calc_v(X_LEMAC,MAC)
+    MAC_h= 2 / 3 * Cr_h * (1 + 0.35 + 0.35 ** 2) / (1 + 0.35)
+    MAC_v= 2 / 3 * Cr_v* (1 + 0.5 + 0.5 ** 2) / (1 + 0.5)
+    print("MAC_h",MAC_h)
+    print("MAC_v",MAC_v)
     #Start of Class 2 weight estimation
     W_MTO = m_crit * 2.205  # lb
     W_ZF = W_MTO * (1-m_f_to_MTOM[0])  # lb
     W_l = 0.7 * W_MTO  # lb
     W_en = 9630 * 2.205  # lb
-    W_apu = 730.0  # could not find apu_uninstalled, so I took this value from reference apu
+    W_apu = 730.0  #
     W_uav = 1200.0  # lb
-    W_c = 27669 * 2.205  # lb (changed this number because in our scenario we are not at max payload)
+    W_c = 27669 * 2.205  # lb
     #print("W_en", W_en)
     # fuselage lengths
-
+    print("MAC",MAC)
+    print("CR_h",Cr_h)
+    print("CR_v",Cr_v)
+    print("CR",Cr)
+    print("Dihedral",4.95)
+    print("X_lemac",X_LEMAC)
     D_fus = 5.727 * 3.2808399  # ft
     L_fus = 55.982 * 3.2808399  # ft
     b_wing = wingspan(S,AR) * 3.2808399  # ft
@@ -97,17 +115,26 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
     L_wing_to_tail_v*= 3.2808399 #ft
     # wing areas and spans
     S_wing = S* 10.7639104  # ft2
-    S_control_surface =Control_surface(2.504,S)*10.7639  # ft2
+    S_control_surface =Control_surface(2,S)*10.7639  # ft2
     S_htail = S_h * 10.7639104  # ft2
     S_vtail = S_v * 10.7639104  # ft2
     S_fus = 819.22 * 10.7639104  # ft2
     S_cs = S_control_surface  # ft2
-
+    print("L_fus",L_fus/3.2808399)
+    print("D_fus",D_fus/3.2808399)
+    print("b_wing",b_wing/3.2808399)
+    print("L_wing_to_tail_h",L_wing_to_tail_h/3.2808399)
+    print("L_wing_to_tail_v",L_wing_to_tail_v/3.2808399)
+    print("S_wing",S_wing/3.2808399/3.2808399)
+    print("S_htail",S_htail/3.2808399/3.2808399)
+    print('S_vtail',S_vtail/3.2808399/3.2808399)
     S_elevator = 0.33*S_htail  # ft2
 
     b_htail = B_h * 3.2808399 # ft
     b_vtail = B_v * 3.2808399  # ft
-
+    print("b_htail",b_htail/3.2808399)
+    print("b_vtail",b_vtail/3.2808399)
+    print("Roll rate",)
     # speeds
     V_cruise_TAS = 241.9574 * 3.2808399  # ft/s
     V_stall = 67.6 * 3.2808399  # ft/s
@@ -116,16 +143,33 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
     half_chord_sweep = math.radians(26.26)  # degree
     htail_sweep = math.radians(LE_sweep_h)  # degree
     vtail_sweep = math.radians(LE_Sweep_V)  # degree
-
+    print("Sweep quarter chord wing",28.5)
+    print("Sweep HTail",LE_sweep_h)
+    print("Sweep Vtail",LE_Sweep_V)
     # wing characteristics
     aspect_ratio = AR  # constant
     A_htail = (b_htail ** 2) / S_htail  # unitless
     A_vtail = (b_vtail ** 2) / S_vtail  # unitless
+    print("Aspect ratio", AR)
+    print("Aspect ratio HTAIL", A_htail)
+    print("Aspect ratio Vtail", A_vtail)
+    print("t/c",0.1)
+    print("tapper wing",0.3)
+    print("tapper Htail",0.35)
+    print('tapper Vtail',0.5)
+    print("Roll rate",P*180/math.pi)
+    print("V2",V2)
+    print("lift over drag",L_over_D)
+    print("T_to_W",T_to_W)
+    print("Oswald",Oswald_eff_factor(AR))
     thickness_ratio = 0.1  # constant
     load_factor = 2.5  # constant
     ultimate_load_factor = 1.5 * load_factor  # constant
     taper_ratio = 0.3  # constant
     tc_vtail = 0.1  # constant
+    V_fuel = wing_fuel_volume(eta_tank, thickness_ratio, S, AR)
+    print("Wing fuel volume",V_fuel)
+    print("S_control_surface",S_control_surface/3.2808399/3.2808399)
     # unitless
 
     # landing gear
@@ -136,7 +180,7 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
     N_lt = 7 * 3.2808399  # ft
     N_w = 4.17 * 3.2808399  # ft
     S_n = 105.36 * 10.7639104  # ft2
-    L_ec = 40 * 3.2808399  # ft assumed wing position 20m in and 10 m to both sides to each engine
+    L_ec = 40 * 3.2808399  # ft
 
     # fuel
     V_t = m_f[0]/820*0.264172*1000  # gallons
@@ -179,15 +223,19 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
 
     #Updated C_D0 value
     C_D0_wing = C_D0_wing_calc(S, Cf_wing, FF_wing, IF_wing, S)
-    C_D0_Htail = C_D0_HTail_calc(S_htail/10.7639104, Cf_HTail, FF_HTail, IF_HTail, S)
-    C_D0_VTail = C_DO_VTail_calc(S_vtail/10.7639104, Cf_VTail, FF_VTail, IF_VTail, S)
-    C_D0_nacelle = C_D0_Nacelle_calc(S_n/10.7639104, Cf_nacelle, FF_nacelle, IF_nacelle, S)
-    C_D0 = (2*C_D0_nacelle + C_D0_Htail + C_D0_VTail + C_D0_wing + C_D0_fuselage*363.53/S+C_D0_wave_drag+C_D0_fuselage_upsweep*363.53/S)*1.25
+    C_D0_Htail = C_D0_HTail_calc(S_htail/10.7639104, Cf_HTail,
+    FF_HTail, IF_HTail, S)
+    C_D0_VTail = C_DO_VTail_calc(S_vtail/10.7639104, Cf_VTail,
+    FF_VTail, IF_VTail, S)
+    C_D0_nacelle = C_D0_Nacelle_calc(S_n/10.7639104, Cf_nacelle,
+    FF_nacelle, IF_nacelle, S)
+    C_D0 = (2*C_D0_nacelle + C_D0_Htail + C_D0_VTail + C_D0_wing +
+    C_D0_fuselage*363.53/S+C_D0_wave_drag+C_D0_fuselage_upsweep*363.53/S)*1.25
+
+    print("C_D0", C_D0)
 
 
-
-
-    W_wing = 0.0051 * (W_MTO * ultimate_load_factor) ** 0.557 * S_wing ** 0.649 * aspect_ratio ** 0.5 * thickness_ratio ** -0.4 * (1 + taper_ratio) ** 0.1 * math.cos(quarter_chord_sweep) ** -1.0 * S_control_surface ** 0.1
+    W_wing = 0.0051 * (W_MTO * ultimate_load_factor) ** 0.557 * S_wing ** 0.649 *aspect_ratio ** 0.5 * thickness_ratio ** -0.4 *(1 + taper_ratio) ** 0.1 * math.cos(quarter_chord_sweep) ** -1.0 * S_control_surface ** 0.1
     print("W_wing", W_wing)
     W_htail = 0.0379 * K_uht * (1 + D_fus / b_wing) ** -0.25 * W_MTO ** 0.639 * ultimate_load_factor ** 0.10 * S_htail ** 0.75 * L_wing_to_tail_h ** -1.0 * K_y ** 0.704 * math.cos(htail_sweep) ** -1.0 * A_htail ** 0.166 * (1 + S_elevator / S_htail) ** 0.1
     print("W_htail", W_htail)
@@ -230,10 +278,17 @@ while abs(W_fin[n]-W_fin[n-1])>0.01*max(W_fin[n-1],W_fin[n]):
     W_handling_gear = 3.0 * 10 ** -4 * W_MTO
     print("W_handling_gear", W_handling_gear)
     # W_military_cargo_handling_system ?
-
+    print("W_engine",W_en)
     print("old weight: ", W_fin[n], " in kg")
-    W_OEW = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle + W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu + W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings + W_air_conditioning + W_anti_ice + W_handling_gear+2*W_en
+    W_OEW = W_wing + W_htail + W_vtail + W_fuselage + W_mlg + W_nlg + W_nacelle +W_engine_controls + W_starter + W_fuel_system + W_flight_controls + W_apu +W_instruments + W_hydraulics + W_electrical + W_avionics + W_furnishings +W_air_conditioning + W_anti_ice + W_handling_gear+2*W_en
     print("new weight: ", W_OEW / 2.205, " in kg")
     W_fin.append(W_OEW / 2.205)
     print(C_D0)
     n+=1
+
+    print(W_fin)
+x=[1,2,3,4,5,6,7]
+plt.figure()
+plt.plot(x,W_fin,color='red')
+plt.plot(x,W_fin, 'o', label='Reference aircrafts', color='black')
+plt.show()

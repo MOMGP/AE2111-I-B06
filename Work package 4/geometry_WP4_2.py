@@ -44,3 +44,6 @@ def moments_of_inertia(wing_box, stringers):
 
     return I_xx, I_yy
 
+def get_mass():
+
+    return mass
