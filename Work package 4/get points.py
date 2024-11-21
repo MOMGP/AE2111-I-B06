@@ -1,23 +1,34 @@
-airfoil_geometry = []
-wingbox_chords = []
+import math
+import csv
+airfoil_chords_list = 'AE2111-I-B06-Cracked-AF\Work package 4\Airfoil Chord List.csv'
+import pandas as pd
+import numpy as np
+
+def get_airfoil(input_file):
+    # Read airfoil points into a numpy array
+    airfoil_points = pd.read_csv(input_file).to_numpy()
+    
+    # Number of rows
+    num_rows = airfoil_points.shape[0]
+    
+    # Divide into top and bottom
+    mid_index = num_rows // 2
+    top_points = airfoil_points[:mid_index]
+    bottom_points = airfoil_points[mid_index:]
+    
+    # Prepare the output array
+    x_y_y = np.zeros((mid_index, 3))
+    
+    # Fill x, top y, and bottom y values
+    x_y_y[:, 0] = top_points[:, 0]  # x-coordinates
+    x_y_y[:, 1] = top_points[:, 1]  # top y-coordinates
+    x_y_y[:, 2] = bottom_points[:, 1]  # bottom y-coordinates
+    
+    return x_y_y
 
 
-def get_points(length_1, length_2, length_3):
-    airfoil_geometry = [[0.5, 1, 2],[0.51, 1.1, 1.9],[0.52, 1.2, 1.8]] #get airfoil geometry
 
-    for i in range(len(airfoil_geometry)):  #input values for length 1
-        j = airfoil_geometry[i][0]
-        if length_1 == j:
-            wingbox_chords.append(airfoil_geometry[j][1], airfoil_geometry[j][2])
+np.save("Airfoil_geom.npy",get_airfoil(airfoil_chords_list))
 
-    for i in range(len(airfoil_geometry)):  #input values for length 2
-        j = airfoil_geometry[i][0]
-        if length_2 == j:
-            wingbox_chords.append(airfoil_geometry[j][1], airfoil_geometry[j][2])
 
-    for i in range(len(airfoil_geometry)):  # input values for length 3
-        j = airfoil_geometry[i][0]
-        if length_3 == j:
-            wingbox_chords.append(airfoil_geometry[j][1], airfoil_geometry[j][2])
 
-    return wingbox_chords()
