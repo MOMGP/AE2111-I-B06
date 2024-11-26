@@ -175,3 +175,14 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
     stringers = np.array(stringers)
     geometry = np.array(geometry)
     return geometry
+
+
+profile_1 = np.array([[(0,0),(0,1),0.01],[(0,1),(1,1),0.01],[(1,1),(1,0),0.01],[(1,0),(0,0),0.01],[(1,1),(2,1),0.01],[(2,1),(2,0),0.01],[(2,0),(1,0),0.01]])
+profile_2 = np.array([[(0,0),(0,1),0.01],[(0,1),(1,1),0.01],[(1,1),(1,0),0.01],[(1,0),(0,0),0.01],[(1,1),(2,1),0.01],[(2,1),(2,0),0.01],[(2,0),(1,0),0.01]])
+profile_3 = np.array([[(0,0),(0,1),0.01],[(0,1),(1,1),0.01],[(1,1),(1,0),0.01],[(1,0),(0,0),0.01]])
+pos_profile_3 = 0.5
+stringers_1 = np.array([[(0.5,0.05),0.5],[(1.5,0.05),0.5],[(0.5,0.95),0.5],[(1.5,0.95),0.5]])
+stringers_2 = np.array([[(0.5,0.05),0.5],[(1.5,0.05),0.5]])
+
+total_mass = get_mass(profile_1, profile_2, profile_3, pos_profile_3, stringers_1, stringers_2)
+print(total_mass)
