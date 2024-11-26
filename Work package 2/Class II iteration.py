@@ -291,4 +291,10 @@ x=[1,2,3,4,5,6,7]
 plt.figure()
 plt.plot(x,W_fin,color='red')
 plt.plot(x,W_fin, 'o', label='Reference aircrafts', color='black')
+plt.xlabel('Number of iterations')
+plt.ylabel("OEW [KG]")
+plt.ylim(75000,130000)
+plt.title('Iteration convergence')
+ticks=[125000,120000,115000,110000,105000,100000,95000,90000,85000,80000,75000]
+plt.yticks(ticks)
 plt.show()
