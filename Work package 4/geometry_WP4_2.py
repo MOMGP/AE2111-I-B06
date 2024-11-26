@@ -24,6 +24,9 @@ sigma_ult = 485000000 #Pa
 G = 28000000000 #Pa
 E = 72400000000
 rho = 2780 # kg/m3
+AR = 10.82
+M_CR = 0.82
+
 def scaled_chord(spanwise_dist):
     chord = C_r - C_r * (1 - taper) * (spanwise_dist / (b / 2))
     return(chord)
@@ -72,16 +75,12 @@ def moments_of_inertia(wing_box, stringers):
     return I_xx, I_yy
 
 def Lambda_n(n_percent):
-    AR = 10.82
-    M_CR = 0.82
     Lambda_c4 = np.rad2deg(np.arccos(1.16 / (M_CR + 0.5)))
     taper = 0.2 * (2 - np.deg2rad(Lambda_c4))
     return np.rad2deg(np.arctan(np.tan(np.deg2rad(Lambda_c4))-(4/AR)*((n_percent-25)/100*(1-taper)/(1+taper))))
 
 def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root, stringers_tip):
     mass = 0
-    span = b
-    density = rho
     for i in range(len(wing_box_root)):
         start_root = wing_box_root[i, 0]
         end_root = wing_box_root[i, 1]
@@ -95,13 +94,9 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         thickness_mid = wing_box_mid[i, 2]
         area_mid = length_mid * thickness_mid
 
-
-
         sweep = np.deg2rad((Lambda_n(start_root / scaled_chord(0))+Lambda_n(end_root / scaled_chord(0))) /2)
-
-        y = span * pos_mid / np.tan(sweep) / np.tan(dihedral)
-
-        mass += (area_root+area_mid)/2 * y * density
+        y = b * pos_mid / np.tan(sweep) / np.tan(dihedral)
+        mass += (area_root+area_mid)/2 * y * rho
 
 
 
@@ -119,10 +114,26 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_mid = length_mid * thickness_mid
 
         sweep = np.deg2rad((Lambda_n(start_tip / scaled_chord(b))+Lambda_n(end_tip / scaled_chord(b))) / 2)
+        y = b * (1-pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        mass += (area_tip + area_mid) / 2 * y * rho
 
-        y = span * pos_mid / np.tan(sweep) / np.tan(dihedral)
+    for i in range(len(stringers_root)):
 
-        mass += (area_tip + area_mid) / 2 * y * density
+        start_root = stringers_root[i, 0]
+        area_root = stringers_root[1]
+
+        sweep = np.deg2rad((Lambda_n(start_root / scaled_chord(0))) / 2)
+        y = b * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        mass += area_root * y * rho
+
+    for i in range(len(stringers_tip)):
+
+        start_tip = stringers_tip[i, 0]
+        area_tip = stringers_tip[1]
+
+        sweep = np.deg2rad((Lambda_n(start_tip / scaled_chord(b))) / 2)
+        y = b * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        mass += area_tip  * y * rho
 
     return mass
 
@@ -164,3 +175,14 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
     stringers = np.array(stringers)
     geometry = np.array(geometry)
     return geometry
+
+
+profile_1 = np.array([[(0,0),(0,1),0.01],[(0,1),(1,1),0.01],[(1,1),(1,0),0.01],[(1,0),(0,0),0.01],[(1,1),(2,1),0.01],[(2,1),(2,0),0.01],[(2,0),(1,0),0.01]])
+profile_2 = np.array([[(0,0),(0,1),0.01],[(0,1),(1,1),0.01],[(1,1),(1,0),0.01],[(1,0),(0,0),0.01],[(1,1),(2,1),0.01],[(2,1),(2,0),0.01],[(2,0),(1,0),0.01]])
+profile_3 = np.array([[(0,0),(0,1),0.01],[(0,1),(1,1),0.01],[(1,1),(1,0),0.01],[(1,0),(0,0),0.01]])
+pos_profile_3 = 0.5
+stringers_1 = np.array([[(0.5,0.05),0.5],[(1.5,0.05),0.5],[(0.5,0.95),0.5],[(1.5,0.95),0.5]])
+stringers_2 = np.array([[(0.5,0.05),0.5],[(1.5,0.05),0.5]])
+
+total_mass = get_mass(profile_1, profile_2, profile_3, pos_profile_3, stringers_1, stringers_2)
+print(total_mass)
