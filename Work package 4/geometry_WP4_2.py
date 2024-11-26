@@ -81,8 +81,6 @@ def Lambda_n(n_percent):
 
 def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root, stringers_tip):
     mass = 0
-    span = b
-    density = rho
     for i in range(len(wing_box_root)):
         start_root = wing_box_root[i, 0]
         end_root = wing_box_root[i, 1]
@@ -97,8 +95,8 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_mid = length_mid * thickness_mid
 
         sweep = np.deg2rad((Lambda_n(start_root / scaled_chord(0))+Lambda_n(end_root / scaled_chord(0))) /2)
-        y = span * pos_mid / np.tan(sweep) / np.tan(dihedral)
-        mass += (area_root+area_mid)/2 * y * density
+        y = b * pos_mid / np.tan(sweep) / np.tan(dihedral)
+        mass += (area_root+area_mid)/2 * y * rho
 
 
 
@@ -116,8 +114,8 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_mid = length_mid * thickness_mid
 
         sweep = np.deg2rad((Lambda_n(start_tip / scaled_chord(b))+Lambda_n(end_tip / scaled_chord(b))) / 2)
-        y = span * (1-pos_mid) / np.tan(sweep) / np.tan(dihedral)
-        mass += (area_tip + area_mid) / 2 * y * density
+        y = b * (1-pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        mass += (area_tip + area_mid) / 2 * y * rho
 
     for i in range(len(stringers_root)):
 
@@ -125,8 +123,8 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_root = stringers_root[1]
 
         sweep = np.deg2rad((Lambda_n(start_root / scaled_chord(0))) / 2)
-        y = span * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
-        mass += area_root * y * density
+        y = b * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        mass += area_root * y * rho
 
     for i in range(len(stringers_tip)):
 
@@ -134,8 +132,8 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_tip = stringers_tip[1]
 
         sweep = np.deg2rad((Lambda_n(start_tip / scaled_chord(b))) / 2)
-        y = span * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
-        mass += area_tip  * y * density
+        y = b * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        mass += area_tip  * y * rho
 
     return mass
 
