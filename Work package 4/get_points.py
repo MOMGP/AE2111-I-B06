@@ -48,20 +48,24 @@ def get_points(length_1, length_2, length_3, chord):
             l = (length_1 - j) / (k - j)
             top_surface = (1 - l) * airfoil_geometry[i][1] + l * airfoil_geometry[i + 1][1]
             bottom_surface = (1 - l) * airfoil_geometry[i][2] + l * airfoil_geometry[i + 1][2]
-            wingbox_chords.append(top_surface)
-            wingbox_chords.append(bottom_surface)
+
+            wingbox_chords.append([length_1, top_surface])
+            wingbox_chords.append([length_1, bottom_surface])
 
         elif j <= length_2 < k:
             l = (length_2 - j) / (k - j)
             top_surface = (1 - l) * airfoil_geometry[i][1] + l * airfoil_geometry[i + 1][1]
             bottom_surface = (1 - l) * airfoil_geometry[i][2] + l * airfoil_geometry[i + 1][2]
-            wingbox_chords.append(top_surface)
-            wingbox_chords.append(bottom_surface)
+
+            wingbox_chords.append([length_2, top_surface])
+            wingbox_chords.append([length_2, bottom_surface])
 
         elif j  <= length_3 < k and not length_3 == -1:
             l = (length_3 - j) / (k - j)
             top_surface = (1 - l) * airfoil_geometry[i][1] + l * airfoil_geometry[i + 1][1]
             bottom_surface = (1 - l) * airfoil_geometry[i][2] + l * airfoil_geometry[i + 1][2]
-            wingbox_chords.append(top_surface)
-            wingbox_chords.append(bottom_surface)
+
+            wingbox_chords.append([length_3, top_surface])
+            wingbox_chords.append([length_3, bottom_surface])
+
     return wingbox_chords
