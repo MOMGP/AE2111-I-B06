@@ -95,11 +95,14 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         thickness_mid = wing_box_mid[i, 2]
         area_mid = length_mid * thickness_mid
 
-        sweep = np.deg2rad((Lambda_n()+Lambda_n())/2)
+
+
+        sweep = np.deg2rad((Lambda_n(start_root / scaled_chord(0))+Lambda_n(end_root / scaled_chord(0))) /2)
 
         y = span * pos_mid / np.tan(sweep) / np.tan(dihedral)
 
         mass += (area_root+area_mid)/2 * y * density
+
 
 
     for i in range(len(wing_box_tip)):
@@ -115,7 +118,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         thickness_mid = wing_box_mid[i, 2]
         area_mid = length_mid * thickness_mid
 
-        sweep = np.deg2rad((Lambda_n() + Lambda_n()) / 2)
+        sweep = np.deg2rad((Lambda_n(start_tip / scaled_chord(b))+Lambda_n(end_tip / scaled_chord(b))) / 2)
 
         y = span * pos_mid / np.tan(sweep) / np.tan(dihedral)
 
