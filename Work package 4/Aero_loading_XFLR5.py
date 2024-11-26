@@ -10,6 +10,9 @@ def q_calc(rho,V):
 C_L0_original = 0.576972
 C_L10_original= 1.394834
 C_D0=0.022 #FROM WP3
+Ar=10.82 #FROM WP3
+e=0.71 #FROM WP3
+
 #DATA FROM 0 deg AOA
 
 #spanwise location
@@ -88,8 +91,8 @@ def drag_distribution_any_CL(CL_d,y):
     CD_real=CD0+(CL_d-C_L0_original)/(C_L10_original-C_L0_original)*(CD10-CD0)
     return CD_real
 def pitching_moment_distribution_any_CL(CL_d,y):
-    CM0=CmAir_quarter_0(y)
-    CM10=CmAir_quarter_10(y)
+    CM0=picth_mon_quarter_chord_interpolation_0(y)
+    CM10=picth_mon_quarter_chord_interpolation_10(y)
     Cm_real=CM0+(CL_d-C_L0_original)/(C_L10_original-C_L0_original)*(CM10-CM0)
     return Cm_real
 
@@ -98,8 +101,6 @@ def AOA(CL_d):#degrees
     return angle
 def Lift_distribution_for_any_load_case(CL_d,rho,V):
     L = []
-    D = []
-    M = []
     span_loc=[]
     q=q_calc(rho,V)
     for i in range (0,26786):
@@ -107,14 +108,44 @@ def Lift_distribution_for_any_load_case(CL_d,rho,V):
         CL_value=lift_distribution_any_CL(CL_d,span_location)
         lift=CL_value*q*chord_length_interpolation(span_location)
         L.append(lift)
-        L.append(lift)
         span_loc.append(span_location)
-        span_loc.append(-span_location)
     return L,span_loc
-
+def Drag_distribution_for_any_load_case(CL_d,rho,V):
+    D=[]
+    q=q_calc(rho,V)
+    for i in range (0,26786):
+        span_location=i/1000
+        CL_value=lift_distribution_any_CL(CL_d,span_location)
+        CD_value=C_D0+CL_value**2/np.pi/e/Ar
+        drag=CD_value*q*chord_length_interpolation(span_location)
+        D.append(drag)
+    return D
+def Moment_distribution_for_any_load_case(CL_d,rho,V):
+    M=[]
+    q=q_calc(rho,V)
+    for i in range (0,26786):
+        span_location=i/1000
+        Cm_value=pitching_moment_distribution_any_CL(CL_d,span_location)
+        moment=Cm_value*q*chord_length_interpolation(span_location)**2
+        M.append(moment)
+    return M
 lift_dist_spanwise,span_loc=Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
+drag_dist=Drag_distribution_for_any_load_case(0.7,0.31641,241.9574)
+moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
+
+#ploting the spanwise lift distribution
 plt.plot(span_loc,lift_dist_spanwise)
-plt.xlim([0,27])
+plt.xlim([-27,27])
+plt.gca().set_aspect(1/4000, adjustable='box')
 plt.show()
-print(AOA(0.6))
-print(lift_dist_spanwise)
+
+#ploting the spanwise drag distribution
+plt.plot(span_loc,drag_dist)
+plt.xlim([-27,27])
+plt.gca().set_aspect(1/400, adjustable='box')
+plt.show()
+
+#ploting the spanwise moment distribution
+plt.plot(span_loc,moment_dist)
+plt.xlim([-27,27])
+plt.show()
