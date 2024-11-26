@@ -18,6 +18,7 @@ Geometry:
 C_r = 7.63 #m
 taper = 0.3 
 b = 53.57 #m
+dihedral = 4.75 #deg
 sigma_y = 450000000 # Pa
 sigma_ult = 485000000 #Pa
 G = 28000000000 #Pa
@@ -79,9 +80,8 @@ def Lambda_n(n_percent):
 
 def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root, stringers_tip):
     mass = 0
-    sweep = Lambda_n()
-    dihedral = 4.75 #deg
-
+    span = b
+    density = rho
     for i in range(len(wing_box_root)):
         start_root = wing_box_root[i, 0]
         end_root = wing_box_root[i, 1]
@@ -95,8 +95,33 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         thickness_mid = wing_box_mid[i, 2]
         area_mid = length_mid * thickness_mid
 
-    for i in range(len(wing_box_tip)):
+        sweep = np.deg2rad((Lambda_n()+Lambda_n())/2)
 
+        y = span * pos_mid / np.tan(sweep) / np.tan(dihedral)
+
+        mass += (area_root+area_mid)/2 * y * density
+
+
+    for i in range(len(wing_box_tip)):
+        start_tip = wing_box_tip[i, 0]
+        end_tip = wing_box_tip[i, 1]
+        length_tip = np.sqrt((start_tip[0] - end_tip[0]) ** 2 + (start_tip[1] - end_tip[1]) ** 2)
+        thickness_tip = wing_box_tip[i, 2]
+        area_tip = length_tip * thickness_tip
+
+        start_mid = wing_box_mid[i, 0]
+        end_mid = wing_box_mid[i, 1]
+        length_mid = np.sqrt((start_mid[0] - end_mid[0]) ** 2 + (start_mid[1] - end_mid[1]) ** 2)
+        thickness_mid = wing_box_mid[i, 2]
+        area_mid = length_mid * thickness_mid
+
+        sweep = np.deg2rad((Lambda_n() + Lambda_n()) / 2)
+
+        y = span * pos_mid / np.tan(sweep) / np.tan(dihedral)
+
+        mass += (area_tip + area_mid) / 2 * y * density
+
+    return mass
 
 # format for wing_box = [(start), (end), thickness]
 #format of stringers = [pos, area]
@@ -123,10 +148,6 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
             geometry.append(np.array([[norm_wing_box_root[2,0]*chord, [x_y_y[0], x_y_y[1]]], norm_wing_box_root[4,2]]))
             geometry.append(np.array([[norm_wing_box_root[3,0]*chord, [x_y_y[0], x_y_y[2]]], norm_wing_box_root[5,2]]))
             geometry.append(np.array([[norm_wing_box_root[3,0]*chord, [x_y_y[0], x_y_y[2]]], norm_wing_box_root[6,2]]))
-
-
-
-
 
 
         else:
