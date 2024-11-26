@@ -67,5 +67,5 @@ def get_points(length_1, length_2, length_3, chord):
 
             wingbox_chords.append([length_3, top_surface])
             wingbox_chords.append([length_3, bottom_surface])
-
+    wingbox_chords = np.array(wingbox_chords)
     return wingbox_chords
