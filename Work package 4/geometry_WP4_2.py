@@ -70,6 +70,22 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
     sweep = Lambda_n()
     dihedral = 4.75 #deg
 
+    for i in range(len(wing_box_root)):
+        start_root = wing_box_root[i, 0]
+        end_root = wing_box_root[i, 1]
+        length_root = np.sqrt((start_root[0] - end_root[0]) ** 2 + (start_root[1] - end_root[1]) ** 2)
+        thickness_root = wing_box_root[i, 2]
+        area_root = length_root*thickness_root
+
+        start_mid = wing_box_mid[i, 0]
+        end_mid = wing_box_mid[i, 1]
+        length_mid = np.sqrt((start_mid[0] - end_mid[0]) ** 2 + (start_mid[1] - end_mid[1]) ** 2)
+        thickness_mid = wing_box_mid[i, 2]
+        area_mid = length_mid * thickness_mid
+
+    for i in range(len(wing_box_tip)):
+
+
 # format for wing_box = [(start), (end), thickness]
 #format of stringers = [pos, area]
 def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_spar, trunctated = False):
