@@ -18,11 +18,12 @@ airfoil_xyy = np.load("Airfoil_geom.npy")
 possible_t = np.array([3.665, 3.264, 2.906, 2.588, 2.305, 2.053, 1.628, 1.291, 1.024, .812, .644, .511, .405, .312]) # in mm
 possible_x = airfoil_xyy[:,0]
 
-x_y_y = np.array(get_points(0.2, 0.6, 0.8, 1))
-x_pts = np.array([x_y_y[:, 0], x_y_y[:, 0]]).flatten()
-y_pts = np.array([x_y_y[:, 1], x_y_y[:, 2]]).flatten()
-plt.scatter(x_pts, y_pts)
-plt.show()
+# x_y_y = np.array(get_points(0.2, 0.5, 0.65, 1))
+# print(x_y_y)
+# plt.scatter([0.2, 0.2, 0.5, 0.5, 0.65, 0.65],x_y_y)
+# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
+# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
+# plt.show()
 
 def check_reqs():
     return 0
@@ -49,18 +50,9 @@ def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
     return(sigma) 
 
-def scaled_chord(spanwise_dist):
-    chord = C_r - C_r * (1 - taper) * (spanwise_dist / (b / 2))
-    return(chord)
-
 def scaled_length(length,chord):
     scaled_length = length*chord/C_r
     return(scaled_length)
-
-
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
-plt.show()
 
 
 # Calculate sweep at particular position

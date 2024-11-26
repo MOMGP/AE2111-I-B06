@@ -15,6 +15,18 @@ Geometry:
 
 
 """
+C_r = 7.63 #m
+taper = 0.3 
+b = 53.57 #m
+sigma_y = 450000000 # Pa
+sigma_ult = 485000000 #Pa
+G = 28000000000 #Pa
+E = 72400000000
+rho = 2780 # kg/m3
+def scaled_chord(spanwise_dist):
+    chord = C_r - C_r * (1 - taper) * (spanwise_dist / (b / 2))
+    return(chord)
+
 def centroid(wing_box, stringers):
     centroid_sum_x =0
     centroid_sum_y = 0

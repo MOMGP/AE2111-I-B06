@@ -35,7 +35,7 @@ def get_airfoil(input_file):
 
 
 def get_points(length_1, length_2, length_3, chord):
-    airfoil_geometry = np.load('C:\\Users\\koppe\\PycharmProjects\\AE2111-I-B06-Cracked-AF\\Airfoil_geom.npy') #get airfoil geometry
+    airfoil_geometry = np.load('Airfoil_geom.npy') #get airfoil geometry
 
     length_1 = length_1/chord
     length_2 = length_2/chord
