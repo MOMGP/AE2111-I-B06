@@ -123,12 +123,6 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
             geometry.append(np.array([[norm_wing_box_root[2,0]*chord, [x_y_y[0], x_y_y[1]]], norm_wing_box_root[4,2]]))
             geometry.append(np.array([[norm_wing_box_root[3,0]*chord, [x_y_y[0], x_y_y[2]]], norm_wing_box_root[5,2]]))
             geometry.append(np.array([[norm_wing_box_root[3,0]*chord, [x_y_y[0], x_y_y[2]]], norm_wing_box_root[6,2]]))
-
-
-
-
-
-
         else:
             for i in range(4):
                 plate = np.array([norm_wing_box_root[i,0]*chord, norm_wing_box_root[i,1]*chord, norm_wing_box_root[i,2]])
