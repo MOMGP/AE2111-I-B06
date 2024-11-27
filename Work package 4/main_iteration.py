@@ -3,7 +3,7 @@ import math
 import scipy
 from matplotlib import pyplot as plt
 import scipy.integrate
-from get_points import get_points
+from get_points import get_points, get_geom_from_points
 from geometry_WP4_2 import centroid, moments_of_inertia
 
 C_r = 7.63 #m
@@ -18,12 +18,19 @@ airfoil_xyy = np.load("Airfoil_geom.npy")
 possible_t = np.array([3.665, 3.264, 2.906, 2.588, 2.305, 2.053, 1.628, 1.291, 1.024, .812, .644, .511, .405, .312]) # in mm
 possible_x = airfoil_xyy[:,0]
 
-# x_y_y = np.array(get_points(0.2, 0.5, 0.65, 1))
-# print(x_y_y)
-# plt.scatter([0.2, 0.2, 0.5, 0.5, 0.65, 0.65],x_y_y)
-# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
-# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
-# plt.show()
+x_y_y = np.array(get_points(0.2, 0.45, 0.65, 1))
+geom = get_geom_from_points(x_y_y)
+x_vals = []
+y_vals = []
+for i in geom:
+    x_vals.append(i[0][0])
+    x_vals.append(i[1][0])
+    y_vals.append(i[0][1])
+    y_vals.append(i[1][1])
+plt.plot(x_vals, y_vals)
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
+plt.show()
 
 def check_reqs():
     return 0
@@ -42,10 +49,6 @@ def v_y(M_x,E,I_xx):
     v = scipy.integrate.quad(g,0,b/2)
     return(v) #idk if this works at all lol?
 
-
-    
-
-
 def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
     return(sigma) 
@@ -53,6 +56,3 @@ def bending_stress(bending_moment, y_max, I_xx):
 def scaled_length(length,chord):
     scaled_length = length*chord/C_r
     return(scaled_length)
-
-
-# Calculate sweep at particular position
