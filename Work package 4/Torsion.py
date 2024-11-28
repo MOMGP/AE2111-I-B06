@@ -21,16 +21,51 @@ Thrust_per_engine_perpendicular = Thrust_per_engine * math.cos(Lambda_c2) #N
 x_thrust = b/2 * 0.35
 x_engine_weight = b/2 * 0.35
 
+#Creating an array list of all the spanwise locations
 span_loc = []
 for i in range(0,26786):
     span_loc.append(i/1000)
+span_loc = np.array(span_loc)
 
-span_wise_lift = []
-for x in span_loc:
+#Creating an array list of all the chord lengths at eatch spanwise location
+chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
+
+#Creating a list of the moment arm of the lift with respect to the assumed shear center position
+moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
+#moment_arm_lift = np.array(moment_arm_lift)
+
+#Creating a list of all the lift values for integration for each spanwise location
+Lift_for_integrating_list = []
+for i in range(0,26786):
+    x = i/1000
+    Lift_for_integrating_list.append(Lift_for_integrating(x,0.7,0.31641,241.9574))
+
+#Creating a list of the product of the moment arm and the lift values for integration for each spanwise location
+#torque_lift_distribution_list = []
+#def torque_lift_distribution():
+#    for i in range(0,26786):
+#        torque_lift_distribution_list.append(Lift_for_integrating_list[i]*moment_arm_lift[i])
+#    return torque_lift_distribution_list
+
+#Create te list of the integrated lift at each spanwise location
+total_lift_list = []
+for i in range(0,26786):
+    x = i/1000
     total_lift,L_error=sp.integrate.quad(Lift_for_integrating,x,26.785,args=(0.7,0.31641,241.9574))
-    span_wise_lift.append(total_lift)
-#If lift is c/4 on unswept wing, then moment arm is equal to distance between c/4 and the centroid, which I assume to be c/2?
-print(span_wise_lift)
+    total_lift_list.append(total_lift)
+
+#Create the array list of the torque of the lift around the assumed shear center at each spanwise location
+torque_lift_list = []
+for i in range(0,26786):
+    torque_lift_list.append(total_lift_list[i]*moment_arm_lift[i])
+print(torque_lift_list)
+
+#span_wise_lift = []
+#for x in span_loc:
+#    total_lift,L_error=sp.integrate.quad(torque_lift_distribution,x,26.785)
+#    span_wise_lift.append(total_lift)
+#print(span_wise_lift)
+
 
 
 #---------------------------------------------------------------------------------------------------
