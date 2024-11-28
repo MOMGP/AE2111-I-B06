@@ -5,7 +5,7 @@ import scipy as sp
 import sympy as smp
 from scipy import integrate
 from sympy import Symbol, integrate
-from Aero_loading_XFLR5 import Lift_for_integrating
+from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise
 #from geometry_WP4_2 import centroid
 
 CL_d = 3
@@ -31,8 +31,18 @@ span_loc = np.array(span_loc)
 #Creating an array list of all the chord lengths at eatch spanwise location
 chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
 
+# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 1---------------------------------------------------------
+#Creating a list of the moment arm of the lift with respect to the assumed shear center position
+moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
 
-# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION ---------------------------------------------------------
+#Creating a list of the lift torque around the shear center along the span
+Lift_torque_spanwise = moment_arm_lift * lift_dist_spanwise
+
+#Add contributions of the thrust en weight of the engine
+
+# -----------------------------------------------------------------------------------------------------------------------------
+'''
+# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 2---------------------------------------------------------
 
 #Creating a list of the moment arm of the lift with respect to the assumed shear center position
 moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
@@ -50,7 +60,7 @@ internal_torque_lift_list = []
 for i in range(0,26786):
     internal_torque_lift_list.append(total_lift_list[i]*moment_arm_lift[i])
 
-# ---------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------------
 
 plt.subplot(1,2,1)
 plt.plot(span_loc, internal_torque_lift_list)
@@ -68,7 +78,9 @@ plt.xlim(0,b/2)
 plt.title("Lift dist.")
 
 plt.show()
+'''
 
 #Is lift_dist_spanwise not the function I need to use to get the torque of the lift?
 #I Have a list of the forces for each spanwise location, so what do I even need to integrate?
+#Check previous courses on the internal moment from a distributed shear force
 
