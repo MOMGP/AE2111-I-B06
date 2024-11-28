@@ -1,3 +1,5 @@
+from turtledemo.penrose import start
+
 import numpy as np
 from get_points import get_points, get_geom_from_points, get_airfoil
 from matplotlib import pyplot as plt
@@ -19,7 +21,7 @@ Geometry:
 C_r = 7.63 #m
 taper = 0.3 
 b = 53.57 #m
-dihedral = 4.75 #deg
+dihedral = np.deg2rad(4.75) #deg
 sigma_y = 450000000 # Pa
 sigma_ult = 485000000 #Pa
 G = 28000000000 #Pa
@@ -94,7 +96,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         thickness_mid = wing_box_mid[i] [2][0]
         area_mid = length_mid * thickness_mid
         sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0))+Lambda_n(end_root[0] / scaled_chord(0))) /2)
-        y = b * pos_mid / np.tan(sweep) / np.tan(dihedral)
+        y = b * pos_mid / np.cos(sweep) / np.cos(dihedral)
         mass += (area_root+area_mid)/2 * y * rho
 
 
@@ -113,7 +115,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_mid = length_mid * thickness_mid
 
         sweep = np.deg2rad((Lambda_n(start_tip [0] / scaled_chord(b))+Lambda_n(end_tip [0] / scaled_chord(b))) / 2)
-        y = b * (1-pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        y = b * (1-pos_mid) / np.cos(sweep) / np.cos(dihedral)
         mass += (area_tip + area_mid) / 2 * y * rho
 
     for i in range(len(stringers_root)):
@@ -122,7 +124,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_root = stringers_root[i][1]
 
         sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0))) / 2)
-        y = b * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        y = b * (1 - pos_mid) / np.cos(sweep) / np.cos(dihedral)
         mass += area_root[0] * y * rho
 
     for i in range(len(stringers_tip)):
@@ -131,7 +133,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
         area_tip = stringers_tip[i][1]
 
         sweep = np.deg2rad((Lambda_n(start_tip [0] / scaled_chord(b))) / 2)
-        y = b * (1 - pos_mid) / np.tan(sweep) / np.tan(dihedral)
+        y = b * (1 - pos_mid) / np.cos(sweep) / np.cos(dihedral)
         mass += area_tip[0]  * y * rho
 
     return mass
@@ -272,15 +274,15 @@ profile_3 = [
 pos_profile_3 = 0.5
 
 stringers_1 = [
-    [[0.5, 0.05], [0.5]],
-    [[1.5, 0.05], [0.5]],
-    [[0.5, 0.95], [0.5]],
-    [[1.5, 0.95], [0.5]]
+    [[0.5, 0.05], [0.01]],
+    [[1.5, 0.05], [0.01]],
+    [[0.5, 0.95], [0.01]],
+    [[1.5, 0.95], [0.01]]
 ]
 
 stringers_2 = [
-    [[0.5, 0.05], [0.5]],
-    [[1.5, 0.05], [0.5]]
+    [[0.5, 0.05], [0.01]],
+    [[1.5, 0.05], [0.01]]
 ]
 
 
