@@ -2,10 +2,10 @@ import numpy as np
 import math
 import scipy
 from matplotlib import pyplot as plt
-import scipy.integrate
+from scipy.integrate import dblquad, quad
 from get_points import get_points, get_geom_from_points
 from geometry_WP4_2 import centroid, moments_of_inertia
-from bending import bending_moment
+# from bending import bending_moment, S
 
 C_r = 7.63 #m
 taper = 0.3 
@@ -43,12 +43,49 @@ def centroid_distance(centroid,airfoil_points):
     max_y = max(distance)    
     return(max_y)
 # need to make tip deflection formula
-def v_y(M_x,E,I_xx):
-    h = M_x / (E*I_xx) 
-    g = scipy.integrate.quad(h,0,b/2)
-    v = scipy.integrate.quad(g,0,b/2) # tip deflection
-    return(v) #idk if this works at all lol?
+# def v_y(M_x,E,I_xx):
+#     # M_x = bending_moment(S)
+#     h = M_x / (E*I_xx) 
+#     g = scipy.integrate.quad(h,0,b/2)
+#     v = scipy.integrate.quad(g,0,b/2) # tip deflection
+#     return(v) #idk if this works at all lol?
+# print(v_y(bending_moment(S),E,I_xx))
 
+# Integrate the bending moment to find the deflection w(x)
+
+def I_xx(x): # dummy ixx :3
+    return 0.1 - 0.002 * x 
+
+def load_distribution(x):
+    return 1000 * x**2
+
+def shear_force(x):
+    result, _ = quad(load_distribution, 0, x)  # Shear force is the integral of load
+    return result
+def bending_moment(x): #dummy bending moment formula
+    return 800000 * x 
+def angle_of_rotation(x):
+    result, _ = quad(lambda xi: bending_moment(xi) / (E * I_xx(x)), 0, x)
+    return result
+def deflection(x):
+    result, _ = quad(angle_of_rotation,0,x)
+    return result
+
+# Calculate and plot results
+x_vals = np.linspace(0, b/2, 100) #create # amount of values evenly spaced
+deflection_vals = [deflection(x) for x in x_vals] 
+
+plt.figure(figsize=(8, 4))
+# Deflection
+#plt.subplot(1, 1, 1) bending moment can be added later aswell if needed :3
+plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
+plt.xlabel("Position along the beam (m)")
+plt.ylabel("Deflection (m)")
+plt.grid(alpha=0.3)
+plt.legend()
+plt.show()
+
+print('Angle of rotation is: ', angle_of_rotation(b/2 * 180 / math.pi), 'degrees')
 def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
     return(sigma) 
