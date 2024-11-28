@@ -23,18 +23,25 @@ x_thrust = b/2 * 0.35
 x_engine_weight = b/2 * 0.35
 
 x = sp.Symbol('x')
-y_position = np.arange(0,b/2,1).tolist()
+#y_position = np.arange(0,b/2,1).tolist()
 
-#Is the moment distribution from the aero_loading_xflr5 file the same as the lift distribution torque around the shear center?
+#moment distribution is around c/4
 
 def Torsion_integration(t):
     return sp.integrate(t,x)
 
-#Lift_torsion = Torsion_integration(Moment_distribution_for_any_load_case(CL_d,rho,V))
-Internal_torsion.append(Moment_distribution_for_any_load_case(CL_d,rho,V))
+Lift_moment_c4 = Moment_distribution_for_any_load_case(CL_d,rho,V)
+#print(Lift_moment_c4)
 
+for i in range (0,26786):
+    Lift_moment_c4[i] = Lift_moment_c4[i] -
+
+
+#Lift_torsion = Torsion_integration(Moment_distribution_for_any_load_case(CL_d,rho,V))
+#Internal_torsion.append(Moment_distribution_for_any_load_case(CL_d,rho,V))
+#print(Moment_distribution_for_any_load_case(CL_d,rho,V))
 #for i in range(len(y_position)):
 #   var_sub = i
 #Internal_torsion.append(Lift_torsion.subs(x, var_sub))
 
-print(Internal_torsion)
+#print(Internal_torsion)
