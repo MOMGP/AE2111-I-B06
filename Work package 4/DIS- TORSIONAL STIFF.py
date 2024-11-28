@@ -25,6 +25,63 @@ import matplotlib as plt
 #                                           h
 #
 #reference area
+"""
+Geometry:
+ ______________4_____________ ______________5_____________ 
+|                            |                            |
+|                            |                            |
+|                            |                            |
+1                            3                            6
+|                            |                            |
+|                            |                            |
+|_____________2______________|_____________7______________| 
+
+List_output = [[(x_s, y_s), (x_e,y_e), t]]
+"""
+def translate(val_list):
+    if len(val_list)==4:
+        h = np.abs(val_list[0][0][0] - val_list[2][0][0])
+        a = np.sqrt((val_list[0][0][0]-val_list[0][1][0])**2+ (val_list[0][0][1]-val_list[0][1][1])**2)
+        b = np.sqrt((val_list[2][0][0]-val_list[2][1][0])**2+ (val_list[2][0][1]-val_list[2][1][1])**2)
+        c = np.sqrt((val_list[3][0][0]-val_list[3][1][0])**2+ (val_list[3][0][1]-val_list[3][1][1])**2)
+        d = np.sqrt((val_list[1][0][0]-val_list[1][1][0])**2+ (val_list[1][0][1]-val_list[1][1][1])**2)
+        t1 = val_list[3][2]
+        t2 = val_list[2][2]
+        t3 = val_list[1][2]
+        t4 = val_list[0][2]
+
+        return h,a,b,c,d,t1,t2,t3,t4
+    else:
+        h1 = np.abs(val_list[0][0][0] - val_list[2][0][0])
+        h2 = np.abs(val_list[2][0][0] - val_list[5][0][0])
+        a = np.sqrt((val_list[0][0][0]-val_list[0][1][0])**2+ (val_list[0][0][1]-val_list[0][1][1])**2)
+        b = np.sqrt((val_list[5][0][0]-val_list[5][1][0])**2+ (val_list[5][0][1]-val_list[5][1][1])**2)
+        c1 = np.sqrt((val_list[3][0][0]-val_list[3][1][0])**2+ (val_list[3][0][1]-val_list[3][1][1])**2)
+        c2 = np.sqrt((val_list[4][0][0]-val_list[4][1][0])**2+ (val_list[4][0][1]-val_list[4][1][1])**2) 
+        d1 = np.sqrt((val_list[1][0][0]-val_list[1][1][0])**2+ (val_list[1][0][1]-val_list[1][1][1])**2) 
+        d2 = np.sqrt((val_list[6][0][0]-val_list[6][1][0])**2+ (val_list[6][0][1]-val_list[6][1][1])**2)
+        b1 = np.sqrt((val_list[2][0][0]-val_list[2][1][0])**2+ (val_list[2][0][1]-val_list[2][1][1])**2)
+
+        t1 = val_list[4][2]
+        t2 = val_list[5][2]
+        t3 = val_list[6][2]
+        t4 = val_list[2][2]
+        t5 = val_list[3][2]
+        t6 = val_list[0][2]
+        t7 = val_list[1][2]
+
+        return a, b1, b, h1, h2, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2
+
+print(translate([
+    [[0, 0], [0, 1], [0.01]],
+    [[0, 1], [1, 1], [0.01]],
+    [[1, 1], [1, 0], [0.01]],
+    [[1, 0], [0, 0], [0.01]],
+    [[1, 1], [2, 1], [0.01]],
+    [[2, 1], [2, 0], [0.01]],
+    [[2, 0], [1, 0], [0.01]]
+]))
+
 def get_A(a,b,h):
     A = 0.5 * (a+b)*h 
     return A  
