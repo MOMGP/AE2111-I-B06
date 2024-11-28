@@ -100,7 +100,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
         y = b / np.cos(sweep) / np.cos(dihedral)
         mass += (area_root+area_tip)/2 * y * rho
 
-    if len(wing_box_mid) == 7:
+    if len(wing_box_mid) == 7: #calc mass if the 2nd wingbox ends at random spar
         for i in range(4,7):
             start_root = wing_box_root[i][0]
             end_root = wing_box_root[i][1]
@@ -116,7 +116,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
             y = b * pos_mid / np.cos(sweep) / np.cos(dihedral)
             mass += (area_root + area_mid) / 2 * y * rho
 
-    elif len(wing_box_mid) == 4:
+    elif len(wing_box_mid) == 4: #calc mass if the 2nd wingbox merges
         for i in range(4,7):
             start_root = wing_box_root[i][0]
             end_root = wing_box_root[i][1]
@@ -133,24 +133,8 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
             sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0)) + Lambda_n(end_root[0] / scaled_chord(0))) / 2)
             y = b * pos_mid / np.cos(sweep) / np.cos(dihedral)
             mass += (area_root + area_mid) / 2 * y * rho
-    # for i in range(len(wing_box_tip)):
-    #     start_tip = wing_box_tip[i][0]
-    #     end_tip = wing_box_tip[i][1]
-    #     length_tip = np.sqrt((start_tip[0] - end_tip[0]) ** 2 + (start_tip[1] - end_tip[1]) ** 2)
-    #     thickness_tip = wing_box_tip[i][2][0]
-    #     area_tip = length_tip * thickness_tip
-    #
-    #     start_mid = wing_box_mid[i][0]
-    #     end_mid = wing_box_mid[i][1]
-    #     length_mid = np.sqrt((start_mid[0] - end_mid[0]) ** 2 + (start_mid[1] - end_mid[1]) ** 2)
-    #     thickness_mid = wing_box_mid[i][2][0]
-    #     area_mid = length_mid * thickness_mid
-    #
-    #     sweep = np.deg2rad((Lambda_n(start_tip [0] / scaled_chord(b))+Lambda_n(end_tip [0] / scaled_chord(b))) / 2)
-    #     y = b * (1-pos_mid) / np.cos(sweep) / np.cos(dihedral)
-    #     mass += (area_tip + area_mid) / 2 * y * rho
 
-    for i in range(len(stringers_root)): #calc mass for spars in root section
+    for i in range(len(stringers_root)): #calc mass for spars in main wing box
 
         start_root = stringers_root[i][0]
         area_root = stringers_root[i][1]
