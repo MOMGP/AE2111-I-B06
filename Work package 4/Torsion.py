@@ -55,40 +55,4 @@ print(torque_lift_list)
 
 
 
-#---------------------------------------------------------------------------------------------------
-#x = smp.Symbol('x')
-#y_position = np.arange(0,b/2,1).tolist()
 
-#moment distribution is around c/4
-
-#def Torsion_integration(t):
-#    return smp.integrate(t,x)
-
-#Torsional_distribution = []
-#Internal_torsion = []
-#Lift_dist_spanwise = []
-#Span_loc = []
-
-#Lift_dist_spanwise, Span_loc = Lift_distribution_for_any_load_case(CL_d, rho, V)
-
-# Convert lists to numpy arrays for numerical calculations
-#Lift_dist_spanwise = np.array(Lift_dist_spanwise)
-#Span_loc = np.array(Span_loc)
-#Chord_at_x = C_r*(1-((1-taper)*(Span_loc/(b/2))))
-
-
-#y_centroid = []
-#for i in range(26786):
-#    y_centroid.append(0.1)
-#y_centroid = np.array(y_centroid)
-
-#Calculate Moment About the Centroid
-#Moment: ∫ (y - y_centroid) * L(y) dy
-#print(Span_loc)
-#Lift_moment_arm = Span_loc - y_centroid  # y - y_centroid
-#moment_integrand = Lift_moment_arm * Lift_dist_spanwise
-#print(moment_integrand)
-#Lift_torque_centroid = Torsion_integration(moment_integrand)
-
-
-#print(Internal_torsion)
