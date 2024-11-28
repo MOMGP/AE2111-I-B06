@@ -1,4 +1,5 @@
 import math
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import sympy as smp
@@ -48,11 +49,26 @@ for i in range(0,26786):
 internal_torque_lift_list = []
 for i in range(0,26786):
     internal_torque_lift_list.append(total_lift_list[i]*moment_arm_lift[i])
-print(internal_torque_lift_list)
 
 # ---------------------------------------------------------------------------------------------------------------------
 
+plt.subplot(1,2,1)
+plt.plot(span_loc, internal_torque_lift_list)
+plt.xlabel("spanwise location")
+plt.ylabel("Lift Torque")
+plt.xlim(0,b/2)
+plt.title("Lift torque dist.")
+plt.gca().set_aspect(1/100000, adjustable='box')
 
+plt.subplot(1,2,2)
+plt.plot(span_loc, total_lift_list)
+plt.xlabel("spanwise location")
+plt.ylabel("Lift")
+plt.xlim(0,b/2)
+plt.title("Lift dist.")
 
+plt.show()
 
+#Is lift_dist_spanwise not the function I need to use to get the torque of the lift?
+#I Have a list of the forces for each spanwise location, so what do I even need to integrate?
 
