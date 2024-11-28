@@ -15,12 +15,14 @@ sigma_ult = 485000000 #Pa
 G = 28000000000 #Pa
 E = 72400000000
 rho = 2780 # kg/m3
+stringer_area = None
 airfoil_xyy = np.load("Airfoil_geom.npy")
 possible_t = np.array([3.665, 3.264, 2.906, 2.588, 2.305, 2.053, 1.628, 1.291, 1.024, .812, .644, .511, .405, .312]) # in mm
-possible_x = airfoil_xyy[:,0]
+possible_x = np.arange(0.2, 0.7, 0.05)
+pos_string_num = np.arange(20, 40, 4) #based on Jeroen resource
 
 x_y_y = np.array(get_points(0.2, 0.45, 0.65, 1))
-geom = get_geom_from_points(x_y_y)
+geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
 x_vals = []
 y_vals = []
 for i in geom:
@@ -32,9 +34,6 @@ plt.plot(x_vals, y_vals)
 plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
 plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
 plt.show()
-
-def check_reqs():
-    return 0
 
 def centroid_distance(centroid,airfoil_points):
     distance = []
@@ -57,3 +56,11 @@ def bending_stress(bending_moment, y_max, I_xx):
 def scaled_length(length,chord):
     scaled_length = length*chord/C_r
     return(scaled_length)
+
+#output = [mass, twist_ang, deflection, spar_pts, thicknesses, num_stringer, truncated, end_third]
+#inputs = spar_pos, thicknesses, num_stringer, truncated, end_third
+pos_combs = []
+for i in np.arange(0.2, 0.5, 0.05):
+    for j in np.arange(i, 0.65, 0.05):
+        for k in np.arange(j, 0.75, 0.05):
+            

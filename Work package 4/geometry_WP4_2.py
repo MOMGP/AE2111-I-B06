@@ -39,18 +39,18 @@ def centroid(wing_box, stringers):
     centroid_sum_y = 0
     area_sum = 0
     for i in range(len(wing_box)):
-        start= wing_box[i,0]
-        end= wing_box[i,1]
+        start= wing_box[i][0]
+        end= wing_box[i][1]
         length = np.sqrt((start[0]-end[0])**2+(start[1]-end[1])**2)
-        thickness = wing_box[i,2]
+        thickness = wing_box[i][2]
         centroid_sum_x+=(start[0]+end[0])/2*length*thickness
         centroid_sum_y+=(start[1]+end[1])/2*length*thickness
         area_sum += length*thickness
     
-    for i in range(stringers):
-        centroid_sum_x+= stringers[i,0,0]*stringers[i,1]
-        centroid_sum_y+= stringers[i,0,1]*stringers[i,1]
-        area_sum+=stringers[i, 1]
+    for i in range(len(stringers)):
+        centroid_sum_x+= stringers[i][0][0]*stringers[i][1]
+        centroid_sum_y+= stringers[i][0][1]*stringers[i][1]
+        area_sum+=stringers[i][1]
     
     centroid_x = centroid_sum_x/area_sum
     centroid_y = centroid_sum_y/area_sum
@@ -62,16 +62,24 @@ def moments_of_inertia(wing_box, stringers):
     I_yy = 0
     I_xy = 0
     for i in range(len(wing_box)):
-        start= wing_box[i,0]
-        end= wing_box[i,1]
+        start= wing_box[i][0]
+        end= wing_box[i][1]
         midpoint = np.array([(start[0]+end[0])/2, (start[1]+end[1])/2])
         length = np.sqrt((start[0]-end[0])**2+(start[1]-end[1])**2)
-        angle = np.arctan((start[1]-end[1])/(start[0]-end[0]))
-        thickness = wing_box[i,2]
+        if start[0]!=end[0]:
+            angle = np.arctan((start[1]-end[1])/(start[0]-end[0]))
+        else:
+            angle = np.pi/2
+        thickness = wing_box[i][2]
         I_xx+=thickness*length**3*np.sin(angle)**2/12 #reg
         I_xx+=thickness*length*(midpoint[1]-centroid_y)**2
         I_yy+=thickness*length**3*np.cos(angle)**2/12 #reg
         I_yy+=thickness*length*(midpoint[0]-centroid_x)**2
+    
+    for i in range(len(stringers)):
+        I_xx+=stringers[i][1]*(stringers[i][0][1]-centroid_y)**2
+        I_yy+=stringers[i][1]*(stringers[i][0][0]-centroid_x)**2
+        
         #PAT for I_xy?
         
 
@@ -180,10 +188,10 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
                 geometry.append(plate)
 
     for i in norm_stringers:
-        stringers.append([i[0]*chord, i[1]]) 
+        stringers.append([[i[0][0]*chord,i[0][1]*chord], i[1]]) 
 
-    return geometry
-
+    return geometry, stringers
+#TODO - make function for getting stringer geometry
 
 def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with_airfoil=False, full_wing=False):
     points_root = get_points_along_spanwise(geom_root, stringers, 0, end_third_spar, trunctated=truncated)
@@ -307,21 +315,25 @@ print(total_mass)
 
 spar1_x=0.2
 spar2_x=0.5
-spar3_x=-1
+spar3_x=0.7
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
-root_geom = get_geom_from_points(x_y_y)
+root_geom = get_geom_from_points(x_y_y, [.644 for i in range(7)])
 print(root_geom)
 x_vals = []
 y_vals = []
-for i in root_geom:
-    x_vals.append(i[0][0])
-    x_vals.append(i[1][0])
-    y_vals.append(i[0][1])
-    y_vals.append(i[1][1])
-airfoil_xyy = np.load("Airfoil_geom.npy")
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
-plt.plot(x_vals, y_vals)
-plt.show()
+# for i in root_geom:
+#     x_vals.append(i[0][0])
+#     x_vals.append(i[1][0])
+#     y_vals.append(i[0][1])
+#     y_vals.append(i[1][1])
+# airfoil_xyy = np.load("Airfoil_geom.npy")
+# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
+# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
+# plt.plot(x_vals, y_vals)
+# plt.show()
 
-#plot3d_geom(root_geom, [], b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
+# plot3d_geom(root_geom, [], b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
+
+root_pts, root_stringers = get_points_along_spanwise(root_geom, [[[0,0],0]], 0, b/6)
+
+print(moments_of_inertia(root_pts, root_stringers)[0])
