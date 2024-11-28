@@ -26,8 +26,7 @@ for i in range(len(Speed)):
         rho_load_case.append(0.31641)
     Speed[i]=Speed[i]*math.sqrt(1.225/rho_load_case[i])
     CL_load_case.append(CL_calc(Weight[i],Speed[i],rho_load_case[i]))
-for i in range (len(CL_load_case)):
-    CL_d=CL_load_case[i]
-    L=[]
-    span_loc=[]
-    L,span_loc=
+#for i in range (len(CL_load_case)):
+ #   CL_d=CL_load_case[i]
+  # span_loc=[]
+  #  L,span_loc=
