@@ -47,11 +47,7 @@ for i in range(0,26786):
     torque_lift_list.append(total_lift_list[i]*moment_arm_lift[i])
 print(torque_lift_list)
 
-#span_wise_lift = []
-#for x in span_loc:
-#    total_lift,L_error=sp.integrate.quad(torque_lift_distribution,x,26.785)
-#    span_wise_lift.append(total_lift)
-#print(span_wise_lift)
+
 
 
 
