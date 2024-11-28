@@ -303,18 +303,21 @@ print(total_mass)
 
 spar1_x=0.2
 spar2_x=0.5
-spar3_x=0.8
+spar3_x=-1
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
 root_geom = get_geom_from_points(x_y_y)
-# print(root_geom)
-# x_vals = []
-# y_vals = []
-# for i in root_geom:
-#     x_vals.append(i[0][0])
-#     x_vals.append(i[1][0])
-#     y_vals.append(i[0][1])
-#     y_vals.append(i[1][1])
-# plt.plot(x_vals, y_vals)
-# plt.show()
+print(root_geom)
+x_vals = []
+y_vals = []
+for i in root_geom:
+    x_vals.append(i[0][0])
+    x_vals.append(i[1][0])
+    y_vals.append(i[0][1])
+    y_vals.append(i[1][1])
+airfoil_xyy = np.load("Airfoil_geom.npy")
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
+plt.plot(x_vals, y_vals)
+plt.show()
 
-plot3d_geom(root_geom, [], b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
+#plot3d_geom(root_geom, [], b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
