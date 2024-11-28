@@ -142,12 +142,12 @@ plt.show()
 plt.plot(span_loc,drag_dist)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/400, adjustable='box')
-plt.show()
+#plt.show()
 
 #ploting the spanwise moment distribution
 plt.plot(span_loc,moment_dist)
 plt.xlim([-27,27])
-plt.show()
+#plt.show()
 
 #NEW FUNCTIONS FOR INTEGRATING
 def Lift_for_integrating(x,CL_d,rho,V):
