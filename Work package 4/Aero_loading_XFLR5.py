@@ -64,7 +64,7 @@ def moment_spanwise_0(y,q):
     moment=picth_mon_quarter_chord_interpolation_0(y)*q*chord_length_interpolation(y)**2
     return moment
 
-#DISTRIBUTION FOR 0 AOA
+#DISTRIBUTION FOR 10 AOA
 
 def lift_spanwise_10(y,q): #calculate lift per unit span at y position
     lift=lift_coeff_interpolation_10(y)*chord_length_interpolation(y)*q
@@ -136,7 +136,7 @@ moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
 plt.plot(span_loc,lift_dist_spanwise)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/4000, adjustable='box')
-plt.show()
+#plt.show()
 
 #ploting the spanwise drag distribution
 plt.plot(span_loc,drag_dist)
