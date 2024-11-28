@@ -138,6 +138,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root,
 
 # format for wing_box = [(start), (end), thickness]
 #format of stringers = [pos, area]
+#TODO - this currently wrong - make it for lists
 def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_spar, trunctated=False):
     chord = scaled_chord(y)
     geometry = []
@@ -150,7 +151,7 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
                 geometry.append(plate)
         else:
             for i in range(4):
-                plate = [norm_wing_box_root[i][0]*chord, norm_wing_box_root[i][1]*chord, norm_wing_box_root[i][2]]
+                plate = [[norm_wing_box_root[i][0][0]*chord,norm_wing_box_root[i][0][1]*chord], [norm_wing_box_root[i][1][0]*chord, norm_wing_box_root[i][1][1]*chord], norm_wing_box_root[i][2]]
                 geometry.append(plate)
     else:
         if y <= end_third_spar:
@@ -161,8 +162,9 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
             x_y_y = get_points(-1, -1, x_pos_third_spar, 1) 
             
             geometry.append([[norm_wing_box_root[2][0][0]*chord,norm_wing_box_root[2][0][1]*chord], [x_y_y[0][0]* chord, x_y_y[0][1]* chord], norm_wing_box_root[4][2]])
-            geometry.append([[norm_wing_box_root[3][0][0]*chord,norm_wing_box_root[3][0][1]*chord], [x_y_y[0][0]* chord, x_y_y[0][1]* chord], norm_wing_box_root[5][2]])
-            geometry.append([[x_y_y[0][0]* chord, x_y_y[0][1]* chord], [x_y_y[1][0]* chord, x_y_y[1][1]* chord], norm_wing_box_root[6][2]])
+            geometry.append([[x_y_y[0][0]* chord, x_y_y[0][1]* chord], [x_y_y[1][0]* chord, x_y_y[1][1]* chord], norm_wing_box_root[5][2]])
+            geometry.append([[norm_wing_box_root[3][0][0]*chord,norm_wing_box_root[3][0][1]*chord], [x_y_y[0][0]* chord, x_y_y[0][1]* chord], norm_wing_box_root[6][2]])
+            
         else:
             for i in range(4):
                 plate = [[norm_wing_box_root[i][0][0]*chord,norm_wing_box_root[i][0][1]*chord], [norm_wing_box_root[i][1][0]*chord,norm_wing_box_root[i][1][1]*chord], norm_wing_box_root[i][2]]
@@ -174,11 +176,11 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
     return geometry
 
 
-def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with_airfoil=False):
-    points_root = get_points_along_spanwise(geom_root, stringers, 0, end_third_spar)
-    points_end_third_spar = get_points_along_spanwise(geom_root, stringers, end_third_spar, end_third_spar)
-    print(points_end_third_spar)
-    points_tip = get_points_along_spanwise(geom_root, stringers, b/2, end_third_spar)
+def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with_airfoil=False, full_wing=False):
+    points_root = get_points_along_spanwise(geom_root, stringers, 0, end_third_spar, trunctated=truncated)
+    points_end_third_spar = get_points_along_spanwise(geom_root, stringers, end_third_spar, end_third_spar, trunctated=truncated)
+    # print(points_end_third_spar)
+    points_tip = get_points_along_spanwise(geom_root, stringers, b/2, end_third_spar, trunctated=truncated)
     lambda_LE = np.deg2rad(Lambda_n(0))
 
     # x_vals = []
@@ -198,10 +200,11 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
     snd_spar_x = np.array([[points_root[2][0][0], points_root[2][1][0]], [points_tip[2][0][0] + np.sin(lambda_LE) * b / 2, points_tip[2][1][0] + np.sin(lambda_LE) * b / 2]])
     snd_spar_y = np.array([[0, 0], [b/2, b/2]])
     snd_spar_z = np.array([[points_root[2][0][1], points_root[2][1][1]], [points_tip[2][0][1] + np.sin(np.deg2rad(dihedral)) * b / 2, points_tip[2][1][1] + np.sin(np.deg2rad(dihedral)) * b / 2]])
-    
-    thd_spar_x = np.array([[points_root[6][0][0], points_root[6][1][0]], [points_end_third_spar[6][0][0] + np.sin(lambda_LE) * end_third_spar, points_end_third_spar[6][1][0] + np.sin(lambda_LE) * end_third_spar]])
+
+
+    thd_spar_x = np.array([[points_root[5][0][0], points_root[5][1][0]], [points_end_third_spar[5][0][0] + np.sin(lambda_LE) * end_third_spar, points_end_third_spar[5][1][0] + np.sin(lambda_LE) * end_third_spar]])
     thd_spar_y = np.array([[0, 0], [end_third_spar, end_third_spar]])
-    thd_spar_z = np.array([[points_root[6][0][1], points_root[6][1][1]],[points_end_third_spar[6][0][1] + np.sin(np.deg2rad(dihedral)) * end_third_spar, points_end_third_spar[6][1][1] + np.sin(np.deg2rad(dihedral)) * end_third_spar]])
+    thd_spar_z = np.array([[points_root[5][0][1], points_root[5][1][1]],[points_end_third_spar[5][0][1] + np.sin(np.deg2rad(dihedral)) * end_third_spar, points_end_third_spar[5][1][1] + np.sin(np.deg2rad(dihedral)) * end_third_spar]])
     # Ensure the axes are properly set for 3D plotting
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -217,12 +220,12 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
 
         all_x = np.tile(np.vstack((root_airfoil[:,0], tip_airfoil[:,0])).T, [2,1])
         all_y = np.array([0, b/2])
-        print(all_x.shape)
-        print(all_y.shape)
+        # print(all_x.shape)
+        # print(all_y.shape)
     
         all_Z_upper = np.vstack((root_airfoil[:, 1], tip_airfoil[:, 1])).T
         all_Z_lower = np.vstack((root_airfoil[:, 2], tip_airfoil[:, 2])).T
-        print(all_Z_lower.shape)
+        # print(all_Z_lower.shape)
         # Tile the Z values to match the meshgrid shape
         Z_upper = np.tile(all_Z_upper, (len(all_y), 1))
         Z_lower = np.tile(all_Z_lower, (len(all_y), 1))
@@ -230,15 +233,26 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
         # Plot root airfoil
         ax.plot_surface(all_x, all_y, Z_upper, color='red', alpha=0.2)
         ax.plot_surface(all_x, all_y, Z_lower, color='red', alpha=0.2)
+        if full_wing:
+            ax.plot_surface(all_x, -all_y, Z_upper, color='red', alpha=0.2)
+            ax.plot_surface(all_x, -all_y, Z_lower, color='red', alpha=0.2)
 
 
     # Plot surfaces for front and second spar
     ax.plot_surface(front_spar_x, front_spar_y, front_spar_z)
     ax.plot_surface(snd_spar_x, snd_spar_y, snd_spar_z)
     ax.plot_surface(thd_spar_x, thd_spar_y, thd_spar_z)
-    ax.set_xlim3d(0, 25)
-    ax.set_ylim3d(0, 25)
-    ax.set_zlim3d(0, 25)
+    if full_wing:
+        ax.plot_surface(front_spar_x, -front_spar_y, front_spar_z)
+        ax.plot_surface(snd_spar_x, -snd_spar_y, snd_spar_z)
+        ax.plot_surface(thd_spar_x, -thd_spar_y, thd_spar_z)
+        ax.set_xlim3d(-25, 25)
+        ax.set_ylim3d(-25, 25)
+        ax.set_zlim3d(-25, 25)
+    else:
+        ax.set_xlim3d(0, 25)
+        ax.set_ylim3d(0, 25)
+        ax.set_zlim3d(0, 25)
         
     plt.show()
 
@@ -288,7 +302,7 @@ total_mass = get_mass(profile_1, profile_2, profile_3, pos_profile_3, stringers_
 print(total_mass)
 
 spar1_x=0.2
-spar2_x=0.45
+spar2_x=0.5
 spar3_x=0.8
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
 root_geom = get_geom_from_points(x_y_y)
@@ -303,4 +317,4 @@ root_geom = get_geom_from_points(x_y_y)
 # plt.plot(x_vals, y_vals)
 # plt.show()
 
-plot3d_geom(root_geom, [], b/6, truncated=False, plot_with_airfoil=True)
+plot3d_geom(root_geom, [], b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
