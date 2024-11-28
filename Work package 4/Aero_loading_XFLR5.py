@@ -136,18 +136,18 @@ moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
 plt.plot(span_loc,lift_dist_spanwise)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/4000, adjustable='box')
-plt.show()
+#plt.show()
 
 #ploting the spanwise drag distribution
 plt.plot(span_loc,drag_dist)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/400, adjustable='box')
-plt.show()
+#plt.show()
 
 #ploting the spanwise moment distribution
 plt.plot(span_loc,moment_dist)
 plt.xlim([-27,27])
-plt.show()
+#plt.show()
 
 #NEW FUNCTIONS FOR INTEGRATING
 def Lift_for_integrating(x,CL_d,rho,V):
