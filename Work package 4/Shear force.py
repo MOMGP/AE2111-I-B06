@@ -55,9 +55,13 @@ shearequation = shear_integration(2*x)
 
 for i in range(len(y_position)):
     var_sub = i
-    if y_position[i] < y_engine:
+    if y_position[i]<0 or y_position[i]>half_span(b):
+       internal_shear_force.append(shearequation.subs(x, var_sub))
+    elif y_position[i]<y_engine:
+        internal_shear_force.append(shearequation.subs(x, var_sub))
+    else:
         internal_shear_force.append(shearequation.subs(x, var_sub)-step(y_position))
-
+    
 
 #print(shearequation)
 plt.plot(y_position, internal_shear_force, label="Shear Force")
