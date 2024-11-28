@@ -30,6 +30,9 @@ span_loc = np.array(span_loc)
 #Creating an array list of all the chord lengths at eatch spanwise location
 chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
 
+
+# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION ---------------------------------------------------------
+
 #Creating a list of the moment arm of the lift with respect to the assumed shear center position
 moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
 #moment_arm_lift = np.array(moment_arm_lift)
@@ -42,11 +45,12 @@ for i in range(0,26786):
     total_lift_list.append(total_lift)
 
 #Create the array list of the torque of the lift around the assumed shear center at each spanwise location
-torque_lift_list = []
+internal_torque_lift_list = []
 for i in range(0,26786):
-    torque_lift_list.append(total_lift_list[i]*moment_arm_lift[i])
-print(torque_lift_list)
+    internal_torque_lift_list.append(total_lift_list[i]*moment_arm_lift[i])
+print(internal_torque_lift_list)
 
+# ---------------------------------------------------------------------------------------------------------------------
 
 
 
