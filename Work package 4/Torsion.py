@@ -34,19 +34,6 @@ chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
 moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
 #moment_arm_lift = np.array(moment_arm_lift)
 
-#Creating a list of all the lift values for integration for each spanwise location
-Lift_for_integrating_list = []
-for i in range(0,26786):
-    x = i/1000
-    Lift_for_integrating_list.append(Lift_for_integrating(x,0.7,0.31641,241.9574))
-
-#Creating a list of the product of the moment arm and the lift values for integration for each spanwise location
-#torque_lift_distribution_list = []
-#def torque_lift_distribution():
-#    for i in range(0,26786):
-#        torque_lift_distribution_list.append(Lift_for_integrating_list[i]*moment_arm_lift[i])
-#    return torque_lift_distribution_list
-
 #Create te list of the integrated lift at each spanwise location
 total_lift_list = []
 for i in range(0,26786):
