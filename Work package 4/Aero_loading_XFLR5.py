@@ -148,34 +148,32 @@ plt.show()
 plt.plot(span_loc,moment_dist)
 plt.xlim([-27,27])
 plt.show()
-rho=0.31641
-CL_d=0.7
-V=241.9574
 
 #NEW FUNCTIONS FOR INTEGRATING
-def Lift_for_integrating(x):
+def Lift_for_integrating(x,CL_d,rho,V):
     q=q_calc(rho,V)
     span_location=x/1000
     CL_value=lift_distribution_any_CL(CL_d,span_location)
     lift=CL_value*q*chord_length_interpolation(span_location)
     return lift
-def Drag_for_integrating(x):
+def Drag_for_integrating(x,CL_d,rho,V):
     q = q_calc(rho, V)
     span_location = x / 1000
     CL_value = lift_distribution_any_CL(CL_d, span_location)
     CD_value = C_D0 + CL_value ** 2 / np.pi / e / Ar
     drag = CD_value * q * chord_length_interpolation(span_location)
     return drag
-def Moment_for_integrating(x):
+def Moment_for_integrating(x,CL_d,rho,V):
     q=q_calc(rho,V)
     span_location=x/1000
     Cm_value=pitching_moment_distribution_any_CL(CL_d,span_location)
     moment=Cm_value*q*chord_length_interpolation(span_location)**2
     return moment
 
-total_lift,L_error=sp.integrate.quad(Lift_for_integrating,0,26.785)
-total_drag,D_error=sp.integrate.quad(Drag_for_integrating,0,26.785)
-total_moment,M_error=sp.integrate.quad(Moment_for_integrating,0,26.785)
+total_lift,L_error=sp.integrate.quad(Lift_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
+total_drag,D_error=sp.integrate.quad(Drag_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
+total_moment,M_error=sp.integrate.quad(Moment_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
+
 print(total_lift,L_error)
 print(total_drag,D_error)
 print(total_moment,M_error)
