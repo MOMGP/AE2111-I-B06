@@ -1,8 +1,7 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
-import scipy as sp
-
+from scipy import integrate
 #MISC functions
 def q_calc(rho,V):
     q=1/2*rho*V**2
@@ -65,7 +64,7 @@ def moment_spanwise_0(y,q):
     moment=picth_mon_quarter_chord_interpolation_0(y)*q*chord_length_interpolation(y)**2
     return moment
 
-#DISTRIBUTION FOR 0 AOA
+#DISTRIBUTION FOR 10 AOA
 
 def lift_spanwise_10(y,q): #calculate lift per unit span at y position
     lift=lift_coeff_interpolation_10(y)*chord_length_interpolation(y)*q
@@ -149,3 +148,32 @@ plt.show()
 plt.plot(span_loc,moment_dist)
 plt.xlim([-27,27])
 plt.show()
+
+#NEW FUNCTIONS FOR INTEGRATING
+def Lift_for_integrating(x,CL_d,rho,V):
+    q=q_calc(rho,V)
+    span_location=x/1000
+    CL_value=lift_distribution_any_CL(CL_d,span_location)
+    lift=CL_value*q*chord_length_interpolation(span_location)
+    return lift
+def Drag_for_integrating(x,CL_d,rho,V):
+    q = q_calc(rho, V)
+    span_location = x / 1000
+    CL_value = lift_distribution_any_CL(CL_d, span_location)
+    CD_value = C_D0 + CL_value ** 2 / np.pi / e / Ar
+    drag = CD_value * q * chord_length_interpolation(span_location)
+    return drag
+def Moment_for_integrating(x,CL_d,rho,V):
+    q=q_calc(rho,V)
+    span_location=x/1000
+    Cm_value=pitching_moment_distribution_any_CL(CL_d,span_location)
+    moment=Cm_value*q*chord_length_interpolation(span_location)**2
+    return moment
+
+total_lift,L_error=sp.integrate.quad(Lift_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
+total_drag,D_error=sp.integrate.quad(Drag_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
+total_moment,M_error=sp.integrate.quad(Moment_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
+
+print(total_lift,L_error)
+print(total_drag,D_error)
+print(total_moment,M_error)
