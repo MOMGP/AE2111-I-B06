@@ -78,7 +78,8 @@ def get_geom_from_points(x_y_y):
         else:
             plates.append((x_y_y[i], x_y_y[i+2], (0.01,)))
     plates.append(( x_y_y[2],  x_y_y[0], (0.01,)))
-    plates.append(( x_y_y[2], x_y_y[4], (0.01,)))
-    plates.append(( x_y_y[4], x_y_y[5], (0.01,)))
-    plates.append(( x_y_y[3], x_y_y[5], (0.01,)))
+    if len(x_y_y)!=4:
+        plates.append(( x_y_y[2], x_y_y[4], (0.01,)))
+        plates.append(( x_y_y[4], x_y_y[5], (0.01,)))
+        plates.append(( x_y_y[3], x_y_y[5], (0.01,)))
     return plates

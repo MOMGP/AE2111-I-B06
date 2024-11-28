@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 import scipy.integrate
 from get_points import get_points, get_geom_from_points
 from geometry_WP4_2 import centroid, moments_of_inertia
+from bending import bending_moment
 
 C_r = 7.63 #m
 taper = 0.3 
@@ -44,9 +45,9 @@ def centroid_distance(centroid,airfoil_points):
     return(max_y)
 # need to make tip deflection formula
 def v_y(M_x,E,I_xx):
-    h = M_x / (E*I_xx)
+    h = M_x / (E*I_xx) 
     g = scipy.integrate.quad(h,0,b/2)
-    v = scipy.integrate.quad(g,0,b/2)
+    v = scipy.integrate.quad(g,0,b/2) # tip deflection
     return(v) #idk if this works at all lol?
 
 def bending_stress(bending_moment, y_max, I_xx):
