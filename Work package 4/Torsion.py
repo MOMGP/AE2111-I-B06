@@ -39,6 +39,24 @@ moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centr
 Lift_torque_spanwise = moment_arm_lift * lift_dist_spanwise
 
 #Add contributions of the thrust en weight of the engine
+thrust_force = []
+n=-1
+for i in span_loc:
+    n += i
+    if i >= b / 2 * 0.35:
+        print(i)
+        print(n)
+        for s in range(0,26786):
+            if s == 43949:
+                thrust_force.append(Thrust_per_engine_perpendicular)
+            else:
+                thrust_force.append(0)
+        break
+
+for i in range(0,26786):
+    if i == n:
+        thrust_force.append(i)
+
 
 # -----------------------------------------------------------------------------------------------------------------------------
 '''
