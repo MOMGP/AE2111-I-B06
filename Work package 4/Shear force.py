@@ -82,18 +82,33 @@ shear_force = []
 L_error_list = []
 total_lift,err=sp.integrate.quad(Lift_for_integrating,0,26.785,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
 total_normal,err_normal=sp.integrate.quad(normal_force_for_integrating,0,26.785,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
-print(total_lift)
+#print(total_lift)
 fout=open("shear.txt", "w")
 for i in np.arange(0,26.78,0.01):
     shear_result,L_error_result=sp.integrate.quad(Lift_for_integrating,0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
-    shear_result=(-total_normal+shear_result)/1000
+    shear_result= 94.4703+(-total_normal+shear_result)/1000
+
+    if i >= 9.37:
+        shear_result = (shear_result - 94.4703)
+
     shear_force.append(shear_result)
     shear_result=str(shear_result)
     fout.write(shear_result)
     fout.write('\n')
     L_error_list.append(L_error_result)
-print(span_loc)
-print(shear_force)
+
+
+def shear_force_for_integrating(x,CL_d,rho,V):
+    span_locs = x
+    shear_result,L_error_result=sp.integrate.quad(Lift_for_integrating,0,x,args=(CL_d,rho,V),limit=50, epsabs=100)
+    shear_result= 94.4703+(-total_normal+shear_result)/1000
+    if i >= 9.37:
+            shear_result = (shear_result - 94.4703)
+    return shear_result
+
+print(shear_force_for_integrating(10,0.7,0.31641,241.9574))
+
+
 plt.figure()
 plt.plot(span_loc, shear_force, label="Shear Force",color='purple')
 plt.xlabel("spanwise location")
