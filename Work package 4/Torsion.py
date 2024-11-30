@@ -11,7 +11,7 @@ from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise
 CL_d = 3
 rho = 1.225
 V = 62
-Weight_engine = 9630*9.81 #N
+weight_engine = 9630*9.81 #N
 Thrust_per_engine = 467060 #N
 Lambda_LE = 0.54 #rad
 C_r = 7.63 #m
@@ -38,24 +38,39 @@ moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centr
 #Creating a list of the lift torque around the shear center along the span
 Lift_torque_spanwise = moment_arm_lift * lift_dist_spanwise
 
-#Add contributions of the thrust en weight of the engine
+#Add contributions of the thrust of the engine
 thrust_force = []
+moment_arm_thrust = []
 n=-1
 for i in span_loc:
-    n += i
+    n += 1
     if i >= b / 2 * 0.35:
-        print(i)
-        print(n)
         for s in range(0,26786):
-            if s == 43949:
+            if s == 9375:
                 thrust_force.append(Thrust_per_engine_perpendicular)
+                moment_arm_thrust.append(chord_at_span_loc[9375]/2) #assuming thrust acts at LE, but it doesnt so change this
             else:
                 thrust_force.append(0)
+                moment_arm_thrust.append(0)
         break
+Thrust_torque_spanwise = np.array(thrust_force) * np.array(moment_arm_thrust)
 
-for i in range(0,26786):
-    if i == n:
-        thrust_force.append(i)
+#Add contributions of the weight of the engine
+weight_force_engine = []
+moment_arm_weight_engine = []
+k=-1
+for i in span_loc:
+    k += 1
+    if i >= b / 2 * 0.35:
+        for s in range(0,26786):
+            if s == 9375:
+                weight_force_engine.append(weight_engine)
+                moment_arm_weight_engine.append(chord_at_span_loc[9375]/2) #assuming weight engine acts at LE and centroid at c/2
+            else:
+                weight_force_engine.append(0)
+                moment_arm_weight_engine.append(0)
+        break
+Weight_engine_torque_spanwise = np.array(weight_force_engine) * np.array(moment_arm_weight_engine)
 
 
 # -----------------------------------------------------------------------------------------------------------------------------
