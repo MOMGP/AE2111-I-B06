@@ -84,7 +84,7 @@ plt.gca().set_aspect(1/100000, adjustable='box')
 plt.show()
 # -----------------------------------------------------------------------------------------------------------------------------
 '''
-# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 2---------------------------------------------------------
+# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 1---------------------------------------------------------
 
 #Creating a list of the moment arm of the lift with respect to the assumed shear center position
 moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
@@ -122,7 +122,7 @@ plt.title("Lift dist.")
 plt.show()
 '''
 
-#Is lift_dist_spanwise not the function I need to use to get the torque of the lift?
-#I Have a list of the forces for each spanwise location, so what do I even need to integrate?
-#Check previous courses on the internal moment from a distributed shear force
+#Is lift_dist_spanwise not the function I need to use to get the torque of the lift? No it is the force acting at each point but not the internal torque
+#I Have a list of the forces for each spanwise location, so what do I even need to integrate? To get the internal torque there needs to be integration
+#Check previous courses on the internal moment from a distributed shear force.
 
