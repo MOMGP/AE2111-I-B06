@@ -5,7 +5,7 @@ import scipy as sp
 import sympy as smp
 from scipy import integrate
 from sympy import Symbol, integrate
-from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise
+from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_force_for_integrating, Lift_distribution_for_any_load_case
 #from geometry_WP4_2 import centroid
 
 CL_d = 3
@@ -30,7 +30,7 @@ span_loc = np.array(span_loc)
 
 #Creating an array list of all the chord lengths at eatch spanwise location
 chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
-
+'''
 # ACTING TORQUES AROUND SHEAR CENTER (NOT INTERNAL TORQUE) ---------------------------------------------------------
 #Creating a list of the moment arm of the lift with respect to the assumed shear center position
 moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
@@ -84,6 +84,7 @@ plt.gca().set_aspect(1/100000, adjustable='box')
 plt.show()
 # -----------------------------------------------------------------------------------------------------------------------------
 '''
+'''
 # INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 1---------------------------------------------------------
 
 #Creating a list of the moment arm of the lift with respect to the assumed shear center position
@@ -121,8 +122,36 @@ plt.title("Lift dist.")
 
 plt.show()
 '''
+# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 2---------------------------------------------------------
+lift, span_loc = Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
 
-#Is lift_dist_spanwise not the function I need to use to get the torque of the lift? No it is the force acting at each point but not the internal torque
-#I Have a list of the forces for each spanwise location, so what do I even need to integrate? To get the internal torque there needs to be integration
-#Check previous courses on the internal moment from a distributed shear force.
+def moment_arm_normal_spanwise(x):
+    chord_at_span_loc = C_r*(1-((1-taper)*(x/(b/2))))
+    moment_arm_normal_torque = chord_at_span_loc/4 #assuming normal force acting at c/4 and centroid at c/2
+    return moment_arm_normal_torque
 
+total_normal_torque,err_normal_torque=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,26.785,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+
+torque_list = []
+torque_error_list = []
+
+fout=open("torque.txt", "w")
+for i in np.arange(0,26.78,0.01):
+    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+    torque_result=(-total_normal_torque+torque_result)/1000
+    torque_list.append(torque_result)
+    torque_result=str(torque_result)
+    fout.write(torque_result)
+    fout.write('\n')
+    torque_error_list.append(torque_error_result)
+
+print(span_loc)
+print(torque_list)
+plt.figure()
+plt.plot(span_loc, torque_list, label="Torque",color='purple')
+plt.xlabel("Spanwise Location [m]")
+plt.ylabel("Torque [kNm]")
+plt.title("Torque distribution due to normal force")
+plt.show()
+
+# -----------------------------------------------------------------------------------------------------------------------------
