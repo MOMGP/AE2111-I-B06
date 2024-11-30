@@ -48,7 +48,7 @@ for i in span_loc:
         for s in range(0,26786):
             if s == 9375:
                 thrust_force.append(Thrust_per_engine_perpendicular)
-                moment_arm_thrust.append(chord_at_span_loc[9375]/2) #assuming thrust acts at LE, but it doesnt so change this
+                moment_arm_thrust.append(chord_at_span_loc[9375]/2) #assuming thrust acts at LE, but it doesnt so change this, instead assume center engine
             else:
                 thrust_force.append(0)
                 moment_arm_thrust.append(0)
@@ -65,7 +65,7 @@ for i in span_loc:
         for s in range(0,26786):
             if s == 9375:
                 weight_force_engine.append(weight_engine)
-                moment_arm_weight_engine.append(chord_at_span_loc[9375]/2) #assuming weight engine acts at LE and centroid at c/2
+                moment_arm_weight_engine.append(chord_at_span_loc[9375]/2) #assuming weight engine acts at LE (change to center of engine) and centroid at c/2
             else:
                 weight_force_engine.append(0)
                 moment_arm_weight_engine.append(0)
