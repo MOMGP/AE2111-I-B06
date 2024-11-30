@@ -31,7 +31,7 @@ span_loc = np.array(span_loc)
 #Creating an array list of all the chord lengths at eatch spanwise location
 chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
 
-# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 1---------------------------------------------------------
+# ACTING TORQUES AROUND SHEAR CENTER (NOT INTERNAL TORQUE) ---------------------------------------------------------
 #Creating a list of the moment arm of the lift with respect to the assumed shear center position
 moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
 
@@ -48,7 +48,7 @@ for i in span_loc:
         for s in range(0,26786):
             if s == 9375:
                 thrust_force.append(Thrust_per_engine_perpendicular)
-                moment_arm_thrust.append(chord_at_span_loc[9375]/2) #assuming thrust acts at LE, but it doesnt so change this, instead assume center engine
+                moment_arm_thrust.append(2.085) #based on technical drawing I am assuming that the thrust acts at center of engine which is assumed to be one radius of the engine from the center of the wingbox, which is 2.085 m. Centroid is assumed at c/2 on the camber line.
             else:
                 thrust_force.append(0)
                 moment_arm_thrust.append(0)
@@ -65,14 +65,23 @@ for i in span_loc:
         for s in range(0,26786):
             if s == 9375:
                 weight_force_engine.append(weight_engine)
-                moment_arm_weight_engine.append(chord_at_span_loc[9375]/2) #assuming weight engine acts at LE (change to center of engine) and centroid at c/2
+                moment_arm_weight_engine.append((chord_at_span_loc[9375]/2) + 3.5) #based on technical drawing I am assuming that the weight of the engine acts at 3.5 meter in front of LE, centroid is assumed at c/2
             else:
                 weight_force_engine.append(0)
                 moment_arm_weight_engine.append(0)
         break
 Weight_engine_torque_spanwise = np.array(weight_force_engine) * np.array(moment_arm_weight_engine)
 
+#List of summation of acting torques at each spanwise location
+Torque_spanwise = Lift_torque_spanwise + Thrust_torque_spanwise - Weight_engine_torque_spanwise
 
+
+plt.plot(span_loc, Torque_spanwise)
+plt.xlabel("spanwise location")
+plt.ylabel("Torque")
+plt.xlim(0,b/2)
+plt.gca().set_aspect(1/100000, adjustable='box')
+plt.show()
 # -----------------------------------------------------------------------------------------------------------------------------
 '''
 # INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 2---------------------------------------------------------
