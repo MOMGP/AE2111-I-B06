@@ -117,7 +117,6 @@ def internal_torque_at_x(x, CL_d, rho, V, n):
         torque_result = (-total_torque + torque_result) #Nm
         torque_list.append(torque_result)
         torque_error_list.append(torque_error_result)
-    print(torque_list)
     return torque_list[-1]
 
 
