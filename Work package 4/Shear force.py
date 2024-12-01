@@ -110,11 +110,12 @@ def shear_force_for_integrating(x,CL_d,rho,V,n):
         shear_result = (shear_result + 94.4703)
     return shear_result
 
-print(shear_force_for_integrating(10,0.7,0.31641,241.9574,1))
-
+#print(shear_force_for_integrating(10,0.7,0.31641,241.9574,1))
+#print(shear_force)
 
 plt.figure()
 plt.plot(span_loc, shear_force, label="Shear Force",color='purple')
+plt.plot([0,0], [0, shear_force[0]], color='purple')
 plt.xlabel("spanwise location")
 plt.ylabel("shear force")
 plt.title("shear force dist.")
