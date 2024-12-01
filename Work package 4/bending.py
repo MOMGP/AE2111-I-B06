@@ -1,45 +1,54 @@
 import math
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import scipy as sp
-from scipy.integrate import quad
+from scipy.integrate import quad, dblquad
+from Aero_loading_XFLR5 import Lift_for_integrating
+from Aero_loading_XFLR5 import lift_distribution_any_CL
+from Aero_loading_XFLR5 import chord_length_interpolation
+from Aero_loading_XFLR5 import normal_force_for_integrating
+from Aero_loading_XFLR5 import Lift_distribution_for_any_load_case
 
-# Initial values
-Pe = 9.81*9630        # Engine weight [N]
+#--------------------------------Initial values--------------------------------#
+
+n = 1
+Pe = 9.81*9630*n        # Engine weight [N]
 ye = 9.37             # Engine spanwise location [m]
 Me = Pe*ye            # Engine bending moment around the root [Nm]
 b = 53.57             # Wing span [m]
-S = -1                # PLACEHOLDER DUMMY for shear
-# Functions
+CL_d = 3
+rho = 1.225
+V = 62
 
-def step(y):                   # Moment step function               
-    if y<0 or y>b:
-        print('span error')
-        M = -1
-    elif y<ye:
-        M = 0
-    else:
-        M = Me
-    return M
+#-------------------------------------------------------------------------------#
 
-def bending_moment(S):          # Bending moment at a location y
+
+lift, span_loc = Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
+
+moment = []                                                                             # Open list for moment
+
+
+fout=open("bending.txt", "w")                                                           # Open text file
+for i in np.arange(0,26.78,0.01):
+
+    moment_result, error = sp.integrate.dblquad(lambda i, j: normal_force_for_integrating(i,0.7, 0.31641, 241.9574, 1),0, 26.785,   # double integration
+                                                 lambda j: j, lambda j: 26.785) + n*Pe*i + Me
     
-    M = []
-    span_loc = []
+    # n*Pe*i comes from a single integral of the engine weight (Pe) over the distance i. Me is the engine bending moment (no integral). n is the load factor 
 
-    for i in range (0,26786):
-        y = i/1000                     # spanwise location
-        moment =-step(y)        # moment as a function of shear + step
-        M.append(0.001*moment)
-        span_loc.append(y)
+    if i <= 9.37:                                           # Not including the engine contribution
+        moment_result = moment_result - n*Pe*i - Me
+
+
+    moment.append(moment_result)
+    fout.write(str(moment_result))
+    fout.write('\n')
     
-    return M,span_loc
 
-M, span_loc = bending_moment(S)
-
-plt.plot(span_loc,M)
-plt.xlabel("Spanwise Position [m]")
-plt.ylabel("Bending Moment [kNm]")
-plt.title("Spanwise Bending Moment")
-plt.legend()
+plt.figure()
+plt.plot(span_loc, moment, label="Bending Moment",color='red')
+plt.xlabel("spanwise location")
+plt.ylabel("Bending Moment")
+plt.title("Bending Moment Dist.")
 plt.show()
+fout.close()
