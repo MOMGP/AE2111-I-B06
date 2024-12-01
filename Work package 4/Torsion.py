@@ -105,6 +105,9 @@ def internal_torque_at_x(x, CL_d, rho, V, n):
     total_torque = n * total_normal_torque + torque_engine_thrust - torque_engine_weight
     if x == 0:
         return -total_torque
+    if x > b/2:
+        print('invalid x entry, half-span is between x = 0 and x = 26.785 m')
+        return
     for i in np.arange(0,x,0.01): #x between 0 and 26.78 with two decimals
         if x > b/2:
             break
@@ -114,9 +117,6 @@ def internal_torque_at_x(x, CL_d, rho, V, n):
         torque_result = (-total_torque + torque_result) #Nm
         torque_list.append(torque_result)
         torque_error_list.append(torque_error_result)
-    if x > b/2:
-        print('invalid x entry, half-span is between x = 0 and x = 26.785 m')
-        return
     print(torque_list)
     return torque_list[-1]
 
