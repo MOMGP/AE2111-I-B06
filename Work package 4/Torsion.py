@@ -30,6 +30,74 @@ span_loc = np.array(span_loc)
 
 #Creating an array list of all the chord lengths at eatch spanwise location
 chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
+
+
+# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION ---------------------------------------------------------
+
+#TORQUE ONLY FOR NORMAL AERODYNAMIC FORCE
+lift, span_loc = Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
+
+def moment_arm_normal_spanwise(x):
+    chord_at_span_loc = C_r*(1-((1-taper)*(x/(b/2))))
+    moment_arm_normal_torque = chord_at_span_loc/4 #assuming normal force acting at c/4 and centroid at c/2
+    return moment_arm_normal_torque
+
+total_normal_torque,err_normal_torque=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,26.785,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+
+torque_list = []
+torque_error_list = []
+
+fout=open("torque.txt", "w")
+for i in np.arange(0,26.78,0.01):
+    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+    torque_result=(-total_normal_torque+torque_result)/1000
+    torque_list.append(torque_result)
+    torque_result=str(torque_result)
+#    fout.write(torque_result)
+#    fout.write('\n')
+    torque_error_list.append(torque_error_result)
+
+plt.figure()
+plt.plot(span_loc, torque_list, label="Torque",color='purple')
+plt.xlabel("Spanwise Location [m]")
+plt.ylabel("Torque [kNm]")
+plt.title("Torque distribution due to normal force")
+plt.show()
+
+#TORQUE FOR ALL ACTING FORCES
+torque_engine_thrust = Thrust_per_engine_perpendicular * 2.085 #based on technical drawing I am assuming that the thrust acts at center of engine which is assumed to be one radius of the engine from the center of the wingbox, which is 2.085 m. Centroid is assumed at c/2 on the camber line.
+torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))))/2 + 3.5) #based on technical drawing I am assuming that the weight of the engine acts at 3.5 meter in front of LE, centroid is assumed at c/2
+total_torque = total_normal_torque + torque_engine_thrust - torque_engine_weight
+
+torque_list = []
+torque_error_list = []
+
+for i in np.arange(0,26.78,0.01):
+    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+    if i >= 9.37:
+        torque_result = torque_result + torque_engine_thrust - torque_engine_weight
+    torque_result=(-total_torque+torque_result)/1000
+    torque_list.append(torque_result)
+    torque_result=str(torque_result)
+    fout.write(torque_result)
+    fout.write('\n')
+    torque_error_list.append(torque_error_result)
+
+plt.figure()
+plt.plot(span_loc, torque_list, label="Torque",color='purple')
+plt.xlabel("Spanwise Location [m]")
+plt.ylabel("Torque [kNm]")
+plt.title("Total Torque distribution")
+plt.show()
+
+#In order for a better approximation of the centroid position, what is the coordinate axis system for the wingbox centroid_x and centroid_y?
+#What is the exact position of the centroid of the engine?
+
+# -----------------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------------
+
+
+
 '''
 # ACTING TORQUES AROUND SHEAR CENTER (NOT INTERNAL TORQUE) ---------------------------------------------------------
 #Creating a list of the moment arm of the lift with respect to the assumed shear center position
@@ -84,74 +152,3 @@ plt.gca().set_aspect(1/100000, adjustable='box')
 plt.show()
 # -----------------------------------------------------------------------------------------------------------------------------
 '''
-'''
-# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 1---------------------------------------------------------
-
-#Creating a list of the moment arm of the lift with respect to the assumed shear center position
-moment_arm_lift = chord_at_span_loc/4 #assuming lift at c/4 of unswept and centroid at c/2 of unswept
-#moment_arm_lift = np.array(moment_arm_lift)
-
-#Create te list of the integrated lift at each spanwise location
-total_lift_list = []
-for i in range(0,26786):
-    x = i/1000
-    total_lift,L_error=sp.integrate.quad(Lift_for_integrating,x,26.785,args=(0.7,0.31641,241.9574))
-    total_lift_list.append(total_lift)
-
-#Create the array list of the torque of the lift around the assumed shear center at each spanwise location
-internal_torque_lift_list = []
-for i in range(0,26786):
-    internal_torque_lift_list.append(total_lift_list[i]*moment_arm_lift[i])
-
-# -----------------------------------------------------------------------------------------------------------------------------
-
-plt.subplot(1,2,1)
-plt.plot(span_loc, internal_torque_lift_list)
-plt.xlabel("spanwise location")
-plt.ylabel("Lift Torque")
-plt.xlim(0,b/2)
-plt.title("Lift torque dist.")
-plt.gca().set_aspect(1/100000, adjustable='box')
-
-plt.subplot(1,2,2)
-plt.plot(span_loc, total_lift_list)
-plt.xlabel("spanwise location")
-plt.ylabel("Lift")
-plt.xlim(0,b/2)
-plt.title("Lift dist.")
-
-plt.show()
-'''
-# INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION METHOD 2---------------------------------------------------------
-lift, span_loc = Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
-
-def moment_arm_normal_spanwise(x):
-    chord_at_span_loc = C_r*(1-((1-taper)*(x/(b/2))))
-    moment_arm_normal_torque = chord_at_span_loc/4 #assuming normal force acting at c/4 and centroid at c/2
-    return moment_arm_normal_torque
-
-total_normal_torque,err_normal_torque=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,26.785,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
-
-torque_list = []
-torque_error_list = []
-
-fout=open("torque.txt", "w")
-for i in np.arange(0,26.78,0.01):
-    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
-    torque_result=(-total_normal_torque+torque_result)/1000
-    torque_list.append(torque_result)
-    torque_result=str(torque_result)
-    fout.write(torque_result)
-    fout.write('\n')
-    torque_error_list.append(torque_error_result)
-
-print(span_loc)
-print(torque_list)
-plt.figure()
-plt.plot(span_loc, torque_list, label="Torque",color='purple')
-plt.xlabel("Spanwise Location [m]")
-plt.ylabel("Torque [kNm]")
-plt.title("Torque distribution due to normal force")
-plt.show()
-
-# -----------------------------------------------------------------------------------------------------------------------------
