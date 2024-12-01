@@ -29,25 +29,23 @@ moment = []                                                                     
 
 fout=open("bending.txt", "w")                                                           # Open text file
 
+def moment_inner_int(i):
+    return quad(lambda x: normal_force_for_integrating(x, 0.7, 0.31641, 241.9574, 1),
+        i, 26.785,limit=50, epsabs=100)[0]
+
+
 for i in np.arange(0,26.78,0.01):
-
-    def moment_inner_int(i):
-     return quad(lambda x: normal_force_for_integrating(x, 0.7, 0.31641, 241.9574, 1),
-        i, 26.785, epsabs=100, limit=50)[0]
-
-    moment_result, error = quad(lambda y: moment_inner_int(y),i,26.78,epsabs=100,limit=50) + n*Pe*i + Me
+    moment_result, error = quad(lambda y: moment_inner_int(y),i,26.78,limit=50, epsabs=100) + n*Pe*i + Me
     
     # n*Pe*i comes from a single integral of the engine weight (Pe) over the distance i. Me is the engine bending moment (no integral). n is the load factor 
 
     if i <= 9.37:                                           # Not including the engine contribution
         moment_result = moment_result - n*Pe*i - Me
 
-
     moment.append(moment_result)
     fout.write(str(moment_result))
     fout.write('\n')
 
-fout.close()
     
 plt.figure()
 plt.plot(span_loc, moment, label="Bending Moment",color='red')
