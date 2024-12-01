@@ -32,7 +32,7 @@ fout=open("bending.txt", "w")                                                   
 for i in np.arange(0,26.78,0.01):
 
     moment_result, error = sp.integrate.dblquad(lambda i, j: normal_force_for_integrating(i,0.7, 0.31641, 241.9574, 1),0, 26.785,   # double integration
-                                                 lambda j: j, lambda j: 26.785) + n*Pe*i + Me
+                                                 lambda j: j, lambda j: 26.785,epsabs=100,limit=50) + n*Pe*i + Me
     
     # n*Pe*i comes from a single integral of the engine weight (Pe) over the distance i. Me is the engine bending moment (no integral). n is the load factor 
 
