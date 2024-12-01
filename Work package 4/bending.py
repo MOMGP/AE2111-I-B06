@@ -19,7 +19,6 @@ b = 53.57             # Wing span [m]
 CL_d = 3
 rho = 1.225
 V = 62
-
 #-------------------------------------------------------------------------------#
 
 
@@ -29,10 +28,14 @@ moment = []                                                                     
 
 
 fout=open("bending.txt", "w")                                                           # Open text file
+
 for i in np.arange(0,26.78,0.01):
 
-    moment_result, error = sp.integrate.dblquad(lambda i, j: normal_force_for_integrating(i,0.7, 0.31641, 241.9574, 1),0, 26.785,   # double integration
-                                                 lambda j: j, lambda j: 26.785,epsabs=100,limit=50) + n*Pe*i + Me
+    def moment_inner_int(i):
+     return quad(lambda x: normal_force_for_integrating(x, 0.7, 0.31641, 241.9574, 1),
+        i, 26.785, epsabs=100, limit=50)[0]
+
+    moment_result, error = quad(lambda y: moment_inner_int(y),i,26.78,epsabs=100,limit=50) + n*Pe*i + Me
     
     # n*Pe*i comes from a single integral of the engine weight (Pe) over the distance i. Me is the engine bending moment (no integral). n is the load factor 
 
@@ -43,12 +46,12 @@ for i in np.arange(0,26.78,0.01):
     moment.append(moment_result)
     fout.write(str(moment_result))
     fout.write('\n')
-    
 
+fout.close()
+    
 plt.figure()
 plt.plot(span_loc, moment, label="Bending Moment",color='red')
 plt.xlabel("spanwise location")
 plt.ylabel("Bending Moment")
 plt.title("Bending Moment Dist.")
 plt.show()
-fout.close()
