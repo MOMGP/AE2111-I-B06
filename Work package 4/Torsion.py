@@ -41,16 +41,16 @@ def moment_arm_normal_spanwise(x):
     chord_at_span_loc = C_r*(1-((1-taper)*(x/(b/2))))
     moment_arm_normal_torque = chord_at_span_loc/4 #assuming normal force acting at c/4 and centroid at c/2
     return moment_arm_normal_torque
-
-total_normal_torque,err_normal_torque=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,26.785,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+'''
+total_normal_torque,err_normal_torque=sp.integrate.quad(lambda x,CL_d,rho,V,n: normal_force_for_integrating(x,CL_d,rho,V,n) * moment_arm_normal_spanwise(x),0,26.78,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
 
 torque_list = []
 torque_error_list = []
 
 fout=open("torque.txt", "w")
 for i in np.arange(0,26.78,0.01):
-    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
-    torque_result=(-total_normal_torque+torque_result)/1000
+    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V,n: normal_force_for_integrating(x,CL_d,rho,V,n) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
+    torque_result=(-total_normal_torque+torque_result) #Nm
     torque_list.append(torque_result)
     torque_result=str(torque_result)
 #    fout.write(torque_result)
@@ -60,23 +60,25 @@ for i in np.arange(0,26.78,0.01):
 plt.figure()
 plt.plot(span_loc, torque_list, label="Torque",color='purple')
 plt.xlabel("Spanwise Location [m]")
-plt.ylabel("Torque [kNm]")
+plt.ylabel("Torque [Nm]")
 plt.title("Torque distribution due to normal force")
-plt.show()
-
+#plt.show()
+'''
 #TORQUE FOR ALL ACTING FORCES
 torque_engine_thrust = Thrust_per_engine_perpendicular * 2.085 #based on technical drawing I am assuming that the thrust acts at center of engine which is assumed to be one radius of the engine from the center of the wingbox, which is 2.085 m. Centroid is assumed at c/2 on the camber line.
 torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))))/2 + 3.5) #based on technical drawing I am assuming that the weight of the engine acts at 3.5 meter in front of LE, centroid is assumed at c/2
+
+'''
 total_torque = total_normal_torque + torque_engine_thrust - torque_engine_weight
 
 torque_list = []
 torque_error_list = []
 
-for i in np.arange(0,26.78,0.01):
-    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V: normal_force_for_integrating(x,CL_d,rho,V) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+for i in np.arange(0,26.78,0.001):
+    torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V,n: normal_force_for_integrating(x,CL_d,rho,V,n) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
     if i >= 9.37:
         torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-    torque_result=(-total_torque+torque_result)/1000
+    torque_result=(-total_torque+torque_result) #Nm
     torque_list.append(torque_result)
     torque_result=str(torque_result)
     fout.write(torque_result)
@@ -86,12 +88,37 @@ for i in np.arange(0,26.78,0.01):
 plt.figure()
 plt.plot(span_loc, torque_list, label="Torque",color='purple')
 plt.xlabel("Spanwise Location [m]")
-plt.ylabel("Torque [kNm]")
+plt.ylabel("Torque [Nm]")
 plt.title("Total Torque distribution")
-plt.show()
+#plt.show()
+'''
 
 #In order for a better approximation of the centroid position, what is the coordinate axis system for the wingbox centroid_x and centroid_y?
 #What is the exact position of the centroid of the engine?
+
+def internal_torque_at_x(x, CL_d, rho, V, n):
+    torque_list = []
+    torque_error_list = []
+    total_normal_torque, err_normal_torque = sp.integrate.quad(lambda x, CL_d, rho, V, n: normal_force_for_integrating(x, CL_d, rho, V, n) * moment_arm_normal_spanwise(x), 0,26.78, args=(CL_d, rho, V, n), limit=50, epsabs=100)
+    total_torque = n * total_normal_torque + torque_engine_thrust - torque_engine_weight
+    for i in np.arange(0,x,0.01): #x between 0 and 26.78 with two decimals
+        if x > b/2:
+            break
+        torque_result, torque_error_result = sp.integrate.quad(lambda x, CL_d, rho, V, n: normal_force_for_integrating(x, CL_d, rho, V, n) * moment_arm_normal_spanwise(x), 0, i, args=(CL_d, rho, V, n), limit=50, epsabs=100)
+        if i >= 9.37:
+            torque_result = torque_result + torque_engine_thrust - torque_engine_weight
+        torque_result = (-total_torque + torque_result) #Nm
+        torque_list.append(torque_result)
+        torque_error_list.append(torque_error_result)
+    if x > b/2:
+        print('invalid x entry, half-span is between x = 0 and x = 26.785 m')
+        return
+    print(torque_list)
+    if x == 0:
+        return -total_torque
+    return torque_list[-1]
+
+
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------------------------------
