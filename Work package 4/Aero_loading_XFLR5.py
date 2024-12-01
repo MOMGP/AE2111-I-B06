@@ -139,7 +139,7 @@ moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
 plt.plot(span_loc,lift_dist_spanwise)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/4000, adjustable='box')
-plt.show()
+#plt.show()
 ''''
 #ploting the spanwise drag distribution
 plt.plot(span_loc,drag_dist)
@@ -175,13 +175,13 @@ def Moment_for_integrating(x,CL_d,rho,V):
 
 #NORMAL FORCE CALCULATION (I'M DUMB)
 normal_force=[]
-def normal_force_for_integrating(x,CL_d,rho,V):
+def normal_force_for_integrating(x,CL_d,rho,V,n):
     q=q_calc(rho,V)
     span_location=x
     CL_value = lift_distribution_any_CL(CL_d, span_location)
     CD_value=C_D0 + CL_value ** 2 / np.pi / e / Ar
-    drag = CD_value * q * chord_length_interpolation(span_location)
-    lift = CL_value * q * chord_length_interpolation(span_location)
+    drag =n* CD_value * q * chord_length_interpolation(span_location)
+    lift = n*CL_value * q * chord_length_interpolation(span_location)
     aoa=AOA(CL_d)
     aoa=math.radians(aoa)
     normal=math.cos(aoa)*lift+math.sin(aoa)*drag

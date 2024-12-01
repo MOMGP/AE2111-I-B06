@@ -98,9 +98,9 @@ for i in np.arange(0,26.78,0.01):
     L_error_list.append(L_error_result)
 
 
-def shear_force_for_integrating(x,CL_d,rho,V):
+def shear_force_for_integrating(x,CL_d,rho,V,n):
     span_locs = x
-    shear_result,L_error_result=sp.integrate.quad(Lift_for_integrating,0,x,args=(CL_d,rho,V),limit=50, epsabs=100)
+    shear_result,L_error_result=sp.integrate.quad(Lift_for_integrating,0,x,args=(CL_d,rho,V,n),limit=50, epsabs=100)
     shear_result= 94.4703+(-total_normal+shear_result)/1000
     if i >= 9.37:
             shear_result = (shear_result - 94.4703)
