@@ -34,7 +34,7 @@ chord_at_span_loc = C_r*(1-((1-taper)*(span_loc/(b/2))))
 
 # INTERNAL TORQUE OF THE LIFT AROUND SHEAR CENTER CALCULATION ---------------------------------------------------------
 
-#TORQUE ONLY FOR NORMAL AERODYNAMIC FORCE
+
 lift, span_loc = Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
 
 def moment_arm_normal_spanwise(x):
@@ -42,6 +42,8 @@ def moment_arm_normal_spanwise(x):
     moment_arm_normal_torque = chord_at_span_loc/4 #assuming normal force acting at c/4 and centroid at c/2
     return moment_arm_normal_torque
 '''
+#TORQUE ONLY FOR NORMAL AERODYNAMIC FORCE
+
 total_normal_torque,err_normal_torque=sp.integrate.quad(lambda x,CL_d,rho,V,n: normal_force_for_integrating(x,CL_d,rho,V,n) * moment_arm_normal_spanwise(x),0,26.78,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
 
 torque_list = []
@@ -64,11 +66,11 @@ plt.ylabel("Torque [Nm]")
 plt.title("Torque distribution due to normal force")
 #plt.show()
 '''
-#TORQUE FOR ALL ACTING FORCES
+#TOTAL INTERNAL TORQUE DIAGRAM AND FUNCTION
 torque_engine_thrust = Thrust_per_engine_perpendicular * 2.085 #based on technical drawing I am assuming that the thrust acts at center of engine which is assumed to be one radius of the engine from the center of the wingbox, which is 2.085 m. Centroid is assumed at c/2 on the camber line.
 torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))))/2 + 3.5) #based on technical drawing I am assuming that the weight of the engine acts at 3.5 meter in front of LE, centroid is assumed at c/2
 
-'''
+
 total_torque = total_normal_torque + torque_engine_thrust - torque_engine_weight
 
 torque_list = []
@@ -91,7 +93,7 @@ plt.xlabel("Spanwise Location [m]")
 plt.ylabel("Torque [Nm]")
 plt.title("Total Torque distribution")
 #plt.show()
-'''
+
 
 #In order for a better approximation of the centroid position, what is the coordinate axis system for the wingbox centroid_x and centroid_y?
 #What is the exact position of the centroid of the engine?
