@@ -76,7 +76,7 @@ total_torque = total_normal_torque + torque_engine_thrust - torque_engine_weight
 torque_list = []
 torque_error_list = []
 
-for i in np.arange(0,26.78,0.001):
+for i in np.arange(0,26.78,0.01):
     torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V,n: normal_force_for_integrating(x,CL_d,rho,V,n) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
     if i >= 9.37:
         torque_result = torque_result + torque_engine_thrust - torque_engine_weight
