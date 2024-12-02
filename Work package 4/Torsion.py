@@ -67,13 +67,14 @@ plt.title("Torque distribution due to normal force")
 #TOTAL INTERNAL TORQUE DIAGRAM AND FUNCTION
 torque_engine_thrust = Thrust_per_engine_perpendicular * 2.085 #based on technical drawing I am assuming that the thrust acts at center of engine which is assumed to be one radius of the engine from the center of the wingbox, which is 2.085 m. Centroid is assumed at c/2 on the camber line.
 torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))))/2 + 3.5) #based on technical drawing I am assuming that the weight of the engine acts at 3.5 meter in front of LE, centroid is assumed at c/2
-
+total_normal_torque, err_normal_torque = sp.integrate.quad(lambda x, CL_d, rho, V, n: normal_force_for_integrating(x, CL_d, rho, V, n) * moment_arm_normal_spanwise(x), 0,26.78, args=(0.7,0.31641,241.9574,1), limit=50, epsabs=100)
 
 total_torque = total_normal_torque + torque_engine_thrust - torque_engine_weight
 
 torque_list = []
 torque_error_list = []
 
+fout=open("torque.txt", "w")
 for i in np.arange(0,26.78,0.01):
     torque_result,torque_error_result=sp.integrate.quad(lambda x,CL_d,rho,V,n: normal_force_for_integrating(x,CL_d,rho,V,n) * moment_arm_normal_spanwise(x),0,i,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
     if i >= 9.37:
@@ -90,7 +91,7 @@ plt.plot(span_loc, torque_list, label="Torque",color='purple')
 plt.xlabel("Spanwise Location [m]")
 plt.ylabel("Torque [Nm]")
 plt.title("Total Torque distribution")
-#plt.show()
+plt.show()
 
 
 #In order for a better approximation of the centroid position, what is the coordinate axis system for the wingbox centroid_x and centroid_y?
