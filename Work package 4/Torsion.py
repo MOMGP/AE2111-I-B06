@@ -2,9 +2,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-import sympy as smp
 from scipy import integrate
-from sympy import Symbol, integrate
 from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_force_for_integrating, Lift_distribution_for_any_load_case
 #from geometry_WP4_2 import centroid
 
