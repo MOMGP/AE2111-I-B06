@@ -6,6 +6,9 @@ from scipy import integrate
 from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
 #from geometry_WP4_2 import centroid
 
+#Centroid coordinate system and implement into the code
+#Change internal torque to positive if necessary
+
 weight_engine = 9630*9.81 #N
 Thrust_per_engine = 467060 #N
 Lambda_LE = 0.54 #rad
@@ -35,7 +38,6 @@ def moment_arm_normal_spanwise(x):
 
 torque_engine_thrust = Thrust_per_engine_perpendicular * 2.085 #based on technical drawing I am assuming that the thrust acts at center of engine which is assumed to be one radius of the engine from the center of the wingbox, which is 2.085 m. Centroid is assumed at c/2 on the camber line.
 torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))))/2 + 3.5) #based on technical drawing I am assuming that the weight of the engine acts at 3.5 meter in front of LE, centroid is assumed at c/2
-total_normal_torque, err_normal_torque = sp.integrate.quad(lambda x, CL_d, rho, V, n: normal_force_for_integrating(x, CL_d, rho, V, n) * moment_arm_normal_spanwise(x), 0,26.78, args=(0.7,0.31641,241.9574,1), limit=50, epsabs=100)
 
 # Function returns the internal torque due to the quarter chord pitching moment
 def internal_quarter_chord_torque_spanwise(y, CL_d, rho, V):
@@ -82,7 +84,7 @@ def internal_torque_diagram (CL_d, rho, V, n):
         torque_result += internal_quarter_chord_torque_spanwise(i, CL_d, rho, V)
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-        torque_result = (-total_torque + torque_result)  # Nm CHECK
+        torque_result = (-total_torque + torque_result)  # Nm # If sign convention must be changed to positive internal torque: torque_result = (total_torque - torque_result)
         torque_list.append(torque_result)
         torque_result = str(torque_result)
         fout.write(torque_result)
@@ -92,17 +94,17 @@ def internal_torque_diagram (CL_d, rho, V, n):
     plt.plot(span_loc, torque_list, label="Torque", color='purple')
     plt.xlabel("Spanwise Location [m]")
     plt.ylabel("Torque [Nm]")
-    plt.title("Total Torque distribution function")
+    plt.title("Internal Torque distribution function")
     plt.show()
-internal_torque_diagram(0.7,0.31641,241.9574,1)
-
-
 
 
 # ------------------------------------------------------------------------------------------------------------------------
 
 
 '''
+#Internal torque diagram for a specific condition
+
+total_normal_torque, err_normal_torque = sp.integrate.quad(lambda x, CL_d, rho, V, n: normal_force_for_integrating(x, CL_d, rho, V, n) * moment_arm_normal_spanwise(x), 0,26.78, args=(0.7,0.31641,241.9574,1), limit=50, epsabs=100)
 total_torque = total_normal_torque + internal_quarter_chord_torque_spanwise(26.78, 0.7,0.31641,241.9574) + torque_engine_thrust - torque_engine_weight
 
 torque_list = []
