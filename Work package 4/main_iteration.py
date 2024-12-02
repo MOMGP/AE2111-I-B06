@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from scipy.integrate import dblquad, quad, quad_vec
 from get_points import get_points, get_geom_from_points
 from geometry_WP4_2 import centroid, moments_of_inertia
-from Aero_loading_XFLR5 import normal_force_for_integrating, 
+from Aero_loading_XFLR5 import normal_force_for_integrating
 # from bending import bending_moment, S
 
 C_r = 7.63 #m
@@ -59,45 +59,71 @@ def centroid_distance(centroid,airfoil_points):
 start = time.time()
 def I_xx(x): # dummy ixx
     return 0.5 - 0.015 * x 
-def load_distribution(x): # load distribution
-    result = normal_force_for_integrating(x,0.7,0.31641,241.9574,1)
-    return result
+
+shear = []
+bending = []
+n_points = 50 # decrease number for higher amount of points to integrate over (a.k.a. increase accuracy)
+with open("shear.txt", 'r') as f:
+    count = 0
+    for i in f:
+        line = i.strip('\n')
+        count += 1
+        print(count)
+        if count % n_points == 0 or count == 1:
+            shear.append(line)
+with open("bending.txt", 'r') as f:
+    count = 0
+    for i in f:
+        line = i.strip('\n')
+        count += 1
+        print(count)
+        if count % n_points == 0 or count == 1:
+            shear.append(line)          
+x_vals = np.linspace(0,b/2,len(shear))
+# x_vals = [x for x in x_vals]
+print(x_vals, len(x_vals))
+print(shear)
+# Create an interpolation function for x as a function of y
+interp_func = scipy.interpolate.interp1d(x_vals, shear, kind='quadratic', fill_value="extrapolate")
+shear_int = interp_func(2.23)
+print(shear_int)
 def shear_force(x): 
-    result = 
+    result = interp_func(x)
     # result, _ = quad(load_distribution, 0, x, limit=200)  # Shear force is the integral of load
     return result
-#def bending_moment(x): 
-    result, _ = quad(shear_force, 0, x, limit=500)  # Bending moment is the integral of shear force
+def bending_moments(x): 
+    result = quad(shear_force,x,b/2) #+ bending
+#     # result, _ = quad(shear_force, 0, x, limit=500)  # Bending moment is the integral of shear force
     return result 
-# def angle_of_rotation(x): # 
-    result, _ = quad(lambda xi: bending_moment(xi) / (E * I_xx(x)), 0, x, limit=500)
-    return result
-# def deflection(x):
-    result, _ = quad(angle_of_rotation,0,x)
-    return result
+# # def angle_of_rotation(x): # 
+#     result, _ = quad(lambda xi: bending_moment(xi) / (E * I_xx(x)), 0, x, limit=500)
+#     return result
+# # def deflection(x):
+#     result, _ = quad(angle_of_rotation,0,x)
+#     return result
 
 # Calculate and plot results
 x_vals = np.linspace(0, b/2, 20) #create # amount of values evenly spaced
-load_vals = [load_distribution(x) for x in x_vals]
+# load_vals = [load_distribution(x) for x in x_vals]
 shear_vals = [shear_force(x) for x in x_vals]
-#moment_vals = [bending_moment(x) for x in x_vals]
+moment_vals = [bending_moments(x) for x in x_vals]
 # angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
 # deflection_vals = [deflection(x) for x in x_vals] 
 
 
-# print('Angle of rotation is: ', angle_of_rotation(b/2), 'degrees or rad idk')
-end = time.time()
-print(end - start, "seconds")
+# # print('Angle of rotation is: ', angle_of_rotation(b/2), 'degrees or rad idk')
+# end = time.time()
+# print(end - start, "seconds")
 
 
 plt.figure(figsize=(8, 4))
 
-# Load distribution
-plt.subplot(5, 1, 1)
-plt.plot(x_vals, load_vals, label="Load Distribution q(x)", color="blue")
-plt.ylabel("Load (N/m)")
-plt.grid(alpha=0.3)
-plt.legend()
+# # Load distribution
+# plt.subplot(5, 1, 1)
+# plt.plot(x_vals, load_vals, label="Load Distribution q(x)", color="blue")
+# plt.ylabel("Load (N/m)")
+# plt.grid(alpha=0.3)
+# plt.legend()
 
 # Shear force
 plt.subplot(5, 1, 2)
@@ -107,43 +133,43 @@ plt.grid(alpha=0.3)
 plt.legend()
 
 # Bending moment
-# plt.subplot(5, 1, 3)
-# plt.plot(x_vals, moment_vals, label="Bending Moment M(x)", color="red")
-# plt.ylabel("Moment (Nm)")
-# plt.grid(alpha=0.3)
-# plt.legend()
+plt.subplot(5, 1, 3)
+plt.plot(x_vals, moment_vals, label="Bending Moment M(x)", color="red")
+plt.ylabel("Moment (Nm)")
+plt.grid(alpha=0.3)
+plt.legend()
 
-# plt.subplot(5, 1, 4) # bending moment can be added later aswell if needed :3
-# plt.plot(x_vals, angle_of_rotation_vals, label="Deflection w(x)", color="purple")
-# plt.xlabel("Position along the beam (m)")
-# plt.ylabel("Deflection (m)")
-# plt.grid(alpha=0.3)
-# plt.legend()
+# # plt.subplot(5, 1, 4) # bending moment can be added later aswell if needed :3
+# # plt.plot(x_vals, angle_of_rotation_vals, label="Deflection w(x)", color="purple")
+# # plt.xlabel("Position along the beam (m)")
+# # plt.ylabel("Deflection (m)")
+# # plt.grid(alpha=0.3)
+# # plt.legend()
 plt.show()
 
 
 
-# Deflection
-#plt.subplot(1, 1, 1) bending moment can be added later aswell if needed :3
-# plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
-# plt.xlabel("Position along the beam (m)")
-# plt.ylabel("Deflection (m)")
-# plt.grid(alpha=0.3)
-# plt.legend()
-# plt.show()
+# # Deflection
+# #plt.subplot(1, 1, 1) bending moment can be added later aswell if needed :3
+# # plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
+# # plt.xlabel("Position along the beam (m)")
+# # plt.ylabel("Deflection (m)")
+# # plt.grid(alpha=0.3)
+# # plt.legend()
+# # plt.show()
 
 
-def bending_stress(bending_moment, y_max, I_xx):
-    sigma = (bending_moment * y_max)/I_xx
-    return(sigma) 
+# def bending_stress(bending_moment, y_max, I_xx):
+#     sigma = (bending_moment * y_max)/I_xx
+#     return(sigma) 
 
-def scaled_length(length,chord):
-    scaled_length = length*chord/C_r
-    return(scaled_length)
+# def scaled_length(length,chord):
+#     scaled_length = length*chord/C_r
+#     return(scaled_length)
 
-#output = [mass, twist_ang, deflection, spar_pts, thicknesses, num_stringer, truncated, end_third]
-#inputs = spar_pos, thicknesses, num_stringer, truncated, end_third
-pos_combs = []
-# for i in np.arange(0.2, 0.5, 0.05):
-#     for j in np.arange(i, 0.65, 0.05):
-#         for k in np.arange(j, 0.75, 0.05):
+# #output = [mass, twist_ang, deflection, spar_pts, thicknesses, num_stringer, truncated, end_third]
+# #inputs = spar_pos, thicknesses, num_stringer, truncated, end_third
+# pos_combs = []
+# # for i in np.arange(0.2, 0.5, 0.05):
+# #     for j in np.arange(i, 0.65, 0.05):
+# #         for k in np.arange(j, 0.75, 0.05):
