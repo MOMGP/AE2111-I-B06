@@ -70,16 +70,17 @@ def get_points(length_1, length_2, length_3, chord):
             wingbox_chords.append([length_3, bottom_surface])
     return wingbox_chords
 
-def get_geom_from_points(x_y_y):
+def get_geom_from_points(x_y_y, thicknesses):
+    
     plates = []
     for i in range(3):
         if (i%2 ==0):
-            plates.append((x_y_y[i], x_y_y[i+1], (0.01,)))
+            plates.append([x_y_y[i], x_y_y[i+1], thicknesses[i]])
         else:
-            plates.append((x_y_y[i], x_y_y[i+2], (0.01,)))
-    plates.append(( x_y_y[2],  x_y_y[0], (0.01,)))
+            plates.append([x_y_y[i], x_y_y[i+2], thicknesses[i]])
+    plates.append([ x_y_y[2],  x_y_y[0], thicknesses[3]])
     if len(x_y_y)!=4:
-        plates.append(( x_y_y[2], x_y_y[4], (0.01,)))
-        plates.append(( x_y_y[4], x_y_y[5], (0.01,)))
-        plates.append(( x_y_y[3], x_y_y[5], (0.01,)))
+        plates.append([ x_y_y[2], x_y_y[4], thicknesses[4]])
+        plates.append([ x_y_y[4], x_y_y[5], thicknesses[5]])
+        plates.append([ x_y_y[3], x_y_y[5], thicknesses[6]])
     return plates
