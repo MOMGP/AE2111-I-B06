@@ -185,18 +185,24 @@ def normal_force_for_integrating(x,CL_d,rho,V,n):
     aoa=AOA(CL_d)
     aoa=math.radians(aoa)
     normal=math.cos(aoa)*lift+math.sin(aoa)*drag
-    normal_force.append(normal)
     return normal
-
+'''
 total_lift,L_error=sp.integrate.quad(Lift_for_integrating,0,26.786,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
 total_drag,D_error=sp.integrate.quad(Drag_for_integrating,0,26.786,args=(0.7,0.31641,241.9574),limit=50,epsabs=100)
 total_moment,M_error=sp.integrate.quad(Moment_for_integrating,0,26.786,args=(0.7,0.31641,241.9574),limit=50,epsabs=100)
+'''
+
+'''''
 for i in np.arange(0,26.78,0.01):
     normal_force_for_integrating(i, 0.7,0.31641,241.9574, 1)
-print(total_lift,L_error)
+    
+
+#Testing shit
+#print(total_lift,L_error)
 plt.plot(span_loc,normal_force)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/4000, adjustable='box')
-#plt.show()
+plt.show()
 #print(total_drag,D_error)
 #print(total_moment,M_error)
+'''
