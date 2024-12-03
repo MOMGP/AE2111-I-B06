@@ -16,7 +16,7 @@ V = 62
 #span, b
 b = 53.57
 y_engine = 9.37 #[m]
-W_engine = 9630*9.81 
+W_engine = 9630*9.81/1000
 
 shear_force_distribution = []
 internal_shear_force = []
