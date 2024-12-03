@@ -7,7 +7,6 @@ from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_
 #from geometry_WP4_2 import centroid_x, centroid_y
 
 #Centroid coordinate system and implement into the code
-#Could be more accurate with the moment arms of the torque of the thrust and weight of the engine
 #Change internal torque to positive if necessary
 
 weight_engine = 9630*9.81 #N
