@@ -4,7 +4,10 @@ from sympy import symbols, Eq, solve # type: ignore
 import matplotlib as mp 
 import numpy as np
 import scipy as scipy 
-import matplotlib as plt
+from matplotlib import pyplot as plt
+from geometry_WP4_2 import get_points_along_spanwise
+from get_points import get_points,get_geom_from_points
+
 #torsional stiffenes function
 #So the torsional stiffenes is defined as ts
 #                                           c
@@ -40,6 +43,7 @@ List_output = [[(x_s, y_s), (x_e,y_e), t]]
 """
 def translate(val_list):
     if len(val_list)==4:
+
         h = np.abs(val_list[0][0][0] - val_list[2][0][0])
         a = np.sqrt((val_list[0][0][0]-val_list[0][1][0])**2+ (val_list[0][0][1]-val_list[0][1][1])**2)
         b = np.sqrt((val_list[2][0][0]-val_list[2][1][0])**2+ (val_list[2][0][1]-val_list[2][1][1])**2)
@@ -49,8 +53,9 @@ def translate(val_list):
         t2 = val_list[2][2]
         t3 = val_list[1][2]
         t4 = val_list[0][2]
+        h1 = 0
 
-        return h,a,b,c,d,t1,t2,t3,t4
+        return [h1,h,a,b,c,d,t1,t2,t3,t4]
     else:
         h1 = np.abs(val_list[0][0][0] - val_list[2][0][0])
         h2 = np.abs(val_list[2][0][0] - val_list[5][0][0])
@@ -70,17 +75,30 @@ def translate(val_list):
         t6 = val_list[0][2]
         t7 = val_list[1][2]
 
-        return a, b1, b, h1, h2, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2
 
-print(translate([
-    [[0, 0], [0, 1], [0.01]],
-    [[0, 1], [1, 1], [0.01]],
-    [[1, 1], [1, 0], [0.01]],
-    [[1, 0], [0, 0], [0.01]],
-    [[1, 1], [2, 1], [0.01]],
-    [[2, 1], [2, 0], [0.01]],
-    [[2, 0], [1, 0], [0.01]]
-]))
+        return [h1, a, b1, b, h2, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2]
+               
+#a = translate([
+#     [[0, 0], [0, 1], [0.01]],
+#     [[0, 1], [1, 1], [0.01]],
+#     [[1, 1], [1, 0], [0.01]],
+#     [[1, 0], [0, 0], [0.01]],
+#     [[1, 1], [2, 1], [0.01]],
+#     [[2, 1], [2, 0], [0.01]],
+#     [[2, 0], [1, 0], [0.01]]
+# ])
+# print(a[1])
+
+# val_list = [
+#     [[0, 0], [0, 1], 0.01],
+#     [[0, 1], [1, 1], 0.01],
+#     [[1, 1], [1, 0], 0.01],
+#     [[1, 0], [0, 0], 0.01],
+#     [[1, 1], [2, 1], 0.01],
+#     [[2, 1], [2, 0], 0.01],
+#     [[2, 0], [1, 0], 0.01]
+# ]
+
 
 def get_A(a,b,h):
     A = 0.5 * (a+b)*h 
@@ -95,12 +113,12 @@ def get_J_SS(h,a,b,c,d,t1,t2,t3,t4):
 
 #rot = rate of twist 
 #multi cell
-def get_J_MS(a, b1, b, h1, h2, G, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2):
+def get_J_MS(h1, a, b1, b, h2, G, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2):
     # Define symbolic variables
     rot, q1, q2 = symbols('rot q1 q2')
 
     # Left side
-    A1 = get_A(a, b1, h1)  # Assuming get_A is a provided function
+    A1 = get_A(a, b1, h1)
     eq1 = Eq(rot, (1 / (2 * A1)) * (((q1 - q2) * b1 / (G * t4)) + (q1 * c1 / (G * t5)) + (q1 * a / (G * t6)) + (q1 * d1 / (G * t7))))
 
     # Right side
@@ -120,12 +138,36 @@ def get_J_MS(a, b1, b, h1, h2, G, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2):
 
 
 #now that we got the J's we need to find a way to let the program determain when to switch to a single cell J calculation 
-def Torsional_Stiffness(h,h1,h2,G,a,b,c,d,b1,c1,c2,d1,d2,t1, t2, t3, t4, t5, t6, t7):
-    if h1 > 0:
-        tor_stiff = G*get_J_MS(a, b1, b, h1, h2, G, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2)
-    else: 
-        tor_stiff = G*get_J_SS(h,a,b,c,d,t1,t2,t3,t4)
-    return tor_stiff 
+
+
+def get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond):
+
+    y = []
+    for i in range(0,26785,500):
+        G = 1000
+        step = i*0.001
+        val_list = get_points_along_spanwise(norm_wing_box_root, norm_stringers, step, end_third_spar, trunctated=cond)[0]
+        values = translate(val_list)
+        if values[0] > 0:
+            tor_stiff = G * get_J_MS(values[0], values[1],values[2],values[3],values[4],G,values[5],values[6],values[7],values[8],values[9],values[10],values[11],values[12],values[13],values[14],values[15])
+        else: 
+            tor_stiff = G * get_J_SS(values[0], values[1],values[2],values[3],values[4],values[5],values[6],values[7],values[8])
+        y.append(tor_stiff)
+    return y
+span = 2*26.785
+spar1_x=0.2
+spar2_x=0.5
+spar3_x=0.7
+x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
+root_geom = get_geom_from_points(x_y_y, [0.5 for i in range(7)])
+#print(get_points_along_spanwise(root_geom, [[[0,0],0]], span/6, True))
+# print(get_torr_stiff_list(root_geom, [[[0,0],0]], span/6, True))
+
+
+
+
+
+
 
 
 
@@ -137,11 +179,11 @@ def Torsional_Stiffness(h,h1,h2,G,a,b,c,d,b1,c1,c2,d1,d2,t1, t2, t3, t4, t5, t6,
 #    T = lambda x: #...    
 #    theta = 1/tor_stiff * scipy.integrate.quad(T,0,x)
 #    return theta
-
-
-print(Torsional_Stiffness(1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1))
-
 #graphing 
 hws = 26.785
-x = np.arange(0,hws,0.01)
- 
+x = np.arange(0,hws,0.5)
+y = get_torr_stiff_list(root_geom, [[[0,0],0]], span/6, True)
+
+plt.plot(x,y)
+
+plt.show()
