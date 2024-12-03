@@ -51,6 +51,7 @@ for i in np.arange(0,26.785,0.01):
     pos=int((i*100))
     moment_total+=shear[pos]*0.01
     fout.write(str(moment_total))
+    fout.write('\n')
 '''
 def moment_at_position_updated(x):
     pos=int(x*100-1)
