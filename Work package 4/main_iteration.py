@@ -23,7 +23,7 @@ airfoil_xyy = np.load("Airfoil_geom.npy")
 possible_t = np.array([3.665, 3.264, 2.906, 2.588, 2.305, 2.053, 1.628, 1.291, 1.024, .812, .644, .511, .405, .312]) # in mm
 possible_x = np.arange(0.2, 0.7, 0.05)
 pos_string_num = np.arange(20, 40, 4) #based on Jeroen resource
-graphs = True
+graphs = False
 x_y_y = np.array(get_points(0.2, 0.45, 0.65, 1))
 geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
 x_vals = []
@@ -42,7 +42,7 @@ for i in geom:
 def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
     return(sigma)     
-
+# Only works for 2 sparred wingbox
 def I_xx(I_xx_root,x): #Assuming I_xx scales linearly with length, as thickness presumably stays the same
     result = scaled_length(I_xx_root,scaled_chord(x))
     return result
@@ -57,32 +57,32 @@ with open("shear.txt", 'r') as f:
         count += 1
         if count % n_points == 0 or count == 1:
             shear.append(line)
-# with open("bending copy.txt", 'r') as f:
-#     count = 0
-#     for i in f:
-#         line = i.strip('\n')
-#         count += 1
-#         if count % n_points == 0 or count == 1:
-#             bending.append(line)          
-x_vals = np.linspace(0,b/2,len(shear)) # This doesn't give completely accurate numbers but its slighty off since i didnt find a better method
-bending_x_vals = np.arange(0,b/2,1) # taken from bending.py (assuming since only 27 values are given in bending.txt)
+with open("bending.txt", 'r') as f:
+    count = 0
+    for i in f:
+        line = i.strip('\n')
+        count += 1
+        if count % n_points == 0 or count == 1:
+            bending.append(line)          
+x_vals = np.linspace(0,b/2,len(shear)) # This doesn't give completely accurate numbers but its slighty off (~1%) since i didnt find a better method
+bending_x_vals = np.arange(0,b/2,1) # taken from bending.py (assuming since only 27 (x = 0-26) values are given in bending.txt)
 shear_interp_func = scipy.interpolate.interp1d(x_vals, shear, kind='quadratic', fill_value="extrapolate") #Unsure if quadratic is appropriate
 # bending_interp_func = scipy.interpolate.interp1d(bending_x_vals, bending, kind='quadratic', fill_value="extrapolate")
-
+#I used interpolation functions to simplify the integrations + dont know any other method to form a function out of the data
 start = time.time()
-def shear_force(x): 
+def shear_force(x): #Just defines the interpolation function for the shear force. I
     result = shear_interp_func(x)
     # result, _ = quad(load_distribution, 0, x, limit=200)  # Shear force is the integral of load
     return result
-def bending_moments(x): 
+def bending_moments(x): #Integrates the interpolated function of shear, and adds the interpolation functions of bending provided by bending.py
     result, _ = quad(shear_force,x,b/2)
     return result # + bending_interp_func #when i get it!!
-aof_0, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(I_xx_r,xi)), 0,b/2, limit=50)
-def angle_of_rotation(x): # 
+aof_0, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(I_xx_r,xi)), 0,b/2, limit=50) # integration constant for angle of rotation
+def angle_of_rotation(x): # does the integral of M(x) / E * I(x) which is the slope 
     result, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(I_xx_r,xi)), x,b/2, limit=50)
     return result - aof_0
-def_0, _ = quad(angle_of_rotation,0,b/2,limit=50)
-def deflection(x):
+def_0, _ = quad(angle_of_rotation,0,b/2,limit=50) # integration constant for deflection
+def deflection(x): # integrates slope to obtain deflection
     result, _ = quad(angle_of_rotation,x,b/2)
     return result - def_0
 
