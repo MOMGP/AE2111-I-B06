@@ -6,14 +6,15 @@ from Torsion import internal_torque_at_x
 from get_points import get_points,get_geom_from_points
 from DIS_TORSIONAL_STIFF import get_torr_stiff_list
 from matplotlib import pyplot as plt
-
+cases = ["CL", "n", "rho", "V"]
 #𝑑θ/𝑑𝑦 = 𝑇(𝑦)/𝐺𝐽(𝑦)
-def rot(x, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond):
-    rot = internal_torque_at_x(x, CL_d, rho, V, n)/get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond, x)
+def rot(x, case,norm_wing_box_root, norm_stringers, end_third_spar, cond):
+    int_torque_x = np.load("Work package 4\\Torsions_diff_cases\\"+case+"_crit.npy")[int(x*2)]
+    rot = int_torque_x/get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond, x)
     return rot
 
 
-def twist_angle(CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond):
+def twist_angle(case, norm_wing_box_root, norm_stringers, end_third_spar, cond):
     G = 28*10**9
     twist = []
     
@@ -21,7 +22,7 @@ def twist_angle(CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_sp
     previous_val =0
     for i in range(0,26785,500):
         step = i*0.001
-        temp = rot(step, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+        temp = rot(step, case,norm_wing_box_root, norm_stringers, end_third_spar, cond)
         sum+=(previous_val+temp)*0.5*0.5
         previous_val = temp
         # result =sp.integrate.quad(lambda x, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond: rot(x, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond), 0,step,args=(CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond))
@@ -52,11 +53,8 @@ n = 1
 #ploting 
 hws = 26.785
 x = np.arange(0,hws,0.5)
-y = twist_angle(CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond)
-print('pussy')
-plt.show()
+y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
 plt.plot(x,y)
-print('pussy')
 plt.title("Tin is a little gay boy")
 plt.show()
 

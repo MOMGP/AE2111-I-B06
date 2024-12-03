@@ -6,10 +6,11 @@ from numba import cuda, float32
 from matplotlib import pyplot as plt
 from scipy.integrate import dblquad, quad, quad_vec
 from get_points import get_points, get_geom_from_points
-from geometry_WP4_2 import centroid, moments_of_inertia, get_stringer_geom_norm,scaled_chord,scaled_length,centroid_distance, get_points_along_spanwise
+from geometry_WP4_2 import centroid, moments_of_inertia, get_stringer_geom_norm,scaled_chord,scaled_length,centroid_distance, get_points_along_spanwise, get_mass
 from Aero_loading_XFLR5 import normal_force_for_integrating
 from bending import moment_at_full_position
 from Shear_force import shear_force_full_values
+from twist_distribution_over_the_wing import twist_angle
 
 C_r = 7.63 #m
 taper = 0.3 
@@ -45,9 +46,6 @@ def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
     return(sigma)     
 # Only works for 2 sparred wingbox
-def I_xx(I_xx_root,x): #Assuming I_xx scales linearly with length, as thickness presumably stays the same
-    result = scaled_length(I_xx_root,scaled_chord(x))
-    return result
 
 shear = []
 bending = []
@@ -66,41 +64,56 @@ with open("Work package 4\\bending.txt", 'r') as f:
         count += 1
         if count % n_points == 0 or count == 1:
             bending.append(line)         
-x_vals = np.linspace(0,b/2,len(shear)) # This doesn't give completely accurate numbers but its slighty off (~1%) since i didnt find a better method
-bending_x_vals = np.linspace(0,b/2,len(bending)) # taken from bending.py (assuming since only 27 (x = 0-26) values are given in bending.txt)
-shear_interp_func = scipy.interpolate.interp1d(x_vals, shear, kind='quadratic', fill_value="extrapolate") #Unsure if quadratic is appropriate
-bending_interp_func = scipy.interpolate.interp1d(bending_x_vals, bending, kind='quadratic', fill_value="extrapolate")
+shear = np.array(shear)
+bending = np.array(bending)
+x_vals = np.linspace(0,b/2,shear.size) # This doesn't give completely accurate numbers but its slighty off (~1%) since i didnt find a better method
+bending_x_vals = np.linspace(0,b/2,bending.size) # taken from bending.py (assuming since only 27 (x = 0-26) values are given in bending.txt)
 #I used interpolation functions to simplify the integrations + dont know any other method to form a function out of the data
 start = time.time()
 def shear_force(x): #Just defines the interpolation function for the shear force. I
-    result = shear_interp_func(x)
+    return -1000*shear[int(x/b*2*len(shear)+0.02)]
     # result, _ = quad(load_distribution, 0, x, limit=200)  # Shear force is the integral of load
-    return result * -1000
 def bending_moments(x): #Integrates the interpolated function of shear, and adds the interpolation functions of bending provided by bending.py
     # result, _ = quad(shear_force,x,b/2)
-    return bending_interp_func(x) * 1000 #when i get it!!
-def angle_of_rotation(x, root_geom, root_str, end_third_spar, truncated): # does the integral of M(x) / E * I(x) which is the slope 
-    aof_0, _ = quad(lambda xi: bending_moments(xi) / (E * moments_of_inertia(root_geom, root_str)), 0,b/2, limit=50) # integration constant for angle of rotation
-    result, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(I_xx_r,xi)), x,b/2, limit=50)
-    return result - aof_0
-def_0, _ = quad(angle_of_rotation,0,b/2,limit=50) # integration constant for deflection
-def deflection(x): # integrates slope to obtain deflection
-    result, _ = quad(angle_of_rotation,x,b/2)
-    return result - def_0
+    return 1000*bending[int(x/b*2*len(bending)+0.02)]
+def angle_of_rotation(root_geom, root_str, end_third_spar, truncated): # does the integral of M(x) / E * I(x) which is the slope 
+    angle_of_rotation = []
+    sum = 0
+    diff = bending_x_vals[2]-bending_x_vals[1]
+    for i in bending.size:
+        if (i==0):
+            angle_of_rotation.append(sum)
+            geom, stringers = get_points_along_spanwise(root_geom, root_str, 0, end_third_spar, truncated)
+            prev_val = 1000*bending[i]/(E * moments_of_inertia(geom, stringers)[0])
+        else:
+            geom, stringers  =  get_points_along_spanwise(root_geom, root_geom, bending_x_vals[i], end_third_spar, truncated)
+            current_val = 1000*bending[i]/(E * moments_of_inertia(geom, stringers)[0])
+            sum+=(current_val+prev_val)*0.5*diff
+            angle_of_rotation.append(sum)
+            prev_val = current_val
+    return angle_of_rotation
+
+def deflection(root_geom, root_str, end_third_spar, truncated): # integrates slope to obtain deflection
+    AOR = angle_of_rotation(root_geom, root_str, end_third_spar, truncated)
+    deflection =[]
+    sum = 0
+    diff = bending_x_vals[2]-bending_x_vals[1]
+    for i in bending.size:
+        if (i==0):
+            deflection.append(sum)
+        else:
+            sum+=(AOR[i], AOR[i-1])*0.5*diff
+            deflection.append(sum)
+    return deflection
 
 # pwease dont remove mario >///<
-print('Maximum deflection is:', abs(deflection(b/2)), "m; which is", abs(deflection(b/2)/(b/2) * 100), "% of the wingspan")
-end = time.time()
-print("integration took", end - start, "seconds")
-print('Interpolated over', len(x_vals), 'intervals of x')
+# print('Maximum deflection is:', abs(deflection(b/2)), "m; which is", abs(deflection(b/2)/(b/2) * 100), "% of the wingspan")
+# end = time.time()
+# print("integration took", end - start, "seconds")
+# print('Interpolated over', len(x_vals), 'intervals of x')
 
 
-# #output = [mass, twist_ang, deflection, spar_pts, thicknesses, num_stringer, truncated, end_third]
-# #inputs = spar_pos, thicknesses, num_stringer, truncated, end_third
-# pos_combs = []
-# # for i in np.arange(0.2, 0.5, 0.05):
-# #     for j in np.arange(i, 0.65, 0.05):
-# #         for k in np.arange(j, 0.75, 0.05):
+
 
 
 
@@ -169,17 +182,45 @@ def scaled_length(length,chord):
 #output = [mass, twist_ang, deflection, spar_pts, thicknesses, num_stringer, truncated, end_third]
 #inputs = spar_pos, thicknesses, num_stringer, end_third, truncated
 pos_combs = []
-
+cases = ["CL", "n", "rho", "V"]
 for i in np.arange(0.2, 0.5, 0.05): # iterating front spar pos (skipping every 0.05 space)
     for j in np.arange(i, 0.65, 0.05): #iterating second spar pos (skipping every 0.05 space)
         for k in np.arange(j, 0.75, 0.05): # iterating third spar pos (skipping every 0.05 space)
-            for t in possible_t:
-                for n in pos_string_num:
-                    for thd_end in np.arange(0.05*b, b/4, 0.025*b): #iterating over end of third spar pos
-                        x_y_y = get_points(i, j, k, 1)
-                        root_geom = get_geom_from_points(x_y_y, [t for i in range(7)])
-                        root_stringer = get_stringer_geom_norm(root_geom, n)
-                        deflection(b/2)
+            for t_tb in possible_t:
+                for t_sides in possible_t:
+                    for n in pos_string_num:
+                        for truncated in [True, False]:
+                            for thd_end in np.arange(0.05*b, b/4, 0.025*b): #iterating over end of third spar pos
+                                x_y_y = get_points(i, j, k, 1)
+                                root_geom = get_geom_from_points(x_y_y, [t_tb for i in range(7)]) #todo - change this to account for top, bot, and sides
+                                root_stringer = get_stringer_geom_norm(root_geom, n)
+                                tip_twists = []
+                                tip_deflections = []
+                                for i in cases:
+                                    tip_deflections.append(deflection(i,root_geom, root_stringer, thd_end, truncated)[-1])
+                                    tip_twists.append(abs(twist_angle(i, root_geom, root_stringer, thd_end, truncated)[-1]))
+                                crit_tip_twist = max(tip_twists)
+                                tip_deflection = max(tip_deflections)
+                                if (tip_deflection<b*0.15 and crit_tip_twist<np.deg2rad(10)):
+                                    np.array([get_mass(get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, thd_end, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, b/2, thd_end, truncated)[0], thd_end, get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[1]),
+                                            crit_tip_twist,
+                                            tip_deflection,
+                                            i, #first spar
+                                            j, #snd spar
+                                            k, #3rd spar
+                                            t_tb,
+                                            t_sides,
+                                            n,
+                                            truncated,
+                                            thd_end
+                                            ])
+                                    
+                                    #todo - add considerations here
+
                             
+                            
+#considerations - if smth works with a particular thickness, dont increase
+# if smth works with a particular num of stringers, dont increase
+# if smth dont work due to twist, skip over all stringers 
 
                         
