@@ -1,5 +1,4 @@
-from turtledemo.penrose import start
-
+import math
 import numpy as np
 from get_points import get_points, get_geom_from_points, get_airfoil
 from matplotlib import pyplot as plt
@@ -34,6 +33,18 @@ stringer_area = 2*10**(-4) #m^3
 def scaled_chord(spanwise_dist):
     chord = C_r - C_r * (1 - taper) * (spanwise_dist / (b / 2))
     return(chord)
+
+def scaled_length(length,chord):
+    scaled_length = length*chord/C_r
+    return(scaled_length)
+
+def centroid_distance(centroid,airfoil_points):
+    distance = []
+    for coordinate in airfoil_points:
+        y = math.dist(centroid, coordinate)
+        distance.append(y)
+    max_y = max(distance)    
+    return(max_y)
 
 def centroid(wing_box, stringers):
     centroid_sum_x =0
