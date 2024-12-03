@@ -185,9 +185,10 @@ x = np.arange(0,hws,0.5)
 y = []
 for i in x:
     y.append(get_torr_stiff_list(root_geom, [[[0,0],0]], span/6, True, i))
-
+plt.show()
 y = np.array(y)
 plt.plot(x,y)
 plt.plot([0,1], [1,2])
+
 plt.show()
 print("I'm going to kms if you dont run this, BITCH")
