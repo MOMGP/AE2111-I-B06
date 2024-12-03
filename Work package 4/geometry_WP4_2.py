@@ -1,5 +1,4 @@
-from turtledemo.penrose import start
-
+import math
 import numpy as np
 from get_points import get_points, get_geom_from_points, get_airfoil
 from matplotlib import pyplot as plt
@@ -29,10 +28,23 @@ E = 72400000000
 rho = 2780 # kg/m3
 AR = 10.82
 M_CR = 0.82
+stringer_area = 2*10**(-4) #m^3
 
 def scaled_chord(spanwise_dist):
     chord = C_r - C_r * (1 - taper) * (spanwise_dist / (b / 2))
     return(chord)
+
+def scaled_length(length,chord):
+    scaled_length = length*chord/C_r
+    return(scaled_length)
+
+def centroid_distance(centroid,airfoil_points):
+    distance = []
+    for coordinate in airfoil_points:
+        y = math.dist(centroid, coordinate)
+        distance.append(y)
+    max_y = max(distance)    
+    return(max_y)
 
 def centroid(wing_box, stringers):
     centroid_sum_x =0
@@ -191,13 +203,26 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
         stringers.append([[i[0][0]*chord,i[0][1]*chord], i[1]]) 
 
     return geometry, stringers
-#TODO - make function for getting stringer geometry
 
-def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with_airfoil=False, full_wing=False):
-    points_root = get_points_along_spanwise(geom_root, stringers, 0, end_third_spar, trunctated=truncated)
-    points_end_third_spar = get_points_along_spanwise(geom_root, stringers, end_third_spar, end_third_spar, trunctated=truncated)
+def get_stringer_geom_norm(geom, num_of_stringers_tot):
+    num_of_stringers_side = int(num_of_stringers_tot/2)
+    top_plate_arr = np.array([geom[3][0], geom[3][1]])
+    direction_top = top_plate_arr[1]-top_plate_arr[0]
+    bot_plate_arr = np.array([geom[1][0], geom[1][1]])
+    direction_bot = bot_plate_arr[1]-bot_plate_arr[0]
+    stringers = [[[top_plate_arr[0][0]+direction_top[0]*str_num_top/(num_of_stringers_side+1), 
+                  top_plate_arr[0][1]+direction_top[1]*str_num_top/(num_of_stringers_side+1)],stringer_area] for str_num_top in range(1, num_of_stringers_side+1)]
+    for str_num in range(1, num_of_stringers_side+1):
+        stringers.append([[bot_plate_arr[0][0]+direction_bot[0]*str_num/(num_of_stringers_side+1), 
+        bot_plate_arr[0][1]+direction_bot[1]*str_num/(num_of_stringers_side+1)], stringer_area])
+    return stringers
+    
+
+def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with_airfoil=False, full_wing=False, plot_stringers = True):
+    points_root, stringers_root = get_points_along_spanwise(geom_root, stringers, 0, end_third_spar, trunctated=truncated)
+    points_end_third_spar, _ = get_points_along_spanwise(geom_root, stringers, end_third_spar, end_third_spar, trunctated=truncated)
     # print(points_end_third_spar)
-    points_tip = get_points_along_spanwise(geom_root, stringers, b/2, end_third_spar, trunctated=truncated)
+    points_tip, stringers_tip = get_points_along_spanwise(geom_root, stringers, b/2, end_third_spar, trunctated=truncated)
     lambda_LE = np.deg2rad(Lambda_n(0))
 
     # x_vals = []
@@ -209,7 +234,7 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
     #     y_vals.append(i[1][1])
     # plt.plot(x_vals, y_vals)
     # plt.show()
-
+    
     front_spar_x = np.array([[points_root[0][0][0], points_root[0][1][0]], [points_tip[0][0][0] + np.sin(lambda_LE) * b / 2, points_tip[0][1][0] + np.sin(lambda_LE) * b / 2]])
     front_spar_y = np.array([[0, 0], [b/2, b/2]])
     front_spar_z = np.array([[points_root[0][0][1], points_root[0][1][1]],[points_tip[0][0][1] + np.sin(np.deg2rad(dihedral)) * b / 2, points_tip[0][1][1] + np.sin(np.deg2rad(dihedral)) * b / 2]])
@@ -254,18 +279,28 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
             ax.plot_surface(all_x, -all_y, Z_upper, color='red', alpha=0.2)
             ax.plot_surface(all_x, -all_y, Z_lower, color='red', alpha=0.2)
 
-
+    
     # Plot surfaces for front and second spar
     ax.plot_surface(front_spar_x, front_spar_y, front_spar_z)
     ax.plot_surface(snd_spar_x, snd_spar_y, snd_spar_z)
     ax.plot_surface(thd_spar_x, thd_spar_y, thd_spar_z)
+
+    #plot stringers
+    if plot_stringers:
+        for i in range(len(stringers_root)):
+            ax.plot([stringers_root[i][0][0], stringers_tip[i][0][0]+np.sin(lambda_LE) * b / 2], [0, b/2], [stringers_root[i][0][1], stringers_tip[i][0][1]+np.sin(np.deg2rad(dihedral)) * b / 2], linewidth=0.3)
+    
     if full_wing:
         ax.plot_surface(front_spar_x, -front_spar_y, front_spar_z)
         ax.plot_surface(snd_spar_x, -snd_spar_y, snd_spar_z)
         ax.plot_surface(thd_spar_x, -thd_spar_y, thd_spar_z)
+        if plot_stringers:
+            for i in range(len(stringers_root)):
+                ax.plot([stringers_root[i][0][0], stringers_tip[i][0][0]+np.sin(lambda_LE) * b / 2], [0, -b/2], [stringers_root[i][0][1], stringers_tip[i][0][1]+np.sin(np.deg2rad(dihedral)) * b / 2], linewidth=0.3)
         ax.set_xlim3d(-25, 25)
         ax.set_ylim3d(-25, 25)
         ax.set_zlim3d(-25, 25)
+
     else:
         ax.set_xlim3d(0, 25)
         ax.set_ylim3d(0, 25)
@@ -311,14 +346,15 @@ stringers_root = [
 
 
 total_mass = get_mass(profile_root, profile_mid, profile_tip, pos_profile_3, stringers_root)
-print(total_mass)
+# print(total_mass)
 
 spar1_x=0.2
 spar2_x=0.5
 spar3_x=0.7
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
 root_geom = get_geom_from_points(x_y_y, [.644 for i in range(7)])
-print(root_geom)
+stringers_norm = get_stringer_geom_norm(root_geom, 32)
+# print(root_geom)
 x_vals = []
 y_vals = []
 # for i in root_geom:
@@ -332,8 +368,7 @@ y_vals = []
 # plt.plot(x_vals, y_vals)
 # plt.show()
 
-# plot3d_geom(root_geom, [], b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
+plot3d_geom(root_geom, stringers_norm, b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
 
-root_pts, root_stringers = get_points_along_spanwise(root_geom, [[[0,0],0]], 0, b/6)
-
+root_pts, root_stringers = get_points_along_spanwise(root_geom, stringers_norm, 0, b/6)
 print(moments_of_inertia(root_pts, root_stringers)[0])

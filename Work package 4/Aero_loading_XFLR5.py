@@ -2,6 +2,7 @@ import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 from scipy import integrate
+import math
 #MISC functions
 def q_calc(rho,V):
     q=1/2*rho*V**2
@@ -102,8 +103,8 @@ def Lift_distribution_for_any_load_case(CL_d,rho,V):
     L = []
     span_loc=[]
     q=q_calc(rho,V)
-    for i in range (0,26786):
-        span_location=i/1000
+    for i in range (0,2678):
+        span_location=i/100
         CL_value=lift_distribution_any_CL(CL_d,span_location)
         lift=CL_value*q*chord_length_interpolation(span_location)
         L.append(lift)
@@ -112,8 +113,8 @@ def Lift_distribution_for_any_load_case(CL_d,rho,V):
 def Drag_distribution_for_any_load_case(CL_d,rho,V):
     D=[]
     q=q_calc(rho,V)
-    for i in range (0,26786):
-        span_location=i/1000
+    for i in range (0,2678):
+        span_location=i/100
         CL_value=lift_distribution_any_CL(CL_d,span_location)
         CD_value=C_D0+CL_value**2/np.pi/e/Ar
         drag=CD_value*q*chord_length_interpolation(span_location)
@@ -122,12 +123,14 @@ def Drag_distribution_for_any_load_case(CL_d,rho,V):
 def Moment_distribution_for_any_load_case(CL_d,rho,V):
     M=[]
     q=q_calc(rho,V)
-    for i in range (0,26786):
-        span_location=i/1000
+    for i in range (0,2678):
+        span_location=i/100
         Cm_value=pitching_moment_distribution_any_CL(CL_d,span_location)
         moment=Cm_value*q*chord_length_interpolation(span_location)**2
         M.append(moment)
     return M
+
+
 lift_dist_spanwise,span_loc=Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
 drag_dist=Drag_distribution_for_any_load_case(0.7,0.31641,241.9574)
 moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
@@ -136,44 +139,70 @@ moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
 plt.plot(span_loc,lift_dist_spanwise)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/4000, adjustable='box')
-plt.show()
-
+#plt.show()
+''''
 #ploting the spanwise drag distribution
 plt.plot(span_loc,drag_dist)
 plt.xlim([-27,27])
 plt.gca().set_aspect(1/400, adjustable='box')
-plt.show()
+#plt.show()
 
 #ploting the spanwise moment distribution
 plt.plot(span_loc,moment_dist)
 plt.xlim([-27,27])
-plt.show()
-
+#plt.show()
+'''
 #NEW FUNCTIONS FOR INTEGRATING
 def Lift_for_integrating(x,CL_d,rho,V):
     q=q_calc(rho,V)
-    span_location=x/1000
+    span_location=x
     CL_value=lift_distribution_any_CL(CL_d,span_location)
     lift=CL_value*q*chord_length_interpolation(span_location)
     return lift
 def Drag_for_integrating(x,CL_d,rho,V):
     q = q_calc(rho, V)
-    span_location = x / 1000
+    span_location = x
     CL_value = lift_distribution_any_CL(CL_d, span_location)
     CD_value = C_D0 + CL_value ** 2 / np.pi / e / Ar
     drag = CD_value * q * chord_length_interpolation(span_location)
     return drag
 def Moment_for_integrating(x,CL_d,rho,V):
     q=q_calc(rho,V)
-    span_location=x/1000
+    span_location=x
     Cm_value=pitching_moment_distribution_any_CL(CL_d,span_location)
     moment=Cm_value*q*chord_length_interpolation(span_location)**2
     return moment
 
-total_lift,L_error=sp.integrate.quad(Lift_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
-total_drag,D_error=sp.integrate.quad(Drag_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
-total_moment,M_error=sp.integrate.quad(Moment_for_integrating,0,26.785,args=(0.7,0.31641,241.9574))
+#NORMAL FORCE CALCULATION (I'M DUMB)
+normal_force=[]
+def normal_force_for_integrating(x,CL_d,rho,V,n):
+    q=q_calc(rho,V)
+    span_location=x
+    CL_value = lift_distribution_any_CL(CL_d, span_location)
+    CD_value=C_D0 + CL_value ** 2 / np.pi / e / Ar
+    drag =n* CD_value * q * chord_length_interpolation(span_location)
+    lift = n*CL_value * q * chord_length_interpolation(span_location)
+    aoa=AOA(CL_d)
+    aoa=math.radians(aoa)
+    normal=math.cos(aoa)*lift+math.sin(aoa)*drag
+    return normal
+'''
+total_lift,L_error=sp.integrate.quad(Lift_for_integrating,0,26.786,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
+total_drag,D_error=sp.integrate.quad(Drag_for_integrating,0,26.786,args=(0.7,0.31641,241.9574),limit=50,epsabs=100)
+total_moment,M_error=sp.integrate.quad(Moment_for_integrating,0,26.786,args=(0.7,0.31641,241.9574),limit=50,epsabs=100)
+'''
 
-print(total_lift,L_error)
-print(total_drag,D_error)
-print(total_moment,M_error)
+'''''
+for i in np.arange(0,26.78,0.01):
+    normal_force_for_integrating(i, 0.7,0.31641,241.9574, 1)
+    
+
+#Testing shit
+#print(total_lift,L_error)
+plt.plot(span_loc,normal_force)
+plt.xlim([-27,27])
+plt.gca().set_aspect(1/4000, adjustable='box')
+plt.show()
+#print(total_drag,D_error)
+#print(total_moment,M_error)
+'''
