@@ -44,7 +44,7 @@ def moment_at_full_position(CL_d,rho,V,n):
     moment=[]
     shear=[]
     for i in np.arange(0,26.785,0.01):
-        res=shear_force_for_integrating(i, 0.7, 0.31641, 241.9574, 1)
+        res=shear_force_for_integrating(i, CL_d, rho, V, n)
         moment_total-=res*0.01
         position.append(i)
         shear.append(res)
