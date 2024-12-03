@@ -23,7 +23,7 @@ airfoil_xyy = np.load("Airfoil_geom.npy")
 possible_t = np.array([3.665, 3.264, 2.906, 2.588, 2.305, 2.053, 1.628, 1.291, 1.024, .812, .644, .511, .405, .312]) # in mm
 possible_x = np.arange(0.2, 0.7, 0.05)
 pos_string_num = np.arange(20, 40, 4) #based on Jeroen resource
-graphs = False
+graphs = True
 x_y_y = np.array(get_points(0.2, 0.45, 0.65, 1))
 geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
 x_vals = []
@@ -49,7 +49,7 @@ def I_xx(I_xx_root,x): #Assuming I_xx scales linearly with length, as thickness 
 
 shear = []
 bending = []
-n_points = 1 # decrease number for higher amount of points to integrate over (a.k.a. increase accuracy
+n_points = 10 # decrease number for higher amount of points to integrate over (a.k.a. increase accuracy
 with open("shear.txt", 'r') as f:
     count = 0
     for i in f:
@@ -57,13 +57,13 @@ with open("shear.txt", 'r') as f:
         count += 1
         if count % n_points == 0 or count == 1:
             shear.append(line)
-with open("bending copy.txt", 'r') as f:
-    count = 0
-    for i in f:
-        line = i.strip('\n')
-        count += 1
-        if count % n_points == 0 or count == 1:
-            bending.append(line)          
+# with open("bending copy.txt", 'r') as f:
+#     count = 0
+#     for i in f:
+#         line = i.strip('\n')
+#         count += 1
+#         if count % n_points == 0 or count == 1:
+#             bending.append(line)          
 x_vals = np.linspace(0,b/2,len(shear)) # This doesn't give completely accurate numbers but its slighty off since i didnt find a better method
 bending_x_vals = np.arange(0,b/2,1) # taken from bending.py (assuming since only 27 values are given in bending.txt)
 shear_interp_func = scipy.interpolate.interp1d(x_vals, shear, kind='quadratic', fill_value="extrapolate") #Unsure if quadratic is appropriate
@@ -89,7 +89,7 @@ def deflection(x):
 print('Maximum deflection is:', abs(deflection(b/2)), "; which is", abs(deflection(b/2)/(b/2) * 100), "% of the wingspan")
 end = time.time()
 print("integration took", end - start, "seconds")
-print('Integrated over', len(x_vals), 'intervals of x')
+print('Interpolated over', len(x_vals), 'intervals of x')
 print(bending)
 
 
