@@ -177,5 +177,6 @@ for i in np.arange(0.2, 0.5, 0.05): # iterating front spar pos (skipping every 0
                         x_y_y = get_points(i, j, k, 1)
                         root_geom = get_geom_from_points(x_y_y, [t for i in range(7)])
                         root_stringer = get_stringer_geom_norm(root_geom, n)
+                        
 
                         
