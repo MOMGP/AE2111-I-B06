@@ -62,7 +62,7 @@ def I_xx(x): # dummy ixx
 
 shear = []
 bending = []
-n_points = 50 # decrease number for higher amount of points to integrate over (a.k.a. increase accuracy)
+n_points = 50 # decrease number for higher amount of points to integrate over (a.k.a. increase accuracy
 with open("shear.txt", 'r') as f:
     count = 0
     for i in f:
@@ -79,8 +79,7 @@ with open("bending.txt", 'r') as f:
         print(count)
         if count % n_points == 0 or count == 1:
             shear.append(line)          
-x_vals = np.linspace(0,b/2,len(shear))
-# x_vals = [x for x in x_vals]
+x_vals = np.linspace(0,b/2,len(shear)) # This doesn't give completely accurate numbers but its slighty off since i didnt find a better method
 print(x_vals, len(x_vals))
 print(shear)
 # Create an interpolation function for x as a function of y
@@ -92,28 +91,27 @@ def shear_force(x):
     # result, _ = quad(load_distribution, 0, x, limit=200)  # Shear force is the integral of load
     return result
 def bending_moments(x): 
-    result = quad(shear_force,x,b/2) #+ bending
-#     # result, _ = quad(shear_force, 0, x, limit=500)  # Bending moment is the integral of shear force
+    result, _ = quad(shear_force,x,b/2) #+ bending #when i get it!!
     return result 
-# # def angle_of_rotation(x): # 
-#     result, _ = quad(lambda xi: bending_moment(xi) / (E * I_xx(x)), 0, x, limit=500)
-#     return result
-# # def deflection(x):
-#     result, _ = quad(angle_of_rotation,0,x)
-#     return result
+def angle_of_rotation(x): # 
+    result, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(x)), x,b/2, limit=50)
+    return result
+def deflection(x):
+    result, _ = quad(angle_of_rotation,x,b/2)
+    return result
 
 # Calculate and plot results
 x_vals = np.linspace(0, b/2, 20) #create # amount of values evenly spaced
 # load_vals = [load_distribution(x) for x in x_vals]
 shear_vals = [shear_force(x) for x in x_vals]
 moment_vals = [bending_moments(x) for x in x_vals]
-# angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
-# deflection_vals = [deflection(x) for x in x_vals] 
+angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
+deflection_vals = [deflection(x) for x in x_vals] 
 
 
 # # print('Angle of rotation is: ', angle_of_rotation(b/2), 'degrees or rad idk')
-# end = time.time()
-# print(end - start, "seconds")
+end = time.time()
+print(end - start, "seconds")
 
 
 plt.figure(figsize=(8, 4))
@@ -139,24 +137,23 @@ plt.ylabel("Moment (Nm)")
 plt.grid(alpha=0.3)
 plt.legend()
 
-# # plt.subplot(5, 1, 4) # bending moment can be added later aswell if needed :3
-# # plt.plot(x_vals, angle_of_rotation_vals, label="Deflection w(x)", color="purple")
-# # plt.xlabel("Position along the beam (m)")
-# # plt.ylabel("Deflection (m)")
-# # plt.grid(alpha=0.3)
-# # plt.legend()
+plt.subplot(5, 1, 4) # bending moment can be added later aswell if needed :3
+plt.plot(x_vals, angle_of_rotation_vals, label="Slope", color="purple")
+plt.xlabel("Position along the beam (m)")
+plt.ylabel("Slope (m)")
+# plt.grid(alpha=0.3)
+plt.legend()
+
+
+
+# Deflection
+plt.subplot(5, 1, 5) #bending moment can be added later aswell if needed :3
+plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
+plt.xlabel("Position along the beam (m)")
+plt.ylabel("Deflection (m)")
+plt.grid(alpha=0.3)
+plt.legend()
 plt.show()
-
-
-
-# # Deflection
-# #plt.subplot(1, 1, 1) bending moment can be added later aswell if needed :3
-# # plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
-# # plt.xlabel("Position along the beam (m)")
-# # plt.ylabel("Deflection (m)")
-# # plt.grid(alpha=0.3)
-# # plt.legend()
-# # plt.show()
 
 
 # def bending_stress(bending_moment, y_max, I_xx):
