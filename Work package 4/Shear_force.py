@@ -119,6 +119,7 @@ def shear_force_full_values(CL_d,rho,V,n):
         fout.write(str(shear_result))
         fout.write('\n')
 shear_force_full_values(0.7,0.31641,241.9574, 1)
+
 #print(shear_force_for_integrating(10,0.7,0.31641,241.9574,1))
 #print(shear_force)
 '''

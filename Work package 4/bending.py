@@ -55,7 +55,7 @@ def moment_at_full_position(CL_d,rho,V,n):
         moment_total+=shear[pos]*0.01
         fout.write(str(moment_total))
         fout.write('\n')
-moment_at_full_position(0.7,0.31641,241.9574, 1)
+
 '''
 def moment_at_position_updated(x):
     pos=int(x*100-1)
