@@ -188,5 +188,6 @@ plt.show()
 y = np.array(y)
 plt.plot(x,y)
 plt.plot([0,1], [1,2])
+
 plt.show()
 print("I'm going to kms if you dont run this, BITCH")

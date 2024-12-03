@@ -6,10 +6,10 @@ from numba import cuda, float32
 from matplotlib import pyplot as plt
 from scipy.integrate import dblquad, quad, quad_vec
 from get_points import get_points, get_geom_from_points
-from geometry_WP4_2 import centroid, moments_of_inertia, get_stringer_geom_norm,scaled_chord,scaled_length,centroid_distance
-# from Aero_loading_XFLR5 import normal_force_for_integrating
-# from bending import moment_at_full_position
-# from bending import bending_moment, S
+from geometry_WP4_2 import centroid, moments_of_inertia, get_stringer_geom_norm,scaled_chord,scaled_length,centroid_distance, get_points_along_spanwise
+from Aero_loading_XFLR5 import normal_force_for_integrating
+from bending import moment_at_full_position
+from Shear_force import shear_force_full_values
 
 C_r = 7.63 #m
 taper = 0.3 
@@ -22,9 +22,9 @@ rho = 2780 # kg/m3
 I_xx_r = 0.01 # dummy value 
 stringer_area = None
 # airfoil_xyy = np.load("Airfoil_geom.npy")
-# possible_t = np.array([3.665, 3.264, 2.906, 2.588, 2.305, 2.053, 1.628, 1.291, 1.024, .812, .644, .511, .405, .312]) # in mm
-# possible_x = np.arange(0.2, 0.7, 0.05)
-# pos_string_num = np.arange(20, 40, 4) #based on Jeroen resource
+possible_t = np.array([3.665, 3.264, 2.906, 2.588, 2.305, 2.053, 1.628, 1.291, 1.024, .812, .644, .511, .405, .312]) # in mm
+possible_x = np.arange(0.2, 0.7, 0.05)
+pos_string_num = np.arange(20, 40, 4) #based on Jeroen resource
 graphs = False
 # x_y_y = np.array(get_points(0.2, 0.45, 0.65, 1))
 # geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
@@ -79,8 +79,8 @@ def shear_force(x): #Just defines the interpolation function for the shear force
 def bending_moments(x): #Integrates the interpolated function of shear, and adds the interpolation functions of bending provided by bending.py
     # result, _ = quad(shear_force,x,b/2)
     return bending_interp_func(x) * 1000 #when i get it!!
-aof_0, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(I_xx_r,xi)), 0,b/2, limit=50) # integration constant for angle of rotation
-def angle_of_rotation(x): # does the integral of M(x) / E * I(x) which is the slope 
+def angle_of_rotation(x, root_geom, root_str, end_third_spar, truncated): # does the integral of M(x) / E * I(x) which is the slope 
+    aof_0, _ = quad(lambda xi: bending_moments(xi) / (E * moments_of_inertia(root_geom, root_str)), 0,b/2, limit=50) # integration constant for angle of rotation
     result, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(I_xx_r,xi)), x,b/2, limit=50)
     return result - aof_0
 def_0, _ = quad(angle_of_rotation,0,b/2,limit=50) # integration constant for deflection
@@ -105,57 +105,57 @@ print('Interpolated over', len(x_vals), 'intervals of x')
 
 
 # Following lines are not necessary for iterating the design, this is purely for analytical purposes
-if graphs == True:
-    x_vals = np.linspace(0,b/2,100)
-    shear_vals = [shear_force(x) for x in x_vals]
-    moment_vals = [bending_moments(x) for x in x_vals]
-    angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
-    deflection_vals = [deflection(x) for x in x_vals] 
-    I_xx = [I_xx(I_xx_r,x) for x in x_vals]
-    end = time.time()
-    print(end - start, "seconds")
+# if graphs == True:
+#     x_vals = np.linspace(0,b/2,100)
+#     shear_vals = [shear_force(x) for x in x_vals]
+#     moment_vals = [bending_moments(x) for x in x_vals]
+#     angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
+#     deflection_vals = [deflection(x) for x in x_vals] 
+#     I_xx = [I_xx(I_xx_r,x) for x in x_vals]
+#     end = time.time()
+#     print(end - start, "seconds")
 
 
-    plt.figure(figsize=(12, 6))
+#     plt.figure(figsize=(12, 6))
 
-    # I_xx vals
-    plt.subplot(5, 1, 5)
-    plt.plot(x_vals, I_xx, label="I_xx", color="yellow")
-    plt.ylabel("I_xx")
-    plt.grid(alpha=0.3)
-    plt.legend()
+#     # I_xx vals
+#     plt.subplot(5, 1, 5)
+#     plt.plot(x_vals, I_xx, label="I_xx", color="yellow")
+#     plt.ylabel("I_xx")
+#     plt.grid(alpha=0.3)
+#     plt.legend()
 
-    # Shear force
-    plt.subplot(5, 1, 1)
-    plt.plot(x_vals, shear_vals, label="Shear Force V(x)", color="green")
-    plt.ylabel("Shear Force (N)")
-    plt.grid(alpha=0.3)
-    plt.legend()
+#     # Shear force
+#     plt.subplot(5, 1, 1)
+#     plt.plot(x_vals, shear_vals, label="Shear Force V(x)", color="green")
+#     plt.ylabel("Shear Force (N)")
+#     plt.grid(alpha=0.3)
+#     plt.legend()
 
-    # Bending moment
-    plt.subplot(5, 1, 2)
-    plt.plot(x_vals, moment_vals, label="Bending Moment M(x)", color="red")
-    plt.ylabel("Moment (Nm)")
-    plt.grid(alpha=0.3)
-    plt.legend()
+#     # Bending moment
+#     plt.subplot(5, 1, 2)
+#     plt.plot(x_vals, moment_vals, label="Bending Moment M(x)", color="red")
+#     plt.ylabel("Moment (Nm)")
+#     plt.grid(alpha=0.3)
+#     plt.legend()
 
-    plt.subplot(5, 1, 3) # bending moment can be added later aswell if needed :3
-    plt.plot(x_vals, angle_of_rotation_vals, label="Slope dv/dx", color="purple")
-    plt.xlabel("Position along the beam (m)")
-    plt.ylabel("Slope (m)")
-    # plt.grid(alpha=0.3)
-    plt.legend()
+#     plt.subplot(5, 1, 3) # bending moment can be added later aswell if needed :3
+#     plt.plot(x_vals, angle_of_rotation_vals, label="Slope dv/dx", color="purple")
+#     plt.xlabel("Position along the beam (m)")
+#     plt.ylabel("Slope (m)")
+#     # plt.grid(alpha=0.3)
+#     plt.legend()
 
 
 
-    # Deflection
-    plt.subplot(5, 1, 4) #bending moment can be added later aswell if needed :3
-    plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
-    plt.xlabel("Position along the beam (m)")
-    plt.ylabel("Deflection (m)")
-    plt.grid(alpha=0.3)
-    plt.legend()
-    plt.show()
+#     # Deflection
+#     plt.subplot(5, 1, 4) #bending moment can be added later aswell if needed :3
+#     plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
+#     plt.xlabel("Position along the beam (m)")
+#     plt.ylabel("Deflection (m)")
+#     plt.grid(alpha=0.3)
+#     plt.legend()
+#     plt.show()
 
 def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
@@ -165,17 +165,21 @@ def scaled_length(length,chord):
     scaled_length = length*chord/C_r
     return(scaled_length)
 
+
 #output = [mass, twist_ang, deflection, spar_pts, thicknesses, num_stringer, truncated, end_third]
 #inputs = spar_pos, thicknesses, num_stringer, end_third, truncated
 pos_combs = []
-# for i in np.arange(0.2, 0.5, 0.05): # iterating front spar pos (skipping every 0.05 space)
-#     for j in np.arange(i, 0.65, 0.05): #iterating second spar pos (skipping every 0.05 space)
-#         for k in np.arange(j, 0.75, 0.05): # iterating third spar pos (skipping every 0.05 space)
-#             for t in possible_t:
-#                 for n in pos_string_num:
-#                     for thd_end in np.arange(0.05*b, b/4, 0.025*b): #iterating over end of third spar pos
-#                         x_y_y = get_points(i, j, k, 1)
-#                         root_geom = get_geom_from_points(x_y_y, [t for i in range(7)])
-#                         root_stringer = get_stringer_geom_norm(root_geom, n)
+
+for i in np.arange(0.2, 0.5, 0.05): # iterating front spar pos (skipping every 0.05 space)
+    for j in np.arange(i, 0.65, 0.05): #iterating second spar pos (skipping every 0.05 space)
+        for k in np.arange(j, 0.75, 0.05): # iterating third spar pos (skipping every 0.05 space)
+            for t in possible_t:
+                for n in pos_string_num:
+                    for thd_end in np.arange(0.05*b, b/4, 0.025*b): #iterating over end of third spar pos
+                        x_y_y = get_points(i, j, k, 1)
+                        root_geom = get_geom_from_points(x_y_y, [t for i in range(7)])
+                        root_stringer = get_stringer_geom_norm(root_geom, n)
+                        deflection(b/2)
+                            
 
                         

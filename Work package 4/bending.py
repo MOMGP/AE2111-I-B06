@@ -38,7 +38,7 @@ def moment_at_position(x,CL_d,rho,V,n):
 
 #START OF MOMENT CALCULATION PAPA MARIO TAKE THIS IN YOUR CODE
 
-def moment_at_full_position(CL_d,rho,V,n):
+def moment_at_full_position():
     moment_total=0
     position=[]
     moment=[]
