@@ -4,10 +4,9 @@ import numpy as np
 import scipy as sp
 from scipy import integrate
 from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
-#from geometry_WP4_2 import centroid
+#from geometry_WP4_2 import centroid_x, centroid_y
 
 #Centroid coordinate system and implement into the code
-#Could be more accurate with the moment arms of the torque of the thrust and weight of the engine
 #Change internal torque to positive if necessary
 
 weight_engine = 9630*9.81 #N
@@ -37,8 +36,20 @@ def moment_arm_normal_spanwise(x):
     moment_arm_normal_torque = chord_at_span_loc/4 #assuming normal force acting at c/4 and centroid at c/2
     return moment_arm_normal_torque
 
+
 torque_engine_thrust = Thrust_per_engine_perpendicular * 2.085 #based on technical drawing I am assuming that the thrust acts at center of engine which is assumed to be one radius of the engine from the center of the wingbox, which is 2.085 m. Centroid is assumed at c/2 on the camber line.
 torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))))/2 + 3.5) #based on technical drawing I am assuming that the weight of the engine acts at 3.5 meter in front of LE, centroid is assumed at c/2
+
+#torque_engine_weight = weight_engine * (3.5 + centroid_x)
+#torque_engine_thrust = Thrust_per_engine_perpendicular * (2.085 + centroid_y)
+
+#def moment_arm_normal_spanwise(x):
+#    chord_at_span_loc = C_r*(1-((1-taper)*(x/(b/2))))
+#    moment_arm_normal_torque = centroid_x - (chord_at_span_loc/4) # assuming normal force acting at c/4 and centroid at centroid_x from LE
+#    return moment_arm_normal_torque
+
+
+
 
 # Function returns the internal torque due to the quarter chord pitching moment
 def internal_quarter_chord_torque_spanwise(y, CL_d, rho, V):
@@ -98,8 +109,8 @@ def internal_torque_diagram (CL_d, rho, V, n):
     plt.title("Internal Torque distribution function")
     plt.show()
 
-
-# ------------------------------------------------------------------------------------------------------------------------
+internal_torque_diagram(0.7,0.31641,241.9574,1)
+# -------------------------------------------------------------------------------------------------------------------------
 
 
 '''
@@ -130,7 +141,7 @@ plt.ylabel("Torque [Nm]")
 plt.title("Total Torque distribution")
 plt.show()
 '''
-# ------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------
 '''
 #TORQUE ONLY FOR NORMAL AERODYNAMIC FORCE
 

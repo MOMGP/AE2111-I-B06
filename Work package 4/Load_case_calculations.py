@@ -6,7 +6,7 @@ import Aero_loading_XFLR5
 import math
 
 CL_crit=[]
-Speed_crit=[]
+V_crit=[]
 Load_factor_crit=[]
 Rho_crit=[]
 #critical load cases
@@ -35,8 +35,16 @@ for i in range(len(Speed)):
 #crit load cases
 for i in range(len(Speed)):
     if i==20 or i==21 or i==25 or i==26:
-        print(CL_load_case[i], Speed[i], Load_factor[i], rho_load_case[i])
         CL_crit.append(CL_load_case[i])
-        Speed_crit.append(Speed[i])
+        V_crit.append(Speed[i])
         Load_factor_crit.append(Load_factor[i])
         Rho_crit.append(rho_load_case[i])
+CL_crit=np.array(CL_crit)
+V_crit=np.array(V_crit)
+Load_factor_crit=np.array(Load_factor_crit)
+Rho_crit=np.array(Rho_crit)
+
+np.save('Load_case_arrays\\CL_crit.npy',CL_crit)
+np.save('Load_case_arrays\\V_crit.npy',V_crit)
+np.save('Load_case_arrays\\Load_factor_crit.npy',Load_factor_crit)
+np.save('Load_case_arrays\\Rho_crit.npy',Rho_crit)
