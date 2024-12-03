@@ -47,7 +47,7 @@ torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))
 
 #def moment_arm_normal_spanwise(x):
 #    chord_at_span_loc = C_r*(1-((1-taper)*(x/(b/2))))
-#    moment_arm_normal_torque = centroid_x - (chord_at_span_loc/4) #assuming normal force acting at c/4 and centroid at centroid_x from LE
+#    moment_arm_normal_torque = centroid_x - (chord_at_span_loc/4) # assuming normal force acting at c/4 and centroid at centroid_x from LE
 #    return moment_arm_normal_torque
 
 
