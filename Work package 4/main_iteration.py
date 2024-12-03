@@ -78,14 +78,12 @@ with open("bending.txt", 'r') as f:
         count += 1
         print(count)
         if count % n_points == 0 or count == 1:
-            shear.append(line)          
+            bending.append(line)          
 x_vals = np.linspace(0,b/2,len(shear)) # This doesn't give completely accurate numbers but its slighty off since i didnt find a better method
-print(x_vals, len(x_vals))
-print(shear)
-# Create an interpolation function for x as a function of y
+bending_x_vals = np.arange(0,b/2,1)
+print(bending)
+# Create an interpolation function for shear as a function of y-span "x"
 interp_func = scipy.interpolate.interp1d(x_vals, shear, kind='quadratic', fill_value="extrapolate")
-shear_int = interp_func(2.23)
-print(shear_int)
 def shear_force(x): 
     result = interp_func(x)
     # result, _ = quad(load_distribution, 0, x, limit=200)  # Shear force is the integral of load
@@ -96,20 +94,22 @@ def bending_moments(x):
 aof_0, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(xi)), 0,b/2, limit=50)
 def angle_of_rotation(x): # 
     result, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(xi)), x,b/2, limit=50)
-    return result
-# def deflection(x):
+    return result - aof_0
+def_0, _ = quad(angle_of_rotation,0,b/2,limit=50)
+def deflection(x):
     result, _ = quad(angle_of_rotation,x,b/2)
-    return result
+    return result - def_0
 print(aof_0, "asdijaoidjasoij")
+print('Maximum deflection is: ', abs(deflection(b/2)), ", which is ", abs(deflection(b/2)/(b/2) * 100), "% of the wingspan")
 # Calculate and plot results
 # load_vals = [load_distribution(x) for x in x_vals]
+x_vals = np.linspace(0,b/2,10)
 shear_vals = [shear_force(x) for x in x_vals]
 moment_vals = [bending_moments(x) for x in x_vals]
 angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
-# deflection_vals = [deflection(x) for x in x_vals] 
+deflection_vals = [deflection(x) for x in x_vals] 
 
 
-# # print('Angle of rotation is: ', angle_of_rotation(b/2), 'degrees or rad idk')
 end = time.time()
 print(end - start, "seconds")
 
@@ -124,21 +124,21 @@ plt.figure(figsize=(8, 4))
 # plt.legend()
 
 # Shear force
-plt.subplot(5, 1, 2)
+plt.subplot(4, 1, 1)
 plt.plot(x_vals, shear_vals, label="Shear Force V(x)", color="green")
 plt.ylabel("Shear Force (N)")
 plt.grid(alpha=0.3)
 plt.legend()
 
 # Bending moment
-plt.subplot(5, 1, 3)
+plt.subplot(4, 1, 2)
 plt.plot(x_vals, moment_vals, label="Bending Moment M(x)", color="red")
 plt.ylabel("Moment (Nm)")
 plt.grid(alpha=0.3)
 plt.legend()
 
-plt.subplot(5, 1, 4) # bending moment can be added later aswell if needed :3
-plt.plot(x_vals, angle_of_rotation_vals, label="Slope", color="purple")
+plt.subplot(4, 1, 3) # bending moment can be added later aswell if needed :3
+plt.plot(x_vals, angle_of_rotation_vals, label="Slope dv/dx", color="purple")
 plt.xlabel("Position along the beam (m)")
 plt.ylabel("Slope (m)")
 # plt.grid(alpha=0.3)
@@ -147,12 +147,12 @@ plt.legend()
 
 
 # Deflection
-# plt.subplot(5, 1, 5) #bending moment can be added later aswell if needed :3
-# plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
-# plt.xlabel("Position along the beam (m)")
-# plt.ylabel("Deflection (m)")
-# plt.grid(alpha=0.3)
-# plt.legend()
+plt.subplot(4, 1, 4) #bending moment can be added later aswell if needed :3
+plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
+plt.xlabel("Position along the beam (m)")
+plt.ylabel("Deflection (m)")
+plt.grid(alpha=0.3)
+plt.legend()
 plt.show()
 
 
