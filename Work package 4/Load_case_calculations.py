@@ -39,3 +39,12 @@ for i in range(len(Speed)):
         V_crit.append(Speed[i])
         Load_factor_crit.append(Load_factor[i])
         Rho_crit.append(rho_load_case[i])
+CL_crit=np.array(CL_crit)
+V_crit=np.array(V_crit)
+Load_factor_crit=np.array(Load_factor_crit)
+Rho_crit=np.array(Rho_crit)
+
+np.save('Load_case_arrays\\CL_crit.npy',CL_crit)
+np.save('Load_case_arrays\\V_crit.npy',V_crit)
+np.save('Load_case_arrays\\Load_factor_crit.npy',Load_factor_crit)
+np.save('Load_case_arrays\\Rho_crit.npy',Rho_crit)
