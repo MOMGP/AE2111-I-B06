@@ -96,6 +96,8 @@ def shear_force_for_integrating(x,CL_d,rho,V,n):
     if i <= 9.37:
         shear_result = (shear_result + 94.4703)
     return shear_result
+
+
 def shear_force_full_values(CL_d,rho,V,n):
     fout = open("shear.txt", "w")
     for i in np.arange(0,26.785,0.01):

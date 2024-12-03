@@ -36,7 +36,7 @@ def moment_at_position(x,CL_d,rho,V,n):
     return moment_result
 
 
-#START OF SHEAR CALCULATION PAPA MARIO TAKE THIS IN YOUR CODE
+#START OF MOMENT CALCULATION PAPA MARIO TAKE THIS IN YOUR CODE
 
 def moment_at_full_position(CL_d,rho,V,n):
     moment_total=0
