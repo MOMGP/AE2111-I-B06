@@ -306,7 +306,7 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
         ax.set_ylim3d(0, 25)
         ax.set_zlim3d(0, 25)
         
-    plt.show()
+    # plt.show()
 
 profile_root = [
     [[0, 0], [0, 1], [0.01]],

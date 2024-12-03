@@ -35,23 +35,28 @@ def moment_at_position(x,CL_d,rho,V,n):
     print(moment_result)
     return moment_result
 
-#START OF SHEAR CALCULATION PAPA MARIO TAKE THIS IN YOUR CODE
-moment_total=0
-position=[]
-moment=[]
-shear=[]
-for i in np.arange(0,26.785,0.01):
-    res=shear_force_for_integrating(i, 0.7, 0.31641, 241.9574, 1)
-    moment_total-=res*0.01
-    position.append(i)
-    shear.append(res)
 
-for i in np.arange(0,26.785,0.01):
-    moment.append(moment_total)
-    pos=int((i*100))
-    moment_total+=shear[pos]*0.01
-    fout.write(str(moment_total))
-    fout.write('\n')
+#START OF MOMENT CALCULATION PAPA MARIO TAKE THIS IN YOUR CODE
+
+def moment_at_full_position(CL_d,rho,V,n):
+    moment_total=0
+    position=[]
+    moment=[]
+    shear=[]
+    for i in np.arange(0,26.785,0.01):
+        res=shear_force_for_integrating(i, 0.7, 0.31641, 241.9574, 1)
+        moment_total-=res*0.01
+        position.append(i)
+        shear.append(res)
+
+    for i in np.arange(0,26.785,0.01):
+        moment.append(moment_total)
+        pos=int((i*100))
+        moment_total+=shear[pos]*0.01
+        fout.write(str(moment_total))
+        fout.write('\n')
+
+
 '''
 def moment_at_position_updated(x):
     pos=int(x*100-1)
