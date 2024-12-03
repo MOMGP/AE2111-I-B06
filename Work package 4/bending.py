@@ -56,7 +56,6 @@ def moment_at_full_position(CL_d,rho,V,n):
         fout.write(str(moment_total))
         fout.write('\n')
 
-
 '''
 def moment_at_position_updated(x):
     pos=int(x*100-1)
