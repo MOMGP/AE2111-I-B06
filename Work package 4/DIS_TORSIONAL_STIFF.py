@@ -153,7 +153,6 @@ def get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond
     return tor_stiff
     #     y.append(tor_stiff)#h,a,b,c,d,t1,t2,t3,t4
     # return y
-    return 
 span = 2*26.785
 spar1_x=0.2
 spar2_x=0.5
@@ -185,7 +184,7 @@ x = np.arange(0,hws,0.5)
 y = []
 for i in x:
     y.append(get_torr_stiff_list(root_geom, [[[0,0],0]], span/6, True, i))
-
+plt.show()
 y = np.array(y)
 plt.plot(x,y)
 plt.plot([0,1], [1,2])

@@ -306,7 +306,7 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
         ax.set_ylim3d(0, 25)
         ax.set_zlim3d(0, 25)
         
-    # plt.show()
+    plt.show()
 
 profile_root = [
     [[0, 0], [0, 1], [0.01]],
@@ -368,7 +368,7 @@ y_vals = []
 # plt.plot(x_vals, y_vals)
 # plt.show()
 
-plot3d_geom(root_geom, stringers_norm, b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
+#plot3d_geom(root_geom, stringers_norm, b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
 
-root_pts, root_stringers = get_points_along_spanwise(root_geom, stringers_norm, 0, b/6)
-print(moments_of_inertia(root_pts, root_stringers)[0])
+#root_pts, root_stringers = get_points_along_spanwise(root_geom, stringers_norm, 0, b/6)
+#print(moments_of_inertia(root_pts, root_stringers)[0])
