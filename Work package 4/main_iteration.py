@@ -2,10 +2,11 @@ import numpy as np
 import math
 import time
 import scipy
+from numba import cuda, float32
 from matplotlib import pyplot as plt
 from scipy.integrate import dblquad, quad, quad_vec
 from get_points import get_points, get_geom_from_points
-from geometry_WP4_2 import centroid, moments_of_inertia,scaled_chord,scaled_length,centroid_distance
+from geometry_WP4_2 import centroid, moments_of_inertia, get_stringer_geom_norm,scaled_chord,scaled_length,centroid_distance
 from Aero_loading_XFLR5 import normal_force_for_integrating
 # from bending import bending_moment, S
 
@@ -155,4 +156,26 @@ if graphs == True:
     plt.legend()
     plt.show()
 
-    
+print('Angle of rotation is: ', angle_of_rotation(b/2 * 180 / math.pi), 'degrees')
+def bending_stress(bending_moment, y_max, I_xx):
+    sigma = (bending_moment * y_max)/I_xx
+    return(sigma) 
+
+def scaled_length(length,chord):
+    scaled_length = length*chord/C_r
+    return(scaled_length)
+
+#output = [mass, twist_ang, deflection, spar_pts, thicknesses, num_stringer, truncated, end_third]
+#inputs = spar_pos, thicknesses, num_stringer, end_third, truncated
+pos_combs = []
+for i in np.arange(0.2, 0.5, 0.05): # iterating front spar pos (skipping every 0.05 space)
+    for j in np.arange(i, 0.65, 0.05): #iterating second spar pos (skipping every 0.05 space)
+        for k in np.arange(j, 0.75, 0.05): # iterating third spar pos (skipping every 0.05 space)
+            for t in possible_t:
+                for n in pos_string_num:
+                    for thd_end in np.arange(0.05*b, b/4, 0.025*b): #iterating over end of third spar pos
+                        x_y_y = get_points(i, j, k, 1)
+                        root_geom = get_geom_from_points(x_y_y, [t for i in range(7)])
+                        root_stringer = get_stringer_geom_norm(root_geom, n)
+
+                        
