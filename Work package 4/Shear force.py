@@ -24,19 +24,8 @@ internal_shear_force = []
 
 def half_span(b):
     L = b/2
-    return L
+    return 
 
-#from XFLR5
-#using x-dir as along the span
-#def integrand(x):
- #   return Lift_distribution_for_any_load_case
-
-'''
-#integrating the loading distribution
-x = Symbol('x')
-def shear_integration(t):
-    return integrate(t, x)
-    '''
 #-------------********-------------*********------------*********-------------********-------------*********------------*********#
 '''
 def step(y):          # Shear force step function            
@@ -73,9 +62,7 @@ shearequation = shear_integration(2*x)
         internal_shear_force.append(shearequation.subs(x, var_sub)-step(y_position))
         """
     
-
-
-# print(Lift_for_integrating(26.785,0.7,0.31641,241.9574))
+#-------------********-------------*********------------*********-------------********-------------*********------------*********#
 
 lift, span_loc = Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
 shear_force = []
