@@ -93,20 +93,20 @@ def shear_force(x):
 def bending_moments(x): 
     result, _ = quad(shear_force,x,b/2) #+ bending #when i get it!!
     return result 
+aof_0, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(xi)), 0,b/2, limit=50)
 def angle_of_rotation(x): # 
-    result, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(x)), x,b/2, limit=50)
+    result, _ = quad(lambda xi: bending_moments(xi) / (E * I_xx(xi)), x,b/2, limit=50)
     return result
-def deflection(x):
+# def deflection(x):
     result, _ = quad(angle_of_rotation,x,b/2)
     return result
-
+print(aof_0, "asdijaoidjasoij")
 # Calculate and plot results
-x_vals = np.linspace(0, b/2, 20) #create # amount of values evenly spaced
 # load_vals = [load_distribution(x) for x in x_vals]
 shear_vals = [shear_force(x) for x in x_vals]
 moment_vals = [bending_moments(x) for x in x_vals]
 angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
-deflection_vals = [deflection(x) for x in x_vals] 
+# deflection_vals = [deflection(x) for x in x_vals] 
 
 
 # # print('Angle of rotation is: ', angle_of_rotation(b/2), 'degrees or rad idk')
@@ -147,12 +147,12 @@ plt.legend()
 
 
 # Deflection
-plt.subplot(5, 1, 5) #bending moment can be added later aswell if needed :3
-plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
-plt.xlabel("Position along the beam (m)")
-plt.ylabel("Deflection (m)")
-plt.grid(alpha=0.3)
-plt.legend()
+# plt.subplot(5, 1, 5) #bending moment can be added later aswell if needed :3
+# plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
+# plt.xlabel("Position along the beam (m)")
+# plt.ylabel("Deflection (m)")
+# plt.grid(alpha=0.3)
+# plt.legend()
 plt.show()
 
 
