@@ -73,7 +73,6 @@ total_normal,err_normal=sp.integrate.quad(normal_force_for_integrating,0,26.785,
 #print(total_lift)
 fout=open("shear.txt", "w")
 for i in np.arange(0,26.78,0.01):
-    #shear_result,L_error_result=sp.integrate.quad(Lift_for_integrating,0,i,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
     normal_int,err_normal=sp.integrate.quad(normal_force_for_integrating,i,26.785,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
 
     shear_result= (-normal_int)/1000
