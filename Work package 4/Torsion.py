@@ -8,7 +8,7 @@ from geometry_WP4_2 import centroid, wingbox, stringers
 
 #Centroid coordinate system and implement into the code
 #Could be more accurate with the moment arms of the torque of the thrust and weight of the engine
-# Change internal torque to positive if necessary
+#Change internal torque to positive if necessary
 
 weight_engine = 9630*9.81 #N
 Thrust_per_engine = 467060 #N
