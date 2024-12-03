@@ -112,7 +112,7 @@ shear_force_full_values(0.7,0.31641,241.9574, 1)
 
 plt.figure()
 plt.plot(span_loc, shear_force, label="Shear Force",color='purple')
-plt.plot([0,0], [0, shear_force[0]], color='purple')
+#plt.plot([0,0], [0, shear_force[0]], color='purple')
 plt.xlabel("spanwise location")
 plt.ylabel("shear force")
 plt.title("shear force dist.")
