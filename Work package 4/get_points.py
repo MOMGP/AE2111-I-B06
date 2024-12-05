@@ -37,7 +37,6 @@ def get_airfoil(input_file):
 def get_points(length_1, length_2, length_3, chord):
     wingbox_chords = []
     airfoil_geometry = np.load('Airfoil_geom.npy') #get airfoil geometry
-
     length_1 = length_1/chord
     length_2 = length_2/chord
     length_3 = length_3/chord
@@ -71,14 +70,24 @@ def get_points(length_1, length_2, length_3, chord):
     return wingbox_chords
 
 def get_geom_from_points(x_y_y, thicknesses):
-    
+    """
+    Geometry:
+    ______________4_____________ ______________5_____________ 
+    |                            |                            |
+    |                            |                            |
+    |                            |                            |
+    1                            3                            6
+    |                            |                            |
+    |                            |                            |
+    |_____________2______________|_____________7______________| 
+
+
+    """
     plates = []
-    for i in range(3):
-        if (i%2 ==0):
-            plates.append([x_y_y[i], x_y_y[i+1], thicknesses[i]])
-        else:
-            plates.append([x_y_y[i], x_y_y[i+2], thicknesses[i]])
-    plates.append([ x_y_y[2],  x_y_y[0], thicknesses[3]])
+    plates.append([x_y_y[0], x_y_y[1], thicknesses[0]])
+    plates.append([x_y_y[1], x_y_y[3], thicknesses[1]])
+    plates.append([x_y_y[2], x_y_y[3], thicknesses[2]])
+    plates.append([x_y_y[2],  x_y_y[0], thicknesses[3]])
     if len(x_y_y)!=4:
         plates.append([ x_y_y[2], x_y_y[4], thicknesses[4]])
         plates.append([ x_y_y[4], x_y_y[5], thicknesses[5]])

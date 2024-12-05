@@ -92,7 +92,7 @@ def shear_force_for_integrating(x,CL_d,rho,V,n):
     normal_int,err_normal=sp.integrate.quad(normal_force_for_integrating,x,26.785,args=(CL_d,rho,V,n),limit=50, epsabs=100)
     shear_result= (-normal_int)/1000
 
-    if i <= 9.37:
+    if x <= 9.37:
         shear_result = (shear_result + 94.4703)
     return shear_result
 

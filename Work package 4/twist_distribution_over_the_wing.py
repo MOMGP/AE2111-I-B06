@@ -2,10 +2,11 @@
 import scipy as sp
 import numpy as np
 from scipy import integrate
-from Torsion import internal_torque_at_x
+#from Torsion import internal_torque_at_x
 from get_points import get_points,get_geom_from_points
 from DIS_TORSIONAL_STIFF import get_torr_stiff_list
 from matplotlib import pyplot as plt
+import time
 cases = ["CL", "n", "rho", "V"]
 #𝑑θ/𝑑𝑦 = 𝑇(𝑦)/𝐺𝐽(𝑦)
 def rot(x, case,norm_wing_box_root, norm_stringers, end_third_spar, cond):
@@ -22,15 +23,13 @@ def twist_angle(case, norm_wing_box_root, norm_stringers, end_third_spar, cond):
     previous_val =0
     for i in range(0,26785,500):
         step = i*0.001
-        temp = rot(step, case,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+        temp = rot(step, case,norm_wing_box_root, norm_stringers, end_third_spar, cond)        
         sum+=(previous_val+temp)*0.5*0.5
         previous_val = temp
         # result =sp.integrate.quad(lambda x, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond: rot(x, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond), 0,step,args=(CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond))
         # twist.append(result)
-        print(sum)
         twist.append(sum)
     return twist
-print('j')
 span = 2*26.785
 spar1_x=0.2
 spar2_x=0.5
@@ -52,11 +51,11 @@ n = 1
 
 #ploting 
 hws = 26.785
-x = np.arange(0,hws,0.5)
-y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
-plt.plot(x,y)
-plt.title("Tin is a little gay boy")
-plt.show()
+# x = np.arange(0,hws,0.5)
+# y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
+# plt.plot(x,y)
+# plt.title("Tin is a little gay boy")
+# plt.show()
 
 
 
