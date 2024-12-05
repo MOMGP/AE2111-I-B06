@@ -67,8 +67,8 @@ with open("Work package 4\\bending.txt", 'r') as f:
         if count % n_points == 0 or count == 1:
             bending.append(line)         
 x_vals = np.linspace(0,b/2,len(shear)) # This doesn't give completely accurate numbers but its slighty off (~1%) since i didnt find a better method
-bending_x_vals = np.linspace(0,b/2,len(bending)) # taken from bending.py (assuming since only 27 (x = 0-26) values are given in bending.txt)
-shear_interp_func = scipy.interpolate.interp1d(x_vals, shear, kind='quadratic', fill_value="extrapolate") #Unsure if quadratic is appropriate
+bending_x_vals = np.linspace(0,b/2,len(bending)) # look comment above
+shear_interp_func = scipy.interpolate.interp1d(x_vals, shear, kind='quadratic', fill_value="extrapolate") #Unsure if quadratic is appropriate but it is 30x faster
 bending_interp_func = scipy.interpolate.interp1d(bending_x_vals, bending, kind='quadratic', fill_value="extrapolate")
 #I used interpolation functions to simplify the integrations + dont know any other method to form a function out of the data
 start = time.time()
