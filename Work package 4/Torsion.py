@@ -49,8 +49,6 @@ torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))
 #    return moment_arm_normal_torque
 
 
-
-
 # Function returns the internal torque due to the quarter chord pitching moment
 def internal_quarter_chord_torque_spanwise(y, CL_d, rho, V):
     total_quarter_pitching_moment_coefficient, err_total_quarter_pitching_moment_coefficient = sp.integrate.quad(pitching_moment_distribution_any_CL,0,y,args=(CL_d),limit=50, epsabs=100)
@@ -78,7 +76,7 @@ def internal_torque_at_x(x, CL_d, rho, V, n):
         torque_result = torque_result + internal_quarter_chord_torque_spanwise(i, CL_d, rho, V)
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-        torque_result = (-total_torque + torque_result) #Nm
+        torque_result = (total_torque - torque_result) #Nm
         torque_list.append(torque_result)
         torque_error_list.append(torque_error_result)
     return torque_list[-1]
@@ -96,7 +94,7 @@ def internal_torque_diagram (CL_d, rho, V, n):
         torque_result += internal_quarter_chord_torque_spanwise(i, CL_d, rho, V)
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-        torque_result = (-total_torque + torque_result)  # Nm # If sign convention must be changed to positive internal torque: torque_result = (total_torque - torque_result)
+        torque_result = (total_torque - torque_result)  # Nm # If sign convention must be changed to negative internal torque: torque_result = (-total_torque + torque_result)
         torque_list.append(torque_result)
         torque_result = str(torque_result)
         fout.write(torque_result)
