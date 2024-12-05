@@ -76,7 +76,7 @@ def internal_torque_at_x(x, CL_d, rho, V, n):
         torque_result = torque_result + internal_quarter_chord_torque_spanwise(i, CL_d, rho, V)
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-        torque_result = (-total_torque + torque_result) #Nm
+        torque_result = (total_torque - torque_result) #Nm
         torque_list.append(torque_result)
         torque_error_list.append(torque_error_result)
     return torque_list[-1]
@@ -94,7 +94,7 @@ def internal_torque_diagram (CL_d, rho, V, n):
         torque_result += internal_quarter_chord_torque_spanwise(i, CL_d, rho, V)
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-        torque_result = (-total_torque + torque_result)  # Nm # If sign convention must be changed to positive internal torque: torque_result = (total_torque - torque_result)
+        torque_result = (total_torque - torque_result)  # Nm # If sign convention must be changed to negative internal torque: torque_result = (-total_torque + torque_result)
         torque_list.append(torque_result)
         torque_result = str(torque_result)
         fout.write(torque_result)
