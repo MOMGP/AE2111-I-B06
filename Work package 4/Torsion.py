@@ -49,8 +49,6 @@ torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))
 #    return moment_arm_normal_torque
 
 
-
-
 # Function returns the internal torque due to the quarter chord pitching moment
 def internal_quarter_chord_torque_spanwise(y, CL_d, rho, V):
     total_quarter_pitching_moment_coefficient, err_total_quarter_pitching_moment_coefficient = sp.integrate.quad(pitching_moment_distribution_any_CL,0,y,args=(CL_d),limit=50, epsabs=100)
