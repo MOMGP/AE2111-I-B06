@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 from scipy import integrate
-from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
+from Aero_loading_XFLR5 import Lift_for_integrating, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
 #from geometry_WP4_2 import centroid_x, centroid_y
 
 #Centroid coordinate system and implement into the code
-#Change internal torque to positive if necessary
+#Change internal torque to negative if necessary
 
 weight_engine = 9630*9.81 #N
 Thrust_per_engine = 467060 #N
@@ -108,6 +108,8 @@ def internal_torque_diagram (CL_d, rho, V, n):
     plt.show()
 
 internal_torque_diagram(0.7,0.31641,241.9574,1)
+internal_torque_diagram(0.7,1.225,362.94,2.5)
+internal_torque_diagram(0.7,1.225,241.96,-1)
 # -------------------------------------------------------------------------------------------------------------------------
 
 
