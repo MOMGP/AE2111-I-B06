@@ -106,13 +106,21 @@ def internal_torque_diagram (CL_d, rho, V, n):
     plt.ylabel("Torque [kNm]")
     plt.title("Internal Torque distribution function")
     plt.show()
-    return torque_list
+#    return torque_list
 
 #internal_torque_diagram(0.7,0.31641,241.9574,1)
 internal_torque_diagram(0.08428454065091404,1.225,362.94,2.5) #critical load case
 internal_torque_diagram(0.1896402164645566,1.225,241.96,-1) #critical load case
 
-
+#plt.figure()
+#plt.plot(span_loc, torque_list_n_pos, label="n = 2.5", color='red')
+#plt.plot(span_loc, torque_list_n_neg, label="n = -1", color='purple')
+#plt.xlabel("Spanwise Location [m]")
+#plt.ylabel("Torque [kNm]")
+#plt.legend()
+#plt.grid(True)
+#plt.savefig("Torsional distribution of critical load cases", format="pdf")
+#plt.show()
 
 # -------------------------------------------------------------------------------------------------------------------------
 
