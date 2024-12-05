@@ -8,7 +8,7 @@ from Aero_loading_XFLR5 import lift_distribution_any_CL
 from Aero_loading_XFLR5 import chord_length_interpolation
 from Aero_loading_XFLR5 import normal_force_for_integrating
 from Aero_loading_XFLR5 import Lift_distribution_for_any_load_case
-from Shear_force import shear_force_for_integrating
+#from Shear_force import shear_force_for_integrating
 
 #--------------------------------Initial values--------------------------------#
 n = 1
@@ -19,6 +19,7 @@ b = 53.57             # Wing span [m]
 CL_d = 3
 rho = 1.225
 V = 62
+cases = ["n", "rho", "V", "CL"]
 #-------------------------------------------------------------------------------#
 
 fout=open('bending.txt','w')
@@ -53,8 +54,17 @@ def moment_at_full_position(CL_d,rho,V,n):
         moment.append(moment_total)
         pos=int((i*100))
         moment_total+=shear[pos]*0.01
-        fout.write(str(moment_total))
-        fout.write('\n')
+    
+    moment = np.array(moment)
+    return moment
+
+
+CL_d = np.load("Work package 4\\Load_case_arrays\\CL_crit.npy")
+n = np.load("Work package 4\\Load_case_arrays\\Load_factor_crit.npy")
+rho = np.load("Work package 4\\Load_case_arrays\\Rho_crit.npy")
+V = np.load("Work package 4\\Load_case_arrays\\V_crit.npy")
+for i in range(len(cases)): #["n", "rho", "V", "CL"]
+    np.save("Work package 4\\Bending_vals\\"+cases[i]+"_crit.npy",moment_at_full_position(CL_d[i], n[i], rho[i], V[i]))
 
 '''
 def moment_at_position_updated(x):
