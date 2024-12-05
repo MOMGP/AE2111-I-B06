@@ -32,7 +32,7 @@ graphs = False
 airfoil_xyy = np.load("Airfoil_geom.npy")
 x_y_y = np.array(get_points(0.35, 0.55, 0.65, 1)) #EDIT THIS
 geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
-stringers_for_plotting = get_stringer_geom_norm(geom, 2) #EDIT THIS
+stringers_for_plotting = get_stringer_geom_norm(geom, 6) #EDIT THIS (for caelan <3)
 stringers_x=[]
 stringers_y =[]
 for i in range(len(stringers_for_plotting)):
