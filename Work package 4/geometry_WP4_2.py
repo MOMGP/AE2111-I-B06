@@ -15,7 +15,7 @@ Geometry:
 |                            |                            |
 |_____________2______________|_____________7______________| 
 
-
+[t_side, t_tb,]
 """
 C_r = 7.63 #m
 taper = 0.3 
@@ -58,7 +58,7 @@ def centroid(wing_box, stringers):
         centroid_sum_x+=(start[0]+end[0])/2*length*thickness
         centroid_sum_y+=(start[1]+end[1])/2*length*thickness
         area_sum += length*thickness
-    
+
     for i in range(len(stringers)):
         centroid_sum_x+= stringers[i][0][0]*stringers[i][1]
         centroid_sum_y+= stringers[i][0][1]*stringers[i][1]
@@ -109,12 +109,12 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
         start_root = wing_box_root[i][0]
         end_root = wing_box_root[i][1]
         length_root = np.sqrt((start_root[0] - end_root[0]) ** 2 + (start_root[1] - end_root[1]) ** 2)
-        thickness_root = wing_box_root[i][2][0]
+        thickness_root = wing_box_root[i][2]
         area_root = length_root*thickness_root
         start_tip = wing_box_tip[i] [0]
         end_tip = wing_box_tip[i][1]
         length_tip = np.sqrt((start_tip[0] - end_tip[0]) ** 2 + (start_tip[1] - end_tip[1]) ** 2)
-        thickness_tip = wing_box_tip[i] [2][0]
+        thickness_tip = wing_box_tip[i][2]
         area_tip = length_tip * thickness_tip
         sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0))+Lambda_n(end_root[0] / scaled_chord(0))) /2)
         y = b / np.cos(sweep) / np.cos(dihedral)
@@ -125,15 +125,15 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
             start_root = wing_box_root[i][0]
             end_root = wing_box_root[i][1]
             length_root = np.sqrt((start_root[0] - end_root[0]) ** 2 + (start_root[1] - end_root[1]) ** 2)
-            thickness_root = wing_box_root[i][2][0]
+            thickness_root = wing_box_root[i][2]
             area_root = length_root * thickness_root
             start_mid = wing_box_mid[i][0]
             end_mid = wing_box_mid[i][1]
             length_mid = np.sqrt((start_mid[0] - end_mid[0]) ** 2 + (start_mid[1] - end_mid[1]) ** 2)
-            thickness_mid = wing_box_mid[i][2][0]
+            thickness_mid = wing_box_mid[i][2]
             area_mid = length_mid * thickness_mid
-            sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0)) + Lambda_n(end_root[0] / scaled_chord(0))) / 2)
-            y = b * pos_mid / np.cos(sweep) / np.cos(dihedral)
+            sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0)*100) + Lambda_n(end_root[0] / scaled_chord(0)*100)) / 2)
+            y = np.sqrt(pos_mid**2+ (length_root-(pos_mid*np.sin(Lambda_n(0))+length_mid))**2) / np.cos(dihedral)
             mass += (area_root + area_mid) / 2 * y * rho
 
     elif len(wing_box_mid) == 4: #calc mass if the 2nd wingbox merges
@@ -141,17 +141,17 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
             start_root = wing_box_root[i][0]
             end_root = wing_box_root[i][1]
             length_root = np.sqrt((start_root[0] - end_root[0]) ** 2 + (start_root[1] - end_root[1]) ** 2)
-            thickness_root = wing_box_root[i][2][0]
+            thickness_root = wing_box_root[i][2]
             area_root = length_root * thickness_root
             start_mid = wing_box_mid[i][0]
             end_mid = wing_box_mid[i][1]
             length_mid = np.sqrt((start_mid[0] - end_mid[0]) ** 2 + (start_mid[1] - end_mid[1]) ** 2)
-            thickness_mid = wing_box_mid[i][2][0]
+            thickness_mid = wing_box_mid[i][2]
             area_mid = length_mid * thickness_mid
             if i == 4 or i == 5:
                 area_mid = 0
-            sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0)) + Lambda_n(end_root[0] / scaled_chord(0))) / 2)
-            y = b * pos_mid / np.cos(sweep) / np.cos(dihedral)
+            sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0)*100) + Lambda_n(end_root[0] / scaled_chord(0)*100)) / 2)
+            y = np.sqrt(pos_mid**2+ (length_root-(pos_mid*np.sin(Lambda_n(0))+length_mid))**2) / np.cos(dihedral)
             mass += (area_root + area_mid) / 2 * y * rho
 
     for i in range(len(stringers_root)): #calc mass for spars in main wing box
@@ -161,7 +161,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
 
         sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0))) / 2)
         y = b / np.cos(sweep) / np.cos(dihedral)
-        mass += area_root[0] * y * rho
+        mass += area_root * y * rho
 
     return mass
 
@@ -201,7 +201,6 @@ def get_points_along_spanwise(norm_wing_box_root, norm_stringers, y, end_third_s
 
     for i in norm_stringers:
         stringers.append([[i[0][0]*chord,i[0][1]*chord], i[1]]) 
-
     return geometry, stringers
 
 def get_stringer_geom_norm(geom, num_of_stringers_tot):
@@ -306,7 +305,7 @@ def plot3d_geom(geom_root, stringers, end_third_spar, truncated=False, plot_with
         ax.set_ylim3d(0, 25)
         ax.set_zlim3d(0, 25)
         
-    # plt.show()
+    plt.show()
 
 profile_root = [
     [[0, 0], [0, 1], [0.01]],
@@ -345,15 +344,15 @@ stringers_root = [
 ]
 
 
-total_mass = get_mass(profile_root, profile_mid, profile_tip, pos_profile_3, stringers_root)
+# total_mass = get_mass(profile_root, profile_mid, profile_tip, pos_profile_3, stringers_root)
 # print(total_mass)
 
-spar1_x=0.2
-spar2_x=0.5
-spar3_x=0.7
-x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
-root_geom = get_geom_from_points(x_y_y, [.644 for i in range(7)])
-stringers_norm = get_stringer_geom_norm(root_geom, 32)
+# spar1_x=0.2
+# spar2_x=0.5
+# spar3_x=0.7
+# x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
+# root_geom = get_geom_from_points(x_y_y, [.644 for i in range(7)])
+# stringers_norm = get_stringer_geom_norm(root_geom, 32)
 # print(root_geom)
 x_vals = []
 y_vals = []
@@ -368,7 +367,7 @@ y_vals = []
 # plt.plot(x_vals, y_vals)
 # plt.show()
 
-plot3d_geom(root_geom, stringers_norm, b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
+#plot3d_geom(root_geom, stringers_norm, b/6, truncated=False, plot_with_airfoil=True, full_wing=True)
 
-root_pts, root_stringers = get_points_along_spanwise(root_geom, stringers_norm, 0, b/6)
-print(moments_of_inertia(root_pts, root_stringers)[0])
+#root_pts, root_stringers = get_points_along_spanwise(root_geom, stringers_norm, 0, b/6)
+#print(moments_of_inertia(root_pts, root_stringers)[0])

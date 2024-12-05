@@ -165,3 +165,15 @@ plt.ylabel("Torque [Nm]")
 plt.title("Torque distribution due to normal force")
 #plt.show()
 '''
+CL_vals = np.load("Work package 4\\Load_case_arrays\\CL_crit.npy")
+rho_vals = np.load("Work package 4\\Load_case_arrays\\Load_factor_crit.npy")
+V_vals = np.load("Work package 4\\Load_case_arrays\\Rho_crit.npy")
+n_vals = np.load("Work package 4\\Load_case_arrays\\V_crit.npy")
+
+# cases= ["n_crit", "rho_crit", "V_crit", "CL_crit"]
+# for i in range(len(cases)):
+#     torsion = []
+#     for x in np.arange(0, 26.785, 0.5):
+#         torsion.append(internal_torque_at_x(x, CL_vals[i], rho_vals[i], V_vals[i], n_vals[i]))
+#         print(cases[i] + " is done for length "+str(x))
+#     np.save("Work package 4\\Torsions_diff_cases\\" + cases[i]+".npy", np.array(torsion))
