@@ -58,46 +58,53 @@ i=0.35
 j=0.55
 combinations = []
 
-# for n in np.arange(2, 20,4):
+#print(np.load("Work package 4\\Combinations\\0.2\\0.3\\0.4\\min_W_4203.0.npy"))
+# for n in np.arange(2, 8,2):
+
+
 # for t_tb in np.arange(0.8, 2, 0.1)*10**(-3):
 #     for t_sides in np.arange(0.4, 2, 0.1)*10**(-3):
-# for thd_end in np.arange(0.05*b, b/4, 0.025*b):
-# for i in np.arange(0.25, 0.5, 0.05):
-#     for j in np.arange(0.25, 0.65, 0.05):
-#         if (j<=i):
-#             combinations.append([i,j, 0, 0, 0])
-#             continue
-"""
-x_y_y = get_points(i, j, j+0.15, 1)
-root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb]) #todo - change this to account for top, bot, and sides
-root_stringer = get_stringer_geom_norm(root_geom, n)
-tip_twists = []
-tip_deflections = []
-for c in cases:
-    tip_deflections.append(np.abs(deflection(c,root_geom, root_stringer, thd_end, truncated)[-1]))
-for c in cases:
-    tip_twists.append(np.abs(twist_angle(c, root_geom, root_stringer, thd_end, truncated)[-1]))
-crit_tip_twist = max(tip_twists)
-tip_deflection = max(tip_deflections)
-if (tip_deflection<b*0.15 and crit_tip_twist<np.deg2rad(10)):
-    mass= get_mass(get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, thd_end, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, b/2, thd_end, truncated)[0], thd_end, get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[1])
-    combinations.append([i, j, mass, tip_deflection, crit_tip_twist])
-    print([i, j, mass, tip_deflection, crit_tip_twist])
-else:
-    combinations.append([i,j, 0, 0, 0])
+
+
+# # for thd_end in np.arange(0.05*b, b/4, 0.025*b):
+# # for i in np.arange(0.25, 0.5, 0.05):
+# #     for j in np.arange(0.25, 0.65, 0.05):
+# #         if (j<=i):
+# #             combinations.append([i,j, 0, 0, 0])
+# #             continue
+
+#         x_y_y = get_points(i, j, j+0.15, 1)
+#         root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb]) #todo - change this to account for top, bot, and sides
+#         root_stringer = get_stringer_geom_norm(root_geom, n)
+#         tip_twists = []
+#         tip_deflections = []
+#         for c in cases:
+#             tip_deflections.append(np.abs(deflection(c,root_geom, root_stringer, thd_end, truncated)[-1]))
+#         for c in cases:
+#             tip_twists.append(np.abs(twist_angle(c, root_geom, root_stringer, thd_end, truncated)[-1]))
+#         crit_tip_twist = max(tip_twists)
+#         tip_deflection = max(tip_deflections)
+#         if (tip_deflection<b*0.15/1.5 and crit_tip_twist<np.deg2rad(10)/1.5):
+#             mass= get_mass(get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, thd_end, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, b/2, thd_end, truncated)[0], thd_end, get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[1])
+#             combinations.append([t_tb, t_sides, mass, tip_deflection, crit_tip_twist])
+#             # print([i, j, mass, tip_deflection, crit_tip_twist])
+#         else:
+#             combinations.append([t_tb,t_sides, np.inf, np.inf, np.inf])
 # combinations = np.array(combinations)
 
 # np.save("Work Package 4\\Testing\\testing_t.npy", combinations)
-# combinations = np.load("Work Package 4\\Testing\\testing_t.npy")
+combinations = np.load("Work Package 4\\Testing\\testing_t.npy")
+mass_column = combinations[:, 2]
+index_of_lowest_mass = np.argmin(mass_column)
+
 print("Critical twist (rad) is "+str(np.radians(10)))
 print("Critical bending is "+str(0.15*b))
+print(combinations[index_of_lowest_mass])
+# x_y_y = get_points(i, j, j+0.2, 1)
+# geom_root = get_geom_from_points (x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
+# stringers = get_stringer_geom_norm(geom_root, 2)
+#plot3d_geom(geom_root, stringers, b*0.1, truncated=False, plot_with_airfoil=True, full_wing=True, plot_stringers = True)
 
-
-x_y_y = get_points(i, j, j+0.2, 1)
-geom_root = get_geom_from_points (x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
-stringers = get_stringer_geom_norm(geom_root, 2)
-plot3d_geom(geom_root, stringers, b*0.1, truncated=False, plot_with_airfoil=True, full_wing=True, plot_stringers = True)
-"""
 
 # TESTING for i,j
 
@@ -155,34 +162,28 @@ plot3d_geom(geom_root, stringers, b*0.1, truncated=False, plot_with_airfoil=True
 
 
 # TESTING for t
+fig = plt.figure(figsize = (12,10))
+ax = plt.axes(projection='3d')
 
-# fig = plt.figure(figsize = (12,10))
-# ax = plt.axes(projection='3d')
+X, Y = combinations[:,0].reshape(-1, np.arange(0.8, 2, 0.1).size), combinations[:,1].reshape(-1, np.arange(0.8, 2, 0.1).size)
+ax.scatter(X, Y, combinations[:,2].reshape(-1, np.arange(0.8, 2, 0.1).size))
+plt.xlabel("t_tb")
+plt.ylabel("t_sides")
+plt.title("thicknesses v. mass")
+plt.show()
+ax = plt.axes(projection='3d')
+ax.scatter(X,Y, combinations[:,3].reshape(-1, np.arange(0.8, 2, 0.1).size))
+plt.xlabel("t_tb")
+plt.ylabel("t_sides")
+plt.title("thicknesses v. def")
+plt.show()
 
-# X, Y = combinations[:,0].reshape(-1, np.arange(0.8, 2, 0.1).size), combinations[:,1].reshape(-1, np.arange(0.8, 2, 0.1).size)
-# ax.scatter(X, Y, combinations[:,2].reshape(-1, np.arange(0.8, 2, 0.1).size))
-# plt.xlabel("t_tb")
-# plt.ylabel("t_sides")
-# plt.title("thicknesses v. mass")
-# plt.show()
-# ax = plt.axes(projection='3d')
-# ax.scatter(X,Y, combinations[:,3].reshape(-1, np.arange(0.8, 2, 0.1).size))
-# plt.xlabel("t_tb")
-# plt.ylabel("t_sides")
-# plt.title("thicknesses v. def")
-# plt.show()
-
-# ax = plt.axes(projection='3d')
-# ax.scatter(X,Y, combinations[:,4].reshape(-1, np.arange(0.8, 2, 0.1).size))
-# plt.xlabel("t_tb")
-# plt.ylabel("t_sides")
-# plt.title("thicknesses v. twist")
-# plt.show()
-
-# x_y_y = get_points(0.4, 0.6, 0.7, 1)
-# geom_root = get_geom_from_points (x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
-# stringers = get_stringer_geom_norm(geom_root, 8)
-# plot3d_geom(geom_root, stringers, b*0.1, truncated=False, plot_with_airfoil=True, full_wing=True, plot_stringers = True)
+ax = plt.axes(projection='3d')
+ax.scatter(X,Y, combinations[:,4].reshape(-1, np.arange(0.8, 2, 0.1).size))
+plt.xlabel("t_tb")
+plt.ylabel("t_sides")
+plt.title("thicknesses v. twist")
+plt.show()
 
 """combination = np.array([mass,
                                             crit_tip_twist,

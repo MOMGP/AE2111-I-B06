@@ -22,25 +22,38 @@ G = 28000000000 #Pa
 E = 72400000000
 rho = 2780 # kg/m3
 stringer_area = 0.0002
-# airfoil_xyy = np.load("Airfoil_geom.npy")
 possible_t = np.arange(2, 24, 2)*0.001
 possible_t_side = np.arange(0.5, 20, 0.5)*0.001
 possible_x = np.arange(0.2, 0.7, 0.05)
 pos_string_num = np.arange(2, 6, 2) #based on Jeroen resource
 graphs = False
-# x_y_y = np.array(get_points(0.2, 0.45, 0.65, 1))
-# geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
-# x_vals = []
-# y_vals = []
-# for i in geom:
-#     x_vals.append(i[0][0])
-#     x_vals.append(i[1][0])
-#     y_vals.append(i[0][1])
-#     y_vals.append(i[1][1])
-# plt.plot(x_vals, y_vals)
-# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
-# plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
-# plt.show()
+
+#Cross section plotting below
+airfoil_xyy = np.load("Airfoil_geom.npy")
+x_y_y = np.array(get_points(0.35, 0.55, 0.65, 1)) #EDIT THIS
+geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
+stringers_for_plotting = get_stringer_geom_norm(geom, 6) #EDIT THIS (for caelan <3)
+stringers_x=[]
+stringers_y =[]
+for i in range(len(stringers_for_plotting)):
+    stringers_x.append(stringers_for_plotting[i][0][0])
+    stringers_y.append(stringers_for_plotting[i][0][1])
+x_vals = []
+y_vals = []
+for i in geom:
+    x_vals.append(i[0][0])
+    x_vals.append(i[1][0])
+    y_vals.append(i[0][1])
+    y_vals.append(i[1][1])
+plt.figure(figsize=(20,4))
+plt.plot(x_vals, y_vals)
+plt.scatter(stringers_x, stringers_y, s=100, cmap="o")
+plt.xlabel("x/c")
+plt.ylabel("t/c")
+plt.xlim(-0.05, 1.05)
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
+plt.savefig("Cross_section_min_W.pdf", format="pdf")
 
 
 def bending_stress(bending_moment, y_max, I_xx):

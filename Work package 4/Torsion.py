@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 from scipy import integrate
-from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
+from Aero_loading_XFLR5 import Lift_for_integrating, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
 #from geometry_WP4_2 import centroid_x, centroid_y
 
 #Centroid coordinate system and implement into the code
-#Change internal torque to positive if necessary
+#Change internal torque to negative if necessary
 
 weight_engine = 9630*9.81 #N
 Thrust_per_engine = 467060 #N
@@ -49,8 +49,6 @@ torque_engine_weight = weight_engine * ((C_r*(1-((1-taper)*((b/2 * 0.35)/(b/2)))
 #    return moment_arm_normal_torque
 
 
-
-
 # Function returns the internal torque due to the quarter chord pitching moment
 def internal_quarter_chord_torque_spanwise(y, CL_d, rho, V):
     total_quarter_pitching_moment_coefficient, err_total_quarter_pitching_moment_coefficient = sp.integrate.quad(pitching_moment_distribution_any_CL,0,y,args=(CL_d),limit=50, epsabs=100)
@@ -78,7 +76,7 @@ def internal_torque_at_x(x, CL_d, rho, V, n):
         torque_result = torque_result + internal_quarter_chord_torque_spanwise(i, CL_d, rho, V)
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-        torque_result = (-total_torque + torque_result) #Nm
+        torque_result = (total_torque - torque_result) #Nm
         torque_list.append(torque_result)
         torque_error_list.append(torque_error_result)
     return torque_list[-1]
@@ -96,8 +94,8 @@ def internal_torque_diagram (CL_d, rho, V, n):
         torque_result += internal_quarter_chord_torque_spanwise(i, CL_d, rho, V)
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
-        torque_result = (-total_torque + torque_result)  # Nm # If sign convention must be changed to positive internal torque: torque_result = (total_torque - torque_result)
-        torque_list.append(torque_result)
+        torque_result = (total_torque - torque_result)  # Nm # If sign convention must be changed to negative internal torque: torque_result = (-total_torque + torque_result)
+        torque_list.append(torque_result/1000)
         torque_result = str(torque_result)
         fout.write(torque_result)
         fout.write('\n')
@@ -105,11 +103,13 @@ def internal_torque_diagram (CL_d, rho, V, n):
     plt.figure()
     plt.plot(span_loc, torque_list, label="Torque", color='purple')
     plt.xlabel("Spanwise Location [m]")
-    plt.ylabel("Torque [Nm]")
+    plt.ylabel("Torque [kNm]")
     plt.title("Internal Torque distribution function")
     plt.show()
 
-internal_torque_diagram(0.7,0.31641,241.9574,1)
+#internal_torque_diagram(0.7,0.31641,241.9574,1)
+internal_torque_diagram(0.08428454065091404,1.225,362.94,2.5) #critical load case
+internal_torque_diagram(0.1896402164645566,1.225,241.96,-1) #critical load case
 # -------------------------------------------------------------------------------------------------------------------------
 
 
