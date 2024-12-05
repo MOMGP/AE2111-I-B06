@@ -153,7 +153,7 @@ plt.ylabel("Torque [Nm]")
 plt.title("Total Torque distribution")
 plt.show()
 '''
-# -------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 '''
 #TORQUE ONLY FOR NORMAL AERODYNAMIC FORCE
 
@@ -179,7 +179,7 @@ plt.ylabel("Torque [Nm]")
 plt.title("Torque distribution due to normal force")
 #plt.show()
 '''
-# -------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 
 CL_vals = np.load("Work package 4\\Load_case_arrays\\CL_crit.npy")
 rho_vals = np.load("Work package 4\\Load_case_arrays\\Load_factor_crit.npy")
