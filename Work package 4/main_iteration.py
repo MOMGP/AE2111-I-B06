@@ -79,7 +79,7 @@ with open("Work package 4\\bending.txt", 'r') as f:
         if count % n_points == 0 or count == 1:
             bending.append(line)         
 shear = np.array(shear) #todo - load array made in bending
-skip = 15
+skip = 1 #1 means no skip
 bending_x_vals = np.arange(0,26.785,0.01*skip)
 #I used interpolation functions to simplify the integrations + dont know any other method to form a function out of the data
 start = time.time()
@@ -117,7 +117,7 @@ def deflection(case, root_geom, root_str, end_third_spar, truncated): # integrat
         if (i==0):
             deflection.append(sum)
         else:
-            sum+=(AOR[i]+AOR[i-1])*0.5*diff
+            sum+=(AOR[i]+AOR[i-1])*0.5*diff #note - trapezoid method used instead of scipy as it is much faster (although slightly less accurate)
             deflection.append(sum)
     return deflection
 
