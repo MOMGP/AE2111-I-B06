@@ -10,7 +10,7 @@ import time
 cases = ["CL", "n", "rho", "V"]
 #𝑑θ/𝑑𝑦 = 𝑇(𝑦)/𝐺𝐽(𝑦)
 def rot(x, case,norm_wing_box_root, norm_stringers, end_third_spar, cond):
-    int_torque_x = np.load("Work package 4\\Torsions_diff_cases\\"+case+"_crit.npy")[int(x*2)]
+    int_torque_x = np.load("Work package 4\\Torsions_diff_cases\\"+case+"_crit.npy")[int(x*2)]*100*0.35
     rot = int_torque_x/get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond, x)
     return rot
 
@@ -54,7 +54,6 @@ hws = 26.785
 # x = np.arange(0,hws,0.5)
 # y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
 # plt.plot(x,y)
-# plt.title("Tin is a little gay boy")
 # plt.show()
 
 

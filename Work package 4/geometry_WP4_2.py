@@ -116,7 +116,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
         length_tip = np.sqrt((start_tip[0] - end_tip[0]) ** 2 + (start_tip[1] - end_tip[1]) ** 2)
         thickness_tip = wing_box_tip[i][2]
         area_tip = length_tip * thickness_tip
-        sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0))+Lambda_n(end_root[0] / scaled_chord(0))) /2)
+        sweep = np.deg2rad((Lambda_n(start_root[0] / scaled_chord(0)*100)+Lambda_n(end_root[0] / scaled_chord(0)*100)) /2)
         y = b / np.cos(sweep) / np.cos(dihedral)
         mass += (area_root+area_tip)/2 * y * rho
 
@@ -163,7 +163,7 @@ def get_mass(wing_box_root, wing_box_mid, wing_box_tip, pos_mid, stringers_root)
         y = b / np.cos(sweep) / np.cos(dihedral)
         mass += area_root * y * rho
 
-    return mass
+    return mass*2 #two wings in an aircraft
 
 # format for wing_box = [(start), (end), thickness]
 #format of stringers = [pos, area]

@@ -22,17 +22,17 @@ G = 28000000000 #Pa
 E = 72400000000
 rho = 2780 # kg/m3
 stringer_area = 0.0002
-possible_t = np.arange(2, 24, 2)*0.001
-possible_t_side = np.arange(0.5, 20, 0.5)*0.001
+possible_t = np.arange(10, 30, 2)*0.001
+possible_t_side = np.arange(2, 14, 2)*0.001
 possible_x = np.arange(0.2, 0.7, 0.05)
-pos_string_num = np.arange(2, 6, 2) #based on Jeroen resource
+pos_string_num = np.arange(20, 40, 4) #based on Jeroen resource
 graphs = False
 
 #Cross section plotting below
 airfoil_xyy = np.load("Airfoil_geom.npy")
-x_y_y = np.array(get_points(0.35, 0.55, 0.65, 1)) #EDIT THIS
+x_y_y = np.array(get_points(0.2, 0.35, 0.7, 1))
 geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
-stringers_for_plotting = get_stringer_geom_norm(geom, 6) #EDIT THIS (for caelan <3)
+stringers_for_plotting = get_stringer_geom_norm(geom, 20)
 stringers_x=[]
 stringers_y =[]
 for i in range(len(stringers_for_plotting)):
@@ -45,15 +45,16 @@ for i in geom:
     x_vals.append(i[1][0])
     y_vals.append(i[0][1])
     y_vals.append(i[1][1])
-plt.figure(figsize=(20,4))
-plt.plot(x_vals, y_vals)
-plt.scatter(stringers_x, stringers_y, s=100, cmap="o")
+plt.figure(figsize=(8, 1.1))
+plt.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.4)
+plt.plot(x_vals, y_vals, "r", linewidth = 1.5, zorder =4)
+plt.scatter(stringers_x, stringers_y, s=7, c="b", zorder=6)
 plt.xlabel("x/c")
 plt.ylabel("t/c")
-plt.xlim(-0.05, 1.05)
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
-plt.savefig("Cross_section_min_W.pdf", format="pdf")
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1], "k", zorder=2)
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2], "k", zorder=2)
+plt.grid()
+plt.savefig("Cross_section_min_W_ult.pdf", format="pdf")
 
 
 def bending_stress(bending_moment, y_max, I_xx):
@@ -89,7 +90,7 @@ start = time.time()
 #     # result, _ = quad(shear_force,x,b/2)
 #     return 1000*bending[int(x/b*2*len(bending)+0.02)]
 def angle_of_rotation(root_geom, root_str, end_third_spar, truncated, case): # does the integral of M(x) / E * I(x) which is the slope 
-    bending = np.load("Work package 4\\Bending_vals\\"+case+"_crit.npy")[::skip]
+    bending = np.load("Work package 4\\Bending_vals\\"+case+"_crit.npy")[::skip]*100*0.5
     angle_of_rotation = []
     sum = 0
     diff = bending_x_vals[2]-bending_x_vals[1]
@@ -107,7 +108,7 @@ def angle_of_rotation(root_geom, root_str, end_third_spar, truncated, case): # d
     return angle_of_rotation
 
 def deflection(case, root_geom, root_str, end_third_spar, truncated): # integrates slope to obtain deflection
-    bending = np.load("Work package 4\\Bending_vals\\"+case+"_crit.npy")[::skip]
+    bending = np.load("Work package 4\\Bending_vals\\"+case+"_crit.npy")[::skip]*1000
     AOR = angle_of_rotation(root_geom, root_str, end_third_spar, truncated, case)
     deflection =[]
     sum = 0
@@ -198,9 +199,15 @@ def scaled_length(length,chord):
 pos_combs = []
 cases = ["n", "rho", "V", "CL"]
 #TEST 
-# x_y_y = get_points(0.2, 0.4, 0.6, 1)
-# root_geom = get_geom_from_points(x_y_y, [0.001 for i in range(7)])
-# root_stringer = get_stringer_geom_norm(root_geom, 4)
+# i=0.2
+# j=0.35
+# k=0.65
+# n=32
+# t_sides =0.008
+# t_tb = 0.012
+# x_y_y = get_points(i, j, k, 1)
+# root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
+# root_stringer = get_stringer_geom_norm(root_geom, n)
 # tip_twists = []
 # tip_deflections = []
 # plt.plot(bending_x_vals, deflection("CL",root_geom, root_stringer, b/6, False))
@@ -215,73 +222,75 @@ skip_t_sides = False
 skip_str = False
 skip_thd_end = False
 orig_time = time.time()
-for i in np.arange(0.2, 0.50, pos_steps): # iterating front spar pos (skipping every 0.05 space)
-    for j in np.arange(i+pos_steps, 0.65, pos_steps): #iterating second spar pos (skipping every 0.05 space)
-        for k in np.arange(j+pos_steps, 0.75, pos_steps): # iterating third spar pos (skipping every 0.05 space)
-            print("currently in k", count, f"time = {time.time()- orig_time}")
-            combinations = []
-            for truncated in [False, True]:
-                for t_tb in possible_t:
-                    for t_sides in possible_t_side:
-                        for thd_end in np.arange(0.05*b, b/4, 0.025*b): #iterating over end of third spar pos
-                            for n in pos_string_num:
-                                x_y_y = get_points(i, j, k, 1)
-                                root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb]) #todo - change this to account for top, bot, and sides
-                                root_stringer = get_stringer_geom_norm(root_geom, n)
-                                tip_twists = []
-                                tip_deflections = []
-                                for c in cases:
-                                    tip_deflections.append(np.abs(deflection(c,root_geom, root_stringer, thd_end, truncated)[-1]))
-                                for c in cases:
-                                    tip_twists.append(np.abs(twist_angle(c, root_geom, root_stringer, thd_end, truncated)[-1]))
-                                crit_tip_twist = max(tip_twists)
-                                tip_deflection = max(tip_deflections)
-                                if (tip_deflection<b*0.15 and crit_tip_twist<np.deg2rad(10)):
-                                    mass= get_mass(get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, thd_end, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, b/2, thd_end, truncated)[0], thd_end, get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[1])
-                                    combination = np.array([mass,
-                                            crit_tip_twist,
-                                            tip_deflection,
-                                            i, #first spar
-                                            j, #snd spar
-                                            k, #3rd spar
-                                            t_tb,
-                                            t_sides,
-                                            n,
-                                            truncated,
-                                            thd_end,
-                                            count
-                                            ]) 
-                                    combinations.append(combination)
-                                    #If already met, more thickness, stringers, or a longer yehudi are just going to add weight
-                                    skip_t_sides=True
-                                    skip_str=True
-                                    skip_thd_end=True
+# for i in np.arange(0.2, 0.3, pos_steps): # iterating front spar pos (skipping every 0.05 space)
+#     for j in np.arange(i+pos_steps*3, 0.45, pos_steps): #iterating second spar pos (skipping every 0.05 space)
+#         for k in np.arange(0.55, 0.75, pos_steps): # iterating third spar pos (skipping every 0.05 space)
+#             print("currently in k", count, f"time = {time.time()- orig_time}")
+#             combinations = []
+#             for truncated in [False, True]:
+#                 for t_tb in possible_t:
+#                     for t_sides in possible_t_side:
+#                         for thd_end in np.arange(0.05*b, b/4, 0.025*b): #iterating over end of third spar pos
+#                             for n in pos_string_num:
+#                                 x_y_y = get_points(i, j, k, 1)
+#                                 root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb]) #todo - change this to account for top, bot, and sides
+#                                 root_stringer = get_stringer_geom_norm(root_geom, n)
+#                                 tip_twists = []
+#                                 tip_deflections = []
+#                                 for c in cases:
+#                                     tip_deflections.append(np.abs(deflection(c,root_geom, root_stringer, thd_end, truncated)[-1]))
+#                                 for c in cases:
+#                                     tip_twists.append(np.abs(twist_angle(c, root_geom, root_stringer, thd_end, truncated)[-1]))
+#                                 crit_tip_twist = max(tip_twists)
+#                                 tip_deflection = max(tip_deflections)
+#                                 if (tip_deflection<b*0.15 and crit_tip_twist<np.deg2rad(10)):
+#                                     mass= get_mass(get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, thd_end, thd_end, truncated)[0], get_points_along_spanwise(root_geom, root_stringer, b/2, thd_end, truncated)[0], thd_end, get_points_along_spanwise(root_geom, root_stringer, 0, thd_end, truncated)[1])
+#                                     combination = np.array([mass,
+#                                             crit_tip_twist,
+#                                             tip_deflection,
+#                                             i, #first spar
+#                                             j, #snd spar
+#                                             k, #3rd spar
+#                                             t_tb,
+#                                             t_sides,
+#                                             n,
+#                                             truncated,
+#                                             thd_end,
+#                                             count
+#                                             ]) 
+#                                     combinations.append(combination)
+#                                     #If already met, more thickness, stringers, or a longer yehudi are just going to add weight
+#                                     skip_t_sides=True
+#                                     skip_str=True
+#                                     skip_thd_end=True
                                     
-                                count+=1
-                                if skip_str:
-                                        skip_str=False
-                                        break
-                            if skip_thd_end:
-                                    skip_thd_end=False
-                                    break
-                        if skip_t_sides:
-                            skip_t_sides=False
-                            break
-            combinations = np.array(combinations)
-            # print(combinations)
-            # print(combinations.size)
-            if combinations.size!=0:
-                lowest_mass = np.min(combinations[:,0])
-                directory = f"Work package 4\\Combinations\\{np.round(i, 2)}\\{np.round(j, 2)}\\{np.round(k, 2)}"
-                file_path = os.path.join(directory, f"min_W_{np.round(lowest_mass, 0)}.npy")
+#                                 count+=1
+#                                 if skip_str:
+#                                         skip_str=False
+#                                         break
+#                             if skip_thd_end:
+#                                     skip_thd_end=False
+#                                     break
+#                         if skip_t_sides:
+#                             skip_t_sides=False
+#                             break
+#             combinations = np.array(combinations)
+#             # print(combinations)
+#             # print(combinations.size)
+#             if combinations.size!=0:
+#                 lowest_mass = np.min(combinations[:,0])
+#                 directory = f"Work package 4\\Combinations\\{np.round(i, 2)}\\{np.round(j, 2)}\\{np.round(k, 2)}"
+#                 file_path = os.path.join(directory, f"min_W_{np.round(lowest_mass, 0)}.npy")
 
-                # Create directories if they don't exist
-                os.makedirs(directory, exist_ok=True)
+#                 # Create directories if they don't exist
+#                 os.makedirs(directory, exist_ok=True)
 
-                # Save the file
-                np.save(file_path, combinations)
-
-                print(f"File saved to: {file_path}")
+#                 # Save the file
+#                 np.save(file_path, combinations)
+#                 combinations_min_def = np.min(combinations[:,2])
+#                 combinations_min_twist = np.min(combinations[:,1])
+#                 print(f"File saved to: {file_path}")
+#                 print(f"Best deflection is {combinations_min_def} while best twist is {combinations_min_twist}")
                                 
                             
 #considerations - if smth works with a particular thickness, dont increase
