@@ -56,6 +56,7 @@ n=2
 cases = ["n", "rho", "V", "CL"]
 i=0.35
 j=0.55
+k=0.7
 combinations = []
 
 #print(np.load("Work package 4\\Combinations\\0.2\\0.3\\0.4\\min_W_4203.0.npy"))
