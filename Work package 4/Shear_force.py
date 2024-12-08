@@ -65,26 +65,43 @@ shearequation = shear_integration(2*x)
 #-------------********-------------*********------------*********-------------********-------------*********------------*********#
 
 lift, span_loc = Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
-shear_force = []
+shear_force_1 = []
+shear_force_2 = []
 L_error_list = []
 normal_list =[]
 total_lift,err=sp.integrate.quad(Lift_for_integrating,0,26.785,args=(0.7,0.31641,241.9574),limit=50, epsabs=100)
 total_normal,err_normal=sp.integrate.quad(normal_force_for_integrating,0,26.785,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
-#print(total_lift)
-fout=open("shear.txt", "w")
-for i in np.arange(0,26.78,0.01):
-    normal_int,err_normal=sp.integrate.quad(normal_force_for_integrating,i,26.785,args=(0.7,0.31641,241.9574,1),limit=50, epsabs=100)
 
-    shear_result= (-normal_int)/1000
+
+fout=open("shear_n=-1.txt", "w")
+for i in np.arange(0,26.78,0.01):
+    normal_int_1,err_normal=sp.integrate.quad(normal_force_for_integrating,i,26.785,args=(0.7,0.31641,241.9574,-1),limit=50, epsabs=100)
+
+    shear_result_1= (-normal_int_1)/1000
 
     if i <= 9.37:
-        shear_result = (shear_result + 94.4703)
+        shear_result_1 = (shear_result_1 + 94.4703)
 
-    shear_force.append(shear_result)
-    shear_result=str(shear_result)
-    fout.write(shear_result)
+    shear_force_1.append(shear_result_1)
+    shear_result_1=str(shear_result_1)
+    fout.write(shear_result_1)
     fout.write('\n')
-    
+plt.plot(span_loc, shear_force_1, label="n = -1",color='purple') 
+
+fout=open("shear_n=2.5.txt", "w")
+for i in np.arange(0,26.78,0.01):
+    normal_int_2,err_normal=sp.integrate.quad(normal_force_for_integrating,i,26.785,args=(0.7,0.31641,241.9574,2.5),limit=50, epsabs=100)
+
+    shear_result_2= (-normal_int_2)/1000
+
+    if i <= 9.37:
+        shear_result_2 = (shear_result_2 + 94.4703)
+
+    shear_force_2.append(shear_result_2)
+    shear_result_2=str(shear_result_2)
+    fout.write(shear_result_2)
+    fout.write('\n')
+plt.plot(span_loc, shear_force_2, label="n = 2.5",color='red') 
 
 
 def shear_force_for_integrating(x,CL_d,rho,V,n):
@@ -107,13 +124,10 @@ def shear_force_full_values(CL_d,rho,V,n):
         fout.write(str(shear_result))
         fout.write('\n')
 
-#print(shear_force_for_integrating(10,0.7,0.31641,241.9574,1))
-#print(shear_force)
 
-plt.figure()
-plt.plot(span_loc, shear_force, label="Shear Force",color='purple')
-#plt.plot([0,0], [0, shear_force[0]], color='purple')
-plt.xlabel("spanwise location")
-plt.ylabel("shear force")
-plt.title("shear force dist.")
+plt.xlabel("Spanwise Location [m]")
+plt.ylabel("Shear Force [kN]")
+plt.grid(True)
+plt.legend()
+plt.savefig('Shear_Force.pdf')
 plt.show()

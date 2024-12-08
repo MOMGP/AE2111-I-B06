@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 from scipy import integrate
-from Aero_loading_XFLR5 import Lift_for_integrating, lift_dist_spanwise, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
+from Aero_loading_XFLR5 import Lift_for_integrating, normal_force_for_integrating, Lift_distribution_for_any_load_case, pitching_moment_distribution_any_CL, chord_length_interpolation
 #from geometry_WP4_2 import centroid_x, centroid_y
 
 #Centroid coordinate system and implement into the code
-#Change internal torque to positive if necessary
+#Change internal torque to negative if necessary
 
 weight_engine = 9630*9.81 #N
 Thrust_per_engine = 467060 #N
@@ -95,7 +95,7 @@ def internal_torque_diagram (CL_d, rho, V, n):
         if i >= 9.37:
             torque_result = torque_result + torque_engine_thrust - torque_engine_weight
         torque_result = (total_torque - torque_result)  # Nm # If sign convention must be changed to negative internal torque: torque_result = (-total_torque + torque_result)
-        torque_list.append(torque_result)
+        torque_list.append(torque_result/1000)
         torque_result = str(torque_result)
         fout.write(torque_result)
         fout.write('\n')
@@ -103,11 +103,25 @@ def internal_torque_diagram (CL_d, rho, V, n):
     plt.figure()
     plt.plot(span_loc, torque_list, label="Torque", color='purple')
     plt.xlabel("Spanwise Location [m]")
-    plt.ylabel("Torque [Nm]")
+    plt.ylabel("Torque [kNm]")
     plt.title("Internal Torque distribution function")
     plt.show()
+#    return torque_list
 
-internal_torque_diagram(0.7,0.31641,241.9574,1)
+#internal_torque_diagram(0.7,0.31641,241.9574,1)
+internal_torque_diagram(0.08428454065091404,1.225,362.94,2.5) #critical load case
+internal_torque_diagram(0.1896402164645566,1.225,241.96,-1) #critical load case
+
+#plt.figure()
+#plt.plot(span_loc, torque_list_n_pos, label="n = 2.5", color='red')
+#plt.plot(span_loc, torque_list_n_neg, label="n = -1", color='purple')
+#plt.xlabel("Spanwise Location [m]")
+#plt.ylabel("Torque [kNm]")
+#plt.legend()
+#plt.grid(True)
+#plt.savefig("Torsional distribution of critical load cases", format="pdf")
+#plt.show()
+
 # -------------------------------------------------------------------------------------------------------------------------
 
 
@@ -139,7 +153,7 @@ plt.ylabel("Torque [Nm]")
 plt.title("Total Torque distribution")
 plt.show()
 '''
-# -------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 '''
 #TORQUE ONLY FOR NORMAL AERODYNAMIC FORCE
 
@@ -165,6 +179,8 @@ plt.ylabel("Torque [Nm]")
 plt.title("Torque distribution due to normal force")
 #plt.show()
 '''
+# ------------------------------------------------------------------------------------------------------------------------
+
 CL_vals = np.load("Work package 4\\Load_case_arrays\\CL_crit.npy")
 rho_vals = np.load("Work package 4\\Load_case_arrays\\Load_factor_crit.npy")
 V_vals = np.load("Work package 4\\Load_case_arrays\\Rho_crit.npy")
