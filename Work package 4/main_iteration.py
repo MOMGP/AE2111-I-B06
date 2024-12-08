@@ -22,17 +22,17 @@ G = 28000000000 #Pa
 E = 72400000000
 rho = 2780 # kg/m3
 stringer_area = 0.0002
-possible_t = np.arange(2, 24, 2)*0.001
-possible_t_side = np.arange(0.5, 20, 0.5)*0.001
+possible_t = np.arange(10, 30, 2)*0.001
+possible_t_side = np.arange(2, 14, 2)*0.001
 possible_x = np.arange(0.2, 0.7, 0.05)
-pos_string_num = np.arange(2, 6, 2) #based on Jeroen resource
+pos_string_num = np.arange(20, 40, 4) #based on Jeroen resource
 graphs = False
 
 #Cross section plotting below
 airfoil_xyy = np.load("Airfoil_geom.npy")
-x_y_y = np.array(get_points(0.35, 0.55, 0.65, 1)) #EDIT THIS
+x_y_y = np.array(get_points(0.2, 0.35, 0.7, 1))
 geom = get_geom_from_points(x_y_y, [0.01 for i in range(7)])
-stringers_for_plotting = get_stringer_geom_norm(geom, 6) #EDIT THIS (for caelan <3)
+stringers_for_plotting = get_stringer_geom_norm(geom, 20)
 stringers_x=[]
 stringers_y =[]
 for i in range(len(stringers_for_plotting)):
@@ -45,49 +45,50 @@ for i in geom:
     x_vals.append(i[1][0])
     y_vals.append(i[0][1])
     y_vals.append(i[1][1])
-plt.figure(figsize=(20,4))
-plt.plot(x_vals, y_vals)
-plt.scatter(stringers_x, stringers_y, s=100, cmap="o")
+plt.figure(figsize=(8, 1.1))
+plt.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.4)
+plt.plot(x_vals, y_vals, "r", linewidth = 1.5, zorder =4)
+plt.scatter(stringers_x, stringers_y, s=7, c="b", zorder=6)
 plt.xlabel("x/c")
 plt.ylabel("t/c")
-plt.xlim(-0.05, 1.05)
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1])
-plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2])
-plt.savefig("Cross_section_min_W.pdf", format="pdf")
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,1], "k", zorder=2)
+plt.plot(airfoil_xyy[:,0], airfoil_xyy[:,2], "k", zorder=2)
+plt.grid()
+plt.savefig("Cross_section_min_W_ult.pdf", format="pdf")
 
 
 def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
     return(sigma)     
 # Only works for 2 sparred wingbox
-# shear = []
-# bending = []
-# n_points = 50 # decrease number for higher amount of points to integrate over (a.k.a. increase accuracy
-# with open("shear.txt", 'r') as f:
-#     count = 0
-#     for i in f:
-#         line = i.strip('\n')
-#         count += 1
-#         if count % n_points == 0 or count == 1:
-#             shear.append(line)
-# with open("Work package 4\\bending.txt", 'r') as f:
-#     count = 0
-#     for i in f:
-#         line = i.strip('\n')
-#         count += 1
-#         if count % n_points == 0 or count == 1:
-#             bending.append(line)         
-# shear = np.array(shear) #todo - load array made in bending
-skip = 15
+shear = []
+bending = []
+n_points = 50 # decrease number for higher amount of points to integrate over (a.k.a. increase accuracy
+with open("shear.txt", 'r') as f:
+    count = 0
+    for i in f:
+        line = i.strip('\n')
+        count += 1
+        if count % n_points == 0 or count == 1:
+            shear.append(line)
+with open("Work package 4\\bending.txt", 'r') as f:
+    count = 0
+    for i in f:
+        line = i.strip('\n')
+        count += 1
+        if count % n_points == 0 or count == 1:
+            bending.append(line)         
+shear = np.array(shear) #todo - load array made in bending
+skip = 1 #1 means no skip
 bending_x_vals = np.arange(0,26.785,0.01*skip)
 #I used interpolation functions to simplify the integrations + dont know any other method to form a function out of the data
 start = time.time()
-# def shear_force(x): #Just defines the interpolation function for the shear force. I
-#     return -1000*shear[int(x/b*2*len(shear)+0.02)]
-#     # result, _ = quad(load_distribution, 0, x, limit=200)  # Shear force is the integral of load
-# def bending_moments(x): #Integrates the interpolated function of shear, and adds the interpolation functions of bending provided by bending.py
-#     # result, _ = quad(shear_force,x,b/2)
-#     return 1000*bending[int(x/b*2*len(bending)+0.02)]
+def shear_force(x): #Just defines the interpolation function for the shear force. I
+    return -1000*shear[int(x/b*2*len(shear)+0.02)]
+    # result, _ = quad(load_distribution, 0, x, limit=200)  # Shear force is the integral of load
+def bending_moments(x): #Integrates the interpolated function of shear, and adds the interpolation functions of bending provided by bending.py
+    # result, _ = quad(shear_force,x,b/2)
+    return 1000*bending[int(x/b*2*len(bending)+0.02)]
 def angle_of_rotation(root_geom, root_str, end_third_spar, truncated, case): # does the integral of M(x) / E * I(x) which is the slope 
     bending = np.load("Work package 4\\Bending_vals\\"+case+"_crit.npy")[::skip]
     angle_of_rotation = []
@@ -107,7 +108,7 @@ def angle_of_rotation(root_geom, root_str, end_third_spar, truncated, case): # d
     return angle_of_rotation
 
 def deflection(case, root_geom, root_str, end_third_spar, truncated): # integrates slope to obtain deflection
-    bending = np.load("Work package 4\\Bending_vals\\"+case+"_crit.npy")[::skip]
+    bending = np.load("Work package 4\\Bending_vals\\"+case+"_crit.npy")[::skip]*1000
     AOR = angle_of_rotation(root_geom, root_str, end_third_spar, truncated, case)
     deflection =[]
     sum = 0
@@ -116,73 +117,63 @@ def deflection(case, root_geom, root_str, end_third_spar, truncated): # integrat
         if (i==0):
             deflection.append(sum)
         else:
-            sum+=(AOR[i]+AOR[i-1])*0.5*diff
+            sum+=(AOR[i]+AOR[i-1])*0.5*diff #note - trapezoid method used instead of scipy as it is much faster (although slightly less accurate)
             deflection.append(sum)
     return deflection
 
-# pwease dont remove mario >///<
-# print('Maximum deflection is:', abs(deflection(b/2)), "m; which is", abs(deflection(b/2)/(b/2) * 100), "% of the wingspan")
-# end = time.time()
-# print("integration took", end - start, "seconds")
-# print('Interpolated over', len(x_vals), 'intervals of x')
-
-
-
-
-
 
 # Following lines are not necessary for iterating the design, this is purely for analytical purposes
-# if graphs == True:
-#     x_vals = np.linspace(0,b/2,100)
-#     shear_vals = [shear_force(x) for x in x_vals]
-#     moment_vals = [bending_moments(x) for x in x_vals]
-#     angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
-#     deflection_vals = [deflection(x) for x in x_vals] 
-#     I_xx = [I_xx(I_xx_r,x) for x in x_vals]
-#     end = time.time()
-#     print(end - start, "seconds")
+if graphs == True:
+    x_vals = np.linspace(0,b/2,100)
+    shear_vals = [shear_force(x) for x in x_vals]
+    moment_vals = [bending_moments(x) for x in x_vals]
+    angle_of_rotation_vals = [angle_of_rotation(x) for x in x_vals]
+    deflection_vals = [deflection(x) for x in x_vals] 
+    I_xx = [I_xx(I_xx_r,x) for x in x_vals]
+    end = time.time()
+    print(end - start, "seconds")
 
 
-#     plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 6))
 
-#     # I_xx vals
-#     plt.subplot(5, 1, 5)
-#     plt.plot(x_vals, I_xx, label="I_xx", color="yellow")
-#     plt.ylabel("I_xx")
-#     plt.grid(alpha=0.3)
-#     plt.legend()
+    # I_xx vals
+    plt.subplot(5, 1, 5)
+    plt.plot(x_vals, I_xx, label="I_xx", color="yellow")
+    plt.ylabel("I_xx")
+    plt.grid(alpha=0.3)
+    plt.legend()
 
-#     # Shear force
-#     plt.subplot(5, 1, 1)
-#     plt.plot(x_vals, shear_vals, label="Shear Force V(x)", color="green")
-#     plt.ylabel("Shear Force (N)")
-#     plt.grid(alpha=0.3)
-#     plt.legend()
+    # Shear force
+    plt.subplot(5, 1, 1)
+    plt.plot(x_vals, shear_vals, label="Shear Force V(x)", color="green")
+    plt.ylabel("Shear Force (N)")
+    plt.grid(alpha=0.3)
+    plt.legend()
 
-#     # Bending moment
-#     plt.subplot(5, 1, 2)
-#     plt.plot(x_vals, moment_vals, label="Bending Moment M(x)", color="red")
-#     plt.ylabel("Moment (Nm)")
-#     plt.grid(alpha=0.3)
-#     plt.legend()
+    # Bending moment
+    plt.subplot(5, 1, 2)
+    plt.plot(x_vals, moment_vals, label="Bending Moment M(x)", color="red")
+    plt.ylabel("Moment (Nm)")
+    plt.grid(alpha=0.3)
+    plt.legend()
 
-#     plt.subplot(5, 1, 3) # bending moment can be added later aswell if needed :3
-#     plt.plot(x_vals, angle_of_rotation_vals, label="Slope dv/dx", color="purple")
-#     plt.xlabel("Position along the beam (m)")
-#     plt.ylabel("Slope (m)")
-#     # plt.grid(alpha=0.3)
-#     plt.legend()
+    plt.subplot(5, 1, 3) # bending moment can be added later aswell if needed :3
+    plt.plot(x_vals, angle_of_rotation_vals, label="Slope dv/dx", color="purple")
+    plt.xlabel("Position along the beam (m)")
+    plt.ylabel("Slope (m)")
+    # plt.grid(alpha=0.3)
+    plt.legend()
 
 
 
-#     # Deflection
-#     plt.subplot(5, 1, 4) #bending moment can be added later aswell if needed :3
-#     plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
-#     plt.xlabel("Position along the beam (m)")
-#     plt.ylabel("Deflection (m)")
-#     plt.grid(alpha=0.3)
-#     plt.legend()
-#     plt.show()
+    # Deflection
+    plt.subplot(5, 1, 4) #bending moment can be added later aswell if needed :3
+    plt.plot(x_vals, deflection_vals, label="Deflection w(x)", color="purple")
+    plt.xlabel("Position along the beam (m)")
+    plt.ylabel("Deflection (m)")
+    plt.grid(alpha=0.3)
+    plt.legend()
+    plt.show()
 
 def bending_stress(bending_moment, y_max, I_xx):
     sigma = (bending_moment * y_max)/I_xx
@@ -198,9 +189,15 @@ def scaled_length(length,chord):
 pos_combs = []
 cases = ["n", "rho", "V", "CL"]
 #TEST 
-# x_y_y = get_points(0.2, 0.4, 0.6, 1)
-# root_geom = get_geom_from_points(x_y_y, [0.001 for i in range(7)])
-# root_stringer = get_stringer_geom_norm(root_geom, 4)
+# i=0.2
+# j=0.35
+# k=0.65
+# n=32
+# t_sides =0.008
+# t_tb = 0.012
+# x_y_y = get_points(i, j, k, 1)
+# root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
+# root_stringer = get_stringer_geom_norm(root_geom, n)
 # tip_twists = []
 # tip_deflections = []
 # plt.plot(bending_x_vals, deflection("CL",root_geom, root_stringer, b/6, False))
@@ -215,9 +212,9 @@ skip_t_sides = False
 skip_str = False
 skip_thd_end = False
 orig_time = time.time()
-for i in np.arange(0.2, 0.50, pos_steps): # iterating front spar pos (skipping every 0.05 space)
-    for j in np.arange(i+pos_steps, 0.65, pos_steps): #iterating second spar pos (skipping every 0.05 space)
-        for k in np.arange(j+pos_steps, 0.75, pos_steps): # iterating third spar pos (skipping every 0.05 space)
+for i in np.arange(0.2, 0.3, pos_steps): # iterating front spar pos (skipping every 0.05 space)
+    for j in np.arange(i+pos_steps*3, 0.45, pos_steps): #iterating second spar pos (skipping every 0.05 space)
+        for k in np.arange(0.55, 0.75, pos_steps): # iterating third spar pos (skipping every 0.05 space)
             print("currently in k", count, f"time = {time.time()- orig_time}")
             combinations = []
             for truncated in [False, True]:
@@ -280,8 +277,10 @@ for i in np.arange(0.2, 0.50, pos_steps): # iterating front spar pos (skipping e
 
                 # Save the file
                 np.save(file_path, combinations)
-
+                combinations_min_def = np.min(combinations[:,2])
+                combinations_min_twist = np.min(combinations[:,1])
                 print(f"File saved to: {file_path}")
+                print(f"Best deflection is {combinations_min_def} while best twist is {combinations_min_twist}")
                                 
                             
 #considerations - if smth works with a particular thickness, dont increase
