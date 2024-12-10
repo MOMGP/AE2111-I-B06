@@ -131,14 +131,17 @@ def Moment_distribution_for_any_load_case(CL_d,rho,V):
     return M
 
 
-lift_dist_spanwise,span_loc=Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
-drag_dist=Drag_distribution_for_any_load_case(0.7,0.31641,241.9574)
-moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
+#NOTICE - just commented this and the plotting because it makes everything take triple the time, and fucks up the iteration
+
+# lift_dist_spanwise,span_loc=Lift_distribution_for_any_load_case(0.7,0.31641,241.9574)
+# drag_dist=Drag_distribution_for_any_load_case(0.7,0.31641,241.9574)
+# moment_dist=Moment_distribution_for_any_load_case(0.7,0.31641,241.9574)
+
 
 #ploting the spanwise lift distribution
-plt.plot(span_loc,lift_dist_spanwise)
-plt.xlim([-27,27])
-plt.gca().set_aspect(1/4000, adjustable='box')
+# plt.plot(span_loc,lift_dist_spanwise)
+# plt.xlim([-27,27])
+# plt.gca().set_aspect(1/4000, adjustable='box')
 #plt.show()
 ''''
 #ploting the spanwise drag distribution
