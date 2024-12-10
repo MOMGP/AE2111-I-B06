@@ -3,7 +3,7 @@ from sympy import symbols, Eq, solve # type: ignore
 import numpy as np
 import scipy as scipy 
 from matplotlib import pyplot as plt
-from geometry_WP4_2 import get_points_along_spanwise
+from geometry_WP4_2 import get_points_along_spanwise, get_stringer_geom_norm
 from get_points import get_points,get_geom_from_points
 import time
 
@@ -162,8 +162,8 @@ def get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond
     #     y.append(tor_stiff)#h,a,b,c,d,t1,t2,t3,t4
     # return y
 span = 2*26.785
-spar1_x=0.2
-spar2_x=0.5
+spar1_x=0.35
+spar2_x=0.55
 spar3_x=0.7
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
 root_geom = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
@@ -187,8 +187,16 @@ root_geom = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
 #    theta = 1/tor_stiff * scipy.integrate.quad(T,0,x)
 #    return theta
 #graphing 
+
+t_tb = 0.001
+t_sides = 0.0007
+truncated = False
+thd_end = 0.1*span
+n=2
+get_stringer_geom_norm = get_stringer_geom_norm(root_geom, n)
+
 hws = 26.785
-x = np.arange(0,hws,0.5)
+x = np.arange(0,hws,0.1)
 y = []
 factor = 0.35
 # for i in x:
@@ -200,3 +208,11 @@ factor = 0.35
 
 # plt.show()
 # print("I'm going to kms if you dont run this, BITCH")
+for i in x:
+    y.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
+y = np.array(y)
+plt.xlabel("Position [m]")
+plt.ylabel("Torsional Stiffness [$N⋅m^2$ rad$^{-1}$]")
+plt.plot(x,y)
+plt.savefig("Tor_stiff_design_point.pdf", format="pdf")
+plt.show()

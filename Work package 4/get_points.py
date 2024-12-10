@@ -1,6 +1,6 @@
 import math
 import csv
-airfoil_chords_list = 'Work package 4\Airfoil Chord List.csv'
+airfoil_chords_list = 'Work package 4\\Airfoil Chord List.csv'
 import pandas as pd
 import numpy as np
 
