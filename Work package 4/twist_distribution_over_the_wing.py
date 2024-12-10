@@ -51,10 +51,16 @@ n = 1
 
 #ploting 
 hws = 26.785
-# x = np.arange(0,hws,0.5)
-# y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
-# plt.plot(x,y)
-# plt.show()
+x = np.arange(0,hws,0.5)
+y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
+y1 = twist_angle('CL' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+y2 = twist_angle('rho' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+y3 = twist_angle('V' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+plt.plot(x,y,label='n',color = 'blue')
+# plt.plot(x, y1, label="Line 1", color="red", linestyle="-")
+plt.plot(x, y2, label="Rho", color="Black", linestyle="-")
+# plt.plot(x, y3, label="Line 1", color="pink", linestyle="-")
+plt.show()
 
 
 
