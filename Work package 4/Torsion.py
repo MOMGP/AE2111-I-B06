@@ -109,7 +109,7 @@ def internal_torque_diagram (CL_d, rho, V, n):
 #    return torque_list
 
 #internal_torque_diagram(0.7,0.31641,241.9574,1)
-internal_torque_diagram(0.08428454065091404,1.225,362.94,2.5) #critical load case
+internal_torque_diagram(0.08428454065091404,1.225,258.97,2.5) #critical load case
 internal_torque_diagram(0.1896402164645566,1.225,241.96,-1) #critical load case
 
 #plt.figure()
@@ -121,6 +121,9 @@ internal_torque_diagram(0.1896402164645566,1.225,241.96,-1) #critical load case
 #plt.grid(True)
 #plt.savefig("Torsional distribution of critical load cases", format="pdf")
 #plt.show()
+
+
+
 
 # -------------------------------------------------------------------------------------------------------------------------
 
@@ -193,3 +196,4 @@ n_vals = np.load("Work package 4\\Load_case_arrays\\V_crit.npy")
 #         torsion.append(internal_torque_at_x(x, CL_vals[i], rho_vals[i], V_vals[i], n_vals[i]))
 #         print(cases[i] + " is done for length "+str(x))
 #     np.save("Work package 4\\Torsions_diff_cases\\" + cases[i]+".npy", np.array(torsion))
+
