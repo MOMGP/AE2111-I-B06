@@ -8,7 +8,7 @@ from twist_distribution_over_the_wing import twist_angle
 from data_analysis import deflection, angle_of_rotation
 b=53.57
 dihedral = np.deg2rad(4.75) #rad
-skip = 50
+skip = 15
 bending_x_vals = np.arange(0,26.785,0.01*skip)
 twist_y_vals = np.arange(0,26785,500)*0.001
 E = 72400000000
@@ -27,7 +27,7 @@ thd_end = b*0.175
 truncated = True
 
 
-def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, plot_with_airfoil=False, full_wing=False, plot_stringers = True, show_deflection = False, show_twist = False, view_engine = False):
+def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, plot_with_airfoil=False, full_wing=False, plot_stringers = True, show_deflection = False, show_twist = False, view_engine = False, zoom=1):
     points_root, stringers_root = get_points_along_spanwise(geom_root, stringers, 0, end_third_spar, trunctated=truncated)
     points_end_third_spar, _ = get_points_along_spanwise(geom_root, stringers, end_third_spar, end_third_spar, trunctated=truncated)
     # print(points_end_third_spar)
@@ -46,7 +46,9 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
     for i in range(len(deflections)):
         deflections[i] = -deflections[i]
     twists = twist_angle(cases[index_twists], root_geom, root_stringer, thd_end, truncated)
-    fig = plt.figure(figsize = (16, 16))
+    for i in range(len(twists)):
+        twists[i]=-twists[i]
+    fig = plt.figure(figsize = (5, 5))
     ax = fig.add_subplot(111, projection='3d')
 
     front_spar_x = []
@@ -175,8 +177,8 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
                 bending_x_vals[i],
                 bending_x_vals[i],
             ]))
-            # color_vals12.append(deflections[i])
-            color_vals12.append(-np.load("Work package 4\\Bending_vals\\n_crit.npy")[::skip][i]*1000)
+            color_vals12.append(deflections[i])
+            # color_vals12.append(-np.load("Work package 4\\Bending_vals\\n_crit.npy")[::skip][i]*1000)
 
             # Front Spar Z (with deflections)
             front_spar_z.append(np.array([
@@ -220,8 +222,8 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
                     top_x_prev_3 + np.sin(lambda_LE) * bending_x_vals[i],
                     bot_x_prev_3 + np.sin(lambda_LE) * bending_x_vals[i],
                 ]))
-                # color_vals3.append(deflections[i])
-                color_vals3.append(-np.load("Work package 4\\Bending_vals\\n_crit.npy")[::skip][i]*1000)
+                color_vals3.append(deflections[i])
+                # color_vals3.append(-np.load("Work package 4\\Bending_vals\\n_crit.npy")[::skip][i]*1000)
 
                 # Third Spar Y
                 thd_spar_y.append(np.array([
@@ -237,13 +239,13 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
 
     
     else:
-        front_spar_x = np.array([[points_root[0][0][0], points_root[0][1][0]], [points_tip[0][0][0] + np.sin(lambda_LE) * b / 2, points_tip[0][1][0] + np.sin(lambda_LE) * b / 2]])
+        front_spar_x = np.array([[points_root[0][0][0], points_root[0][1][0]], [points_tip[0][0][0] + np.sin(lambda_LE) * b / 2, points_tip[0][1][0] + np.sin(lambda_LE) * b / 2], [points_end_third_spar[0][0][0] + np.sin(lambda_LE) * thd_end, points_end_third_spar[0][1][0] + np.sin(lambda_LE) * thd_end]])
         front_spar_y = np.array([[0, 0], [b/2, b/2]])
-        front_spar_z = np.array([[points_root[0][0][1], points_root[0][1][1]],[points_tip[0][0][1] + np.sin(np.deg2rad(dihedral)) * b / 2, points_tip[0][1][1] + np.sin(np.deg2rad(dihedral)) * b / 2]])
+        front_spar_z = np.array([[points_root[0][0][1], points_root[0][1][1]],[points_tip[0][0][1] + np.sin(np.deg2rad(dihedral)) * b / 2, points_tip[0][1][1] + np.sin(np.deg2rad(dihedral)) * b / 2], [points_end_third_spar[0][0][1] + np.sin(np.deg2rad(dihedral)) * thd_end, points_end_third_spar[0][1][1] + np.sin(np.deg2rad(dihedral)) * thd_end]])
         
-        snd_spar_x = np.array([[points_root[2][0][0], points_root[2][1][0]], [points_tip[2][0][0] + np.sin(lambda_LE) * b / 2, points_tip[2][1][0] + np.sin(lambda_LE) * b / 2]])
+        snd_spar_x = np.array([[points_root[2][0][0], points_root[2][1][0]], [points_tip[2][0][0] + np.sin(lambda_LE) * b / 2, points_tip[2][1][0] + np.sin(lambda_LE) * b / 2],  [points_end_third_spar[2][0][0] + np.sin(lambda_LE) * thd_end, points_end_third_spar[2][1][0] + np.sin(lambda_LE) * thd_end]])
         snd_spar_y = np.array([[0, 0], [b/2, b/2]])
-        snd_spar_z = np.array([[points_root[2][0][1], points_root[2][1][1]], [points_tip[2][0][1] + np.sin(np.deg2rad(dihedral)) * b / 2, points_tip[2][1][1] + np.sin(np.deg2rad(dihedral)) * b / 2]])
+        snd_spar_z = np.array([[points_root[2][0][1], points_root[2][1][1]], [points_tip[2][0][1] + np.sin(np.deg2rad(dihedral)) * b / 2, points_tip[2][1][1] + np.sin(np.deg2rad(dihedral)) * b / 2], [points_end_third_spar[2][0][1] + np.sin(np.deg2rad(dihedral)) * thd_end, points_end_third_spar[2][1][1] + np.sin(np.deg2rad(dihedral)) *  thd_end]])
         color_vals12 = [1 , 1]
 
         thd_spar_x = np.array([[points_root[5][0][0], points_root[5][1][0]], [points_end_third_spar[5][0][0] + np.sin(lambda_LE) * end_third_spar, points_end_third_spar[5][1][0] + np.sin(lambda_LE) * end_third_spar]])
@@ -253,7 +255,7 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
     # Ensure the axes are properly set for 3D plotting
         if plot_stringers:
             for i in range(len(stringers_root)):
-                ax.plot([stringers_root[i][0][0], stringers_tip[i][0][0]+np.sin(lambda_LE) * b / 2], [0, b/2], [stringers_root[i][0][1], stringers_tip[i][0][1]+np.sin(np.deg2rad(dihedral)) * b / 2], linewidth=0.3)
+                ax.plot([stringers_root[i][0][0], stringers_tip[i][0][0]+np.sin(lambda_LE) * b / 2], [0, b/2], [stringers_root[i][0][1], stringers_tip[i][0][1]+np.sin(np.deg2rad(dihedral)) * b / 2], linewidth=0.3, color='r')
             if full_wing:
                 if plot_stringers:
                     for i in range(len(stringers_root)):
@@ -291,15 +293,15 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
                     airfoil_z_bottom[i, j] = prev_geom[j, 0] * np.sin(twists[i]) + prev_geom[j, 2] * np.cos(twists[i]) + np.sin(dihedral) * twist_y_vals[i]
 
             # Plot the top surface
-            ax.plot_surface(airfoil_x_top, airfoil_y_top, airfoil_z_top, color='red', alpha=0.2)
+            ax.plot_surface(airfoil_x_top, airfoil_y_top, airfoil_z_top, color='#0B0B0B', alpha=0.05)
 
             # Plot the bottom surface
-            ax.plot_surface(airfoil_x_bottom, airfoil_y_bottom, airfoil_z_bottom, color='red', alpha=0.2)
+            ax.plot_surface(airfoil_x_bottom, airfoil_y_bottom, airfoil_z_bottom, color='#0B0B0B', alpha=0.05)
             if full_wing:
-                ax.plot_surface(airfoil_x_top, -airfoil_y_top, airfoil_z_top, color='red', alpha=0.2)
+                ax.plot_surface(airfoil_x_top, -airfoil_y_top, airfoil_z_top, color='#0B0B0B', alpha=0.05)
 
                 # Plot the bottom surface
-                ax.plot_surface(airfoil_x_bottom, -airfoil_y_bottom, airfoil_z_bottom, color='red', alpha=0.2)
+                ax.plot_surface(airfoil_x_bottom, -airfoil_y_bottom, airfoil_z_bottom, color='#0B0B0B', alpha=0.05)
         elif show_deflection:
             n_twists = bending_x_vals.size
             n_points = x_y_y.shape[0]
@@ -329,15 +331,15 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
                     airfoil_z_bottom[i, j] = prev_geom[j, 2]  + np.sin(dihedral) * bending_x_vals[i] +  deflections[i]
 
             # Plot the top surface
-            ax.plot_surface(airfoil_x_top, airfoil_y_top, airfoil_z_top, color='red', alpha=0.2)
+            ax.plot_surface(airfoil_x_top, airfoil_y_top, airfoil_z_top, color='#0B0B0B', alpha=0.15)
 
             # Plot the bottom surface
-            ax.plot_surface(airfoil_x_bottom, airfoil_y_bottom, airfoil_z_bottom, color='red', alpha=0.2)
+            ax.plot_surface(airfoil_x_bottom, airfoil_y_bottom, airfoil_z_bottom, color='#0B0B0B', alpha=0.15)
             if full_wing:
-                ax.plot_surface(airfoil_x_top, -airfoil_y_top, airfoil_z_top, color='red', alpha=0.2)
+                ax.plot_surface(airfoil_x_top, -airfoil_y_top, airfoil_z_top, color='#0B0B0B', alpha=0.15)
 
                 # Plot the bottom surface
-                ax.plot_surface(airfoil_x_bottom, -airfoil_y_bottom, airfoil_z_bottom, color='red', alpha=0.2)
+                ax.plot_surface(airfoil_x_bottom, -airfoil_y_bottom, airfoil_z_bottom, color='#0B0B0B', alpha=0.15)
 
         else:
             tip_airfoil = x_y_y*scaled_chord(b/2)
@@ -360,11 +362,11 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
             Z_lower = np.tile(all_Z_lower, (len(all_y), 1))
 
             # Plot root airfoil
-            ax.plot_surface(all_x, all_y, Z_upper, color='red', alpha=0.2)
-            ax.plot_surface(all_x, all_y, Z_lower, color='red', alpha=0.2)
+            ax.plot_surface(all_x, all_y, Z_upper, color='#0B0B0B', alpha=0.2)
+            ax.plot_surface(all_x, all_y, Z_lower, color='#0B0B0B', alpha=0.2)
             if full_wing:
-                ax.plot_surface(all_x, -all_y, Z_upper, color='red', alpha=0.2)
-                ax.plot_surface(all_x, -all_y, Z_lower, color='red', alpha=0.2)
+                ax.plot_surface(all_x, -all_y, Z_upper, color='#0B0B0B', alpha=0.2)
+                ax.plot_surface(all_x, -all_y, Z_lower, color='#0B0B0B', alpha=0.2)
 
     
     # Plot surfaces for front and second spar
@@ -377,15 +379,33 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
     thd_spar_x = np.array(thd_spar_x)
     thd_spar_y = np.array(thd_spar_y)
     thd_spar_z = np.array(thd_spar_z)
+    
+
+    color_vals12=np.array(color_vals12)
+    color_vals3 = np.array(color_vals3)
+
+    if show_twist:
+        color_vals12=np.degrees(np.array(color_vals12))
+        color_vals3 = np.degrees(np.array(color_vals3))
+        color_vals12=-color_vals12
+        color_vals3=-color_vals3
+
     norm = colors.Normalize(np.min(color_vals12), np.max(color_vals12))
+    
+        
+    color_vals12 = np.tile(color_vals12, [2,1]).T.reshape(-1, 2)
+    color_vals3 = np.tile(color_vals3, [2,1]).T.reshape(-1, 2)
 
-    color_vals12 = np.tile(np.array(color_vals12), [2,1]).T.reshape(-1, 2)
-    color_vals3 = np.tile(np.array(color_vals3), [2,1]).T.reshape(-1, 2)
-
-    ax.plot_surface(front_spar_x, front_spar_y, front_spar_z, rstride=1, cstride=1, facecolors =cm.rainbow(norm(color_vals12)))
-    ax.plot_surface(snd_spar_x, snd_spar_y, snd_spar_z, rstride=1, cstride=1, facecolors = cm.rainbow(norm(color_vals12)))
-    ax.plot_surface(thd_spar_x, thd_spar_y, thd_spar_z, rstride=1, cstride=1, facecolors = cm.rainbow(norm(color_vals3)))
-    fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cm.rainbow), ax=ax)
+    ax.plot_surface(front_spar_x[:2], front_spar_y[:2], front_spar_z[:2], rstride=1, cstride=1, facecolors =cm.rainbow(norm(color_vals12)))
+    ax.plot_surface(snd_spar_x[:2], snd_spar_y[:2], snd_spar_z[:2], rstride=1, cstride=1, facecolors = cm.rainbow(norm(color_vals12)))
+    ax.plot_surface(np.array([[snd_spar_x[0][0], snd_spar_x[-1][0]], [thd_spar_x[0][0],  thd_spar_x[-1][0]]]), 
+                    np.array([[0, thd_end], [0, thd_end]]),
+                    np.array([[snd_spar_z[0][0], snd_spar_z[len(thd_spar_z)-1][0] ], [thd_spar_z[0][0], thd_spar_z[-1][0]]]), color = 'b', alpha = 0.6)
+    if show_twist:
+        fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cm.rainbow), ax=ax, label="Twist, $\\theta$ [deg]", shrink = 0.7)
+    elif show_deflection:
+        # fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cm.rainbow), ax=ax, label="Bending moment distribution, [kN/m]", shrink=0.7)
+        fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cm.rainbow), ax=ax, label="Wing deflection, [m]", shrink=0.7)
     #plot stringers
     # if show_twist:
     #     if plot_stringers:
@@ -412,14 +432,14 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
     if view_engine:
         radius = 4.17/2
         length = 10
-        center = (7.5-length/2, 10.66, 10.66*np.sin(dihedral)-radius*1.5)
+        center = (7.5-length*0.7, 9.37, 9.37*np.sin(dihedral)-radius*1.5)
         theta = np.linspace(0, 2 * np.pi, 25)  # Angle around the cylinder
         x = np.linspace(0, length, 25)          # Length of the cylinder
         theta, x = np.meshgrid(theta, x)        # Create a meshgrid for the angles and length
-
+        curve = -(x-length/2)**2/(length**2)-(x-length/2)/length/3+1
         # Parametric equations for the cylinder pointing in the x-direction
-        y = center[1] + radius * np.cos(theta)
-        z = center[2] + radius * np.sin(theta)
+        y = center[1] + radius * np.cos(theta)*curve
+        z = center[2] + radius * np.sin(theta)*curve
         x = center[0] + x
 
         ax.plot_surface(x, y, z, color='k', alpha=0.4)
@@ -427,8 +447,8 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
         theta_cap = np.linspace(0, 2 * np.pi, 25)
         theta_cap, r = np.meshgrid(theta_cap, np.linspace(0, radius, 25))  # Circular coordinates
 
-        y_cap = center[1] + r * np.cos(theta_cap)
-        z_cap = center[2] + r * np.sin(theta_cap)
+        y_cap = center[1] + r * np.cos(theta_cap)*0.5
+        z_cap = center[2] + r * np.sin(theta_cap)*0.5
 
         # Cap at the start of the cylinder
         x_cap_start = np.full_like(y_cap, center[0])
@@ -439,24 +459,35 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
             ax.plot_surface(x_cap_start, -y_cap, z_cap, color='k', alpha=0.4)
             ax.plot_surface(x_cap_start+length, -y_cap, z_cap, color='k', alpha=0.4)
 
-
     if full_wing:
         ax.plot_surface(front_spar_x, -front_spar_y, front_spar_z, rstride=1, cstride=1, facecolors =cm.rainbow(norm(color_vals12)))
         ax.plot_surface(snd_spar_x, -snd_spar_y, snd_spar_z, rstride=1, cstride=1, facecolors = cm.rainbow(norm(color_vals12)))
         ax.plot_surface(thd_spar_x, -thd_spar_y, thd_spar_z, rstride=1, cstride=1, facecolors = cm.rainbow(norm(color_vals3)))
-        ax.set_xlim3d(-25, 25)
-        ax.set_ylim3d(-25, 25)
-        ax.set_zlim3d(-25, 25)
+        lims = 25/zoom
+        x_offset = 4
+        ax.set_xlim3d(-lims+x_offset, lims+x_offset)
+        ax.set_ylim3d(-lims, lims)
+        ax.set_zlim3d(-lims, lims)
 
     else:
-        ax.set_xlim3d(0, 25)
-        ax.set_ylim3d(0, 25)
-        ax.set_zlim3d(0, 25)
-        
+        x_offset = 4
+        lims = 25/zoom
+        ax.set_xlim3d(x_offset, lims+x_offset)
+        ax.set_ylim3d(0, lims)
+        ax.set_zlim3d(0, lims)
+    ax.view_init(elev=90, azim=0)
+    # Hide grid lines
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_zticks([])
+    plt.axis('off')
+    plt.tight_layout()
     plt.show()
 
-
+i=0.2
+j=0.35
+k=0.65
 x_y_y = get_points(i, j, k, 1)
 root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
 root_str = get_stringer_geom_norm(root_geom, n)
-plot_def_in_aircraft(root_geom, root_str, thd_end, truncated, True, True, False, False, True, True)
+plot_def_in_aircraft(root_geom, root_str, thd_end, truncated=truncated, plot_with_airfoil=True, full_wing=False, plot_stringers=True, show_deflection=False, show_twist=False, view_engine=False, zoom=1)

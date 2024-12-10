@@ -190,6 +190,7 @@ root_geom = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
 hws = 26.785
 x = np.arange(0,hws,0.5)
 y = []
+factor = 0.35
 # for i in x:
 #     y.append(get_torr_stiff_list(root_geom, [[[0,0],0]], span/6, True, i))
 # plt.show()
