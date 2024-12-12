@@ -4,13 +4,13 @@ import numpy as np
 from scipy import integrate
 #from Torsion import internal_torque_at_x
 from get_points import get_points,get_geom_from_points
-from DIS_TORSIONAL_STIFF import get_torr_stiff_list
+from DIS_TORSIONAL_STIFF import get_torr_stiff_list, factor
 from matplotlib import pyplot as plt
 import time
 cases = ["CL", "n", "rho", "V"]
 #𝑑θ/𝑑𝑦 = 𝑇(𝑦)/𝐺𝐽(𝑦)
 def rot(x, case,norm_wing_box_root, norm_stringers, end_third_spar, cond):
-    int_torque_x = np.load("Work package 4\\Torsions_diff_cases\\"+case+"_crit.npy")[int(x*2)]*100*0.35
+    int_torque_x = np.load("Work package 4\\Torsions_diff_cases\\"+case+"_crit.npy")[int(x*2)]*100*factor
     rot = int_torque_x/get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond, x)
     return rot
 
@@ -32,12 +32,14 @@ def twist_angle(case, norm_wing_box_root, norm_stringers, end_third_spar, cond):
     return twist
 span = 2*26.785
 spar1_x=0.2
-spar2_x=0.5
+spar2_x=0.35
 spar3_x=0.7
+t_sides = 0.008
+t_tb = 0.014
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
-norm_wing_box_root = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
+norm_wing_box_root = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
 norm_stringers = [[[0,0],0]]
-end_third_spar = span/6 
+end_third_spar = span*0.175 
 cond = True 
 hws = 26.785
 x = np.arange(0,hws,0.5)
@@ -51,10 +53,16 @@ n = 1
 
 #ploting 
 hws = 26.785
-# x = np.arange(0,hws,0.5)
-# y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
-# plt.plot(x,y)
-# plt.show()
+x = np.arange(0,hws,0.5)
+y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
+y1 = twist_angle('CL' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+y2 = twist_angle('rho' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+y3 = twist_angle('V' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+plt.plot(x,y,label='n',color = 'blue')
+# plt.plot(x, y1, label="Line 1", color="red", linestyle="-")
+plt.plot(x, y2, label="Rho", color="Black", linestyle="-")
+# plt.plot(x, y3, label="Line 1", color="pink", linestyle="-")
+plt.show()
 
 
 
