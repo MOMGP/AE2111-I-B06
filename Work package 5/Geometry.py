@@ -1,4 +1,6 @@
 geometry = []
+b = 53.57
+
 
 def get_design(design_number):
     if design_number == 1:          #first design
@@ -24,7 +26,6 @@ def get_design(design_number):
     geometry.append(spar3)
     geometry.append(thickness_top_bottom)
     geometry.append(thickness_sides)
-    b = 53.57
     end_second_cell = 0.175*b
     geometry.append(end_second_cell)
     return geometry
