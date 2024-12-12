@@ -396,39 +396,39 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
     color_vals12 = np.tile(color_vals12, [2,1]).T.reshape(-1, 2)
     color_vals3 = np.tile(color_vals3, [2,1]).T.reshape(-1, 2)
 
-    ax.plot_surface(front_spar_x[:2], front_spar_y[:2], front_spar_z[:2], rstride=1, cstride=1, facecolors =cm.rainbow(norm(color_vals12)))
-    ax.plot_surface(snd_spar_x[:2], snd_spar_y[:2], snd_spar_z[:2], rstride=1, cstride=1, facecolors = cm.rainbow(norm(color_vals12)))
-    ax.plot_surface(np.array([[snd_spar_x[0][0], snd_spar_x[-1][0]], [thd_spar_x[0][0],  thd_spar_x[-1][0]]]), 
-                    np.array([[0, thd_end], [0, thd_end]]),
-                    np.array([[snd_spar_z[0][0], snd_spar_z[len(thd_spar_z)-1][0] ], [thd_spar_z[0][0], thd_spar_z[-1][0]]]), color = 'b', alpha = 0.6)
+    # ax.plot_surface(front_spar_x[:2], front_spar_y[:2], front_spar_z[:2], rstride=1, cstride=1, facecolors =cm.rainbow(norm(color_vals12)))
+    # ax.plot_surface(snd_spar_x[:2], snd_spar_y[:2], snd_spar_z[:2], rstride=1, cstride=1, facecolors = cm.rainbow(norm(color_vals12)))
+    # ax.plot_surface(np.array([[snd_spar_x[0][0], snd_spar_x[-1][0]], [thd_spar_x[0][0],  thd_spar_x[-1][0]]]), 
+    #                 np.array([[0, thd_end], [0, thd_end]]),
+    #                 np.array([[snd_spar_z[0][0], snd_spar_z[len(thd_spar_z)-1][0] ], [thd_spar_z[0][0], thd_spar_z[-1][0]]]), color = 'b', alpha = 0.6)
     if show_twist:
         fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cm.rainbow), ax=ax, label="Twist, $\\theta$ [deg]", shrink = 0.7)
     elif show_deflection:
         # fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cm.rainbow), ax=ax, label="Bending moment distribution, [kN/m]", shrink=0.7)
         fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cm.rainbow), ax=ax, label="Wing deflection, [m]", shrink=0.7)
     #plot stringers
-    # if show_twist:
-    #     if plot_stringers:
-    #         for i in range(len(stringers)):
-    #             stringer_x=[]
-    #             stringer_y=[]
-    #             stringer_z=[]
-    #             for j in range(twist_y_vals.size):
-    #                 prev_str = get_points_along_spanwise(geom_root, stringers, twist_y_vals[j], end_third_spar, trunctated=truncated)[1]
-    #                 stringer_x.append(prev_str[i][0][0]+np.sin(lambda_LE)* twist_y_vals[j])
-    #                 stringer_y.append(twist_y_vals[j])
-    #                 stringer_z.append(prev_str[i][0][1]+np.sin(dihedral)*twist_y_vals[j])
-    #             ax.plot(stringer_x, stringer_y, stringer_z, cmap = cm.rainbow(norm(color_vals12[:,1])), linewidth=0.3, alpha = 0.3)
-    #         if full_wing:
-    #             stringer_x=[]
-    #             stringer_y=[]
-    #             stringer_z=[]
-    #             for j in range(twist_y_vals.size):
-    #                 prev_str = get_points_along_spanwise(geom_root, stringers, twist_y_vals[j], end_third_spar, trunctated=truncated)[1]
-    #                 stringer_x.append(prev_str[i][0][0]+np.sin(lambda_LE)* twist_y_vals[j])
-    #                 stringer_y.append(-twist_y_vals[j])
-    #                 stringer_z.append(prev_str[i][0][1]+np.sin(dihedral)*twist_y_vals[j])
-    #             ax.plot(stringer_x, stringer_y, stringer_z, "r", linewidth=0.3, alpha = 0.3)
+    if show_twist:
+        if plot_stringers:
+            for i in range(len(stringers)):
+                stringer_x=[]
+                stringer_y=[]
+                stringer_z=[]
+                for j in range(twist_y_vals.size):
+                    prev_str = get_points_along_spanwise(geom_root, stringers, twist_y_vals[j], end_third_spar, trunctated=truncated)[1]
+                    stringer_x.append(prev_str[i][0][0]+np.sin(lambda_LE)* twist_y_vals[j])
+                    stringer_y.append(twist_y_vals[j])
+                    stringer_z.append(prev_str[i][0][1]+np.sin(dihedral)*twist_y_vals[j])
+                ax.plot(stringer_x, stringer_y, stringer_z, cmap = cm.rainbow(norm(color_vals12[:,1])), linewidth=0.3, alpha = 0.3)
+            if full_wing:
+                stringer_x=[]
+                stringer_y=[]
+                stringer_z=[]
+                for j in range(twist_y_vals.size):
+                    prev_str = get_points_along_spanwise(geom_root, stringers, twist_y_vals[j], end_third_spar, trunctated=truncated)[1]
+                    stringer_x.append(prev_str[i][0][0]+np.sin(lambda_LE)* twist_y_vals[j])
+                    stringer_y.append(-twist_y_vals[j])
+                    stringer_z.append(prev_str[i][0][1]+np.sin(dihedral)*twist_y_vals[j])
+                ax.plot(stringer_x, stringer_y, stringer_z, "r", linewidth=0.3, alpha = 0.3)
     if view_engine:
         radius = 4.17/2
         length = 10
@@ -477,10 +477,10 @@ def plot_def_in_aircraft(geom_root, stringers, end_third_spar, truncated=True, p
         ax.set_zlim3d(0, lims)
     ax.view_init(elev=90, azim=0)
     # Hide grid lines
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_zticks([])
-    plt.axis('off')
+    # ax.set_xticks([])
+    # ax.set_yticks([])
+    # ax.set_zticks([])
+    # plt.axis('off')
     plt.tight_layout()
     plt.show()
 
@@ -490,4 +490,4 @@ k=0.65
 x_y_y = get_points(i, j, k, 1)
 root_geom = get_geom_from_points(x_y_y, [t_sides, t_tb, t_sides, t_tb, t_tb, t_sides, t_tb])
 root_str = get_stringer_geom_norm(root_geom, n)
-plot_def_in_aircraft(root_geom, root_str, thd_end, truncated=truncated, plot_with_airfoil=True, full_wing=False, plot_stringers=True, show_deflection=False, show_twist=False, view_engine=False, zoom=1)
+plot_def_in_aircraft(root_geom, root_str, thd_end, truncated=truncated, plot_with_airfoil=True, full_wing=True, plot_stringers=True, show_deflection=True, show_twist=False, view_engine=True, zoom=1)
