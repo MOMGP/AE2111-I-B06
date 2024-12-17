@@ -162,8 +162,8 @@ def get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond
     #     y.append(tor_stiff)#h,a,b,c,d,t1,t2,t3,t4
     # return y
 span = 2*26.785
-spar1_x=0.35
-spar2_x=0.55
+spar1_x=0.2
+spar2_x=0.35
 spar3_x=0.7
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
 root_geom = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
@@ -188,8 +188,8 @@ root_geom = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
 #    return theta
 #graphing 
 
-t_tb = 0.001
-t_sides = 0.0007
+t_tb = 0.022
+t_sides = 0.01
 truncated = False
 thd_end = 0.1*span
 n=2
@@ -211,8 +211,13 @@ factor = 0.35
 for i in x:
     y.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
 y = np.array(y)
-plt.xlabel("Position [m]")
+y1 = []
+for i in x:
+    y1.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
+y1 = np.array(y1)
+plt.xlabel("Spanise position, y  [m]")
+plt.grid(True)
 plt.ylabel("Torsional Stiffness [$N⋅m^2$ rad$^{-1}$]")
 plt.plot(x,y)
-plt.savefig("Tor_stiff_design_point.pdf", format="pdf")
+plt.savefig("Tor_stiff_design_point-D3.pdf", format="pdf")
 plt.show()

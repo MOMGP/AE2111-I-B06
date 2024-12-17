@@ -2,7 +2,7 @@
 import scipy as sp
 import numpy as np
 from scipy import integrate
-#from Torsion import internal_torque_at_x
+from Torsion import internal_torque_for_plotting
 from get_points import get_points,get_geom_from_points
 from DIS_TORSIONAL_STIFF import get_torr_stiff_list, factor
 from matplotlib import pyplot as plt
@@ -13,9 +13,10 @@ def rot(x, case,norm_wing_box_root, norm_stringers, end_third_spar, cond):
     int_torque_x = np.load("Work package 4\\Torsions_diff_cases\\"+case+"_crit.npy")[int(x*2)]*100*factor
     rot = int_torque_x/get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond, x)
     return rot
+LC_22=[0.1896402164645566,1.225,241.96,-1.0] #CL_d,rho,V,n
+LC_26=[0.640875724061477,0.31641,258.97916748380965,2.5]
 
-
-def twist_angle(case, norm_wing_box_root, norm_stringers, end_third_spar, cond):
+def twist_angle(CL_d,rho,V,n, norm_wing_box_root, norm_stringers, end_third_spar, cond):
     G = 28*10**9
     twist = []
     
@@ -23,8 +24,8 @@ def twist_angle(case, norm_wing_box_root, norm_stringers, end_third_spar, cond):
     previous_val =0
     for i in range(0,26785,500):
         step = i*0.001
-        temp = rot(step, case,norm_wing_box_root, norm_stringers, end_third_spar, cond)        
-        sum+=(previous_val+temp)*0.5*0.5
+        temp = rot(step,CL_d,rho,V,n,norm_wing_box_root, norm_stringers, end_third_spar, cond)        
+        sum+=(temp +previous_val)*0.5*0.5/1.9
         previous_val = temp
         # result =sp.integrate.quad(lambda x, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond: rot(x, CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond), 0,step,args=(CL_d, rho, V, n,norm_wing_box_root, norm_stringers, end_third_spar, cond))
         # twist.append(result)
@@ -51,18 +52,18 @@ V = 241.9574
 n = 1
 
 
-#ploting 
-hws = 26.785
-x = np.arange(0,hws,0.5)
-y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
-y1 = twist_angle('CL' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
-y2 = twist_angle('rho' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
-y3 = twist_angle('V' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
-plt.plot(x,y,label='n',color = 'blue')
-# plt.plot(x, y1, label="Line 1", color="red", linestyle="-")
-plt.plot(x, y2, label="Rho", color="Black", linestyle="-")
-# plt.plot(x, y3, label="Line 1", color="pink", linestyle="-")
-plt.show()
+# #ploting 
+# hws = 26.785
+# x = np.arange(0,hws,0.5)
+# y = twist_angle("n",norm_wing_box_root, norm_stringers, end_third_spar, cond)
+# y1 = twist_angle('CL' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+# y2 = twist_angle('rho' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+# y3 = twist_angle('V' ,norm_wing_box_root, norm_stringers, end_third_spar, cond)
+# plt.plot(x,y,label='n',color = 'blue')
+# # plt.plot(x, y1, label="Line 1", color="red", linestyle="-")
+# plt.plot(x, y2, label="Rho", color="Black", linestyle="-")
+# # plt.plot(x, y3, label="Line 1", color="pink", linestyle="-")
+# plt.show()
 
 
 
