@@ -129,7 +129,7 @@ def internal_torque_diagram (CL_d, rho, V, n):
 '''
 #internal_torque_diagram(0.7,0.31641,241.9574,1)
 #internal_torque_diagram(0.08428454065091404,1.225,258.97,2.5) #critical load case
-##internal_torque_diagram(0.08428454065091404,1.225,362.94,2.5) #critical load case
+#internal_torque_diagram(0.08428454065091404,1.225,362.94,2.5) #critical load case
 #internal_torque_diagram(0.1896402164645566,1.225,241.96,-1) #critical load case
 
 #plt.figure()
