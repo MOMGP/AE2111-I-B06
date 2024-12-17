@@ -96,13 +96,13 @@ def centroid_z(type, x_over_c1, x_over_c2, y_end, thickness, top=False):
 def I_xx(type, x_over_c1, x_over_c2, y_begin, y_end, Top=False): #Type can be 'spar', 'flange', or 'skin'
     
     if type=="spar":
-        
+        1
 
     elif type == "flange":
-        
+        1
 
     elif type == "skin":
-
+        1
     else:
         print("centroid_z no valid type")
 
