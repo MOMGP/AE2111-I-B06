@@ -198,6 +198,16 @@ get_stringer_geom_norm = get_stringer_geom_norm(root_geom, n)
 hws = 26.785
 x = np.arange(0,hws,0.1)
 y = []
+factor = 0.35
+# for i in x:
+#     y.append(get_torr_stiff_list(root_geom, [[[0,0],0]], span/6, True, i))
+# plt.show()
+# y = np.array(y)
+# plt.plot(x,y)
+# plt.plot([0,1], [1,2])
+
+# plt.show()
+# print("I'm going to kms if you dont run this, BITCH")
 for i in x:
     y.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
 y = np.array(y)

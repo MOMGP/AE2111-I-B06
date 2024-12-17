@@ -25,42 +25,6 @@ internal_shear_force = []
 def half_span(b):
     L = b/2
     return 
-
-#-------------********-------------*********------------*********-------------********-------------*********------------*********#
-'''
-def step(y):          # Shear force step function            
-    if y_position<0 or y_position>half_span(b):
-        S_engine = 0
-    elif y_position<y_engine:
-        S_engine = 0
-    else:
-        S_engine = W_engine
-    return S_engine
-
-#appending to lists
-y_position = np.arange(0, half_span(b), 1).tolist()
-
-x = sp.Symbol('x')
-#Lift_distribution_for_any_load_case(CL_d,rho,V)
-shearequation = shear_integration(2*x)
-'''
-'''for i in range(len(y_position)):
-    if y_position[i]<0 or y_position[i]>half_span(b):
-       
-    elif y_position[i]<y_engine:
-        
-    else:
-        internal_shear_force.append(shearequation.subs(x, var_sub)-step(y_position))
-'''
-"""for i in range(len(y_position)):
-    var_sub = i
-    if y_position[i]<0 or y_position[i]>half_span(b):
-       internal_shear_force.append(shearequation.subs(x, var_sub))
-    elif y_position[i]<y_engine:
-        internal_shear_force.append(shearequation.subs(x, var_sub))
-    else:
-        internal_shear_force.append(shearequation.subs(x, var_sub)-step(y_position))
-        """
     
 #-------------********-------------*********------------*********-------------********-------------*********------------*********#
 
