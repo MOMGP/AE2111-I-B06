@@ -136,9 +136,11 @@ def get_J_MS(h1, a, b1, b, h2, G, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2):
     solution = fsolve(equations, initial_guess)
 
     # Extract rot from solution
+
     rot_solution = solution[0]
     J = 1 / (G * rot_solution)
-    return J
+
+    return [J,solution[1],solution[2]]
 
 
 
@@ -155,15 +157,15 @@ def get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond
     val_list = get_points_along_spanwise(norm_wing_box_root, norm_stringers, x, end_third_spar, trunctated=cond)[0]
     values = translate(val_list)
     if values[0] > 0:
-        tor_stiff = G * get_J_MS(values[0], values[1],values[2],values[3],values[4],G,values[5],values[6],values[7],values[8],values[9],values[10],values[11],values[12],values[13],values[14],values[15])
+        tor_stiff = G * get_J_MS(values[0], values[1],values[2],values[3],values[4],G,values[5],values[6],values[7],values[8],values[9],values[10],values[11],values[12],values[13],values[14],values[15])[0]
     else: 
         tor_stiff = G * get_J_SS(values[1], values[2],values[3],values[4],values[5],values[6],values[7],values[8],values[9])#[h1,h,a,b,c,d,t1,t2,t3,t4]
     return tor_stiff
     #     y.append(tor_stiff)#h,a,b,c,d,t1,t2,t3,t4
     # return y
 span = 2*26.785
-spar1_x=0.35
-spar2_x=0.55
+spar1_x=0.2
+spar2_x=0.35
 spar3_x=0.7
 x_y_y = get_points(spar1_x, spar2_x, spar3_x, 1)
 root_geom = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
@@ -188,8 +190,8 @@ root_geom = get_geom_from_points(x_y_y, [0.0005 for i in range(7)])
 #    return theta
 #graphing 
 
-t_tb = 0.001
-t_sides = 0.0007
+t_tb = 0.022
+t_sides = 0.01
 truncated = False
 thd_end = 0.1*span
 n=2
@@ -211,8 +213,13 @@ factor = 0.35
 for i in x:
     y.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
 y = np.array(y)
-plt.xlabel("Position [m]")
+y1 = []
+for i in x:
+    y1.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
+y1 = np.array(y1)
+plt.xlabel("Spanise position, y  [m]")
+plt.grid(True)
 plt.ylabel("Torsional Stiffness [$N⋅m^2$ rad$^{-1}$]")
 plt.plot(x,y)
-plt.savefig("Tor_stiff_design_point.pdf", format="pdf")
+plt.savefig("Tor_stiff_design_point-D3.pdf", format="pdf")
 plt.show()
