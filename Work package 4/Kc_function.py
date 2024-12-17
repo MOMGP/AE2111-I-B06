@@ -18,7 +18,7 @@ def Kc(a,b):
         value = 4
     return value
 
-print(Kc(3.4,5.6))
+# print(Kc(3.4,5.6))
 
 
     
