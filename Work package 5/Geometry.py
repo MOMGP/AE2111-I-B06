@@ -3,29 +3,26 @@ b = 53.57
 
 
 def get_design(design_number):
-    if design_number == 1:          #first design
+    if design_number == 0:          #first design
         spar1 = 0.2
         spar2 = 0.35
         spar3 = 0.65
-        thickness_top_bottom = 0.014
         thickness_sides = 0.008
-    elif design_number == 2:        #second design
+        thickness_top_bottom = 0.014
+    elif design_number == 1:        #second design
         spar1 = 0.2
         spar2 = 0.4
         spar3 = 0.7
-        thickness_top_bottom = 0.016
         thickness_sides = 0.01
-    elif design_number == 3:        #third design
+        thickness_top_bottom = 0.016
+    elif design_number == 2:        #third design
         spar1= 0.2
         spar2 = 0.35
         spar3 = 0.7
-        thickness_top_bottom = 0.022
         thickness_sides = 0.01
-    geometry.append(spar1)
-    geometry.append(spar2)
-    geometry.append(spar3)
-    geometry.append(thickness_top_bottom)
-    geometry.append(thickness_sides)
+        thickness_top_bottom = 0.022
+    geometry.append((spar1, spar2, spar3))
+    geometry.append((thickness_sides, thickness_top_bottom))
     end_second_cell = 0.175*b
     geometry.append(end_second_cell)
     return geometry
