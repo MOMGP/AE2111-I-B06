@@ -27,8 +27,8 @@ def get_airfoil(input_file):
     x_y_y[:, 1] = top_points[:, 1]  # top y-coordinates
     x_y_y[:, 2] = bottom_points[:, 1]  # bottom y-coordinates
     
+    np.save("Airfoil_geom_x_z_z.npy", x_y_y)
     return x_y_y
-
 
 
 #np.save("Airfoil_geom.npy",get_airfoil(airfoil_chords_list))
