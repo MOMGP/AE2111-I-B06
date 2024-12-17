@@ -136,9 +136,11 @@ def get_J_MS(h1, a, b1, b, h2, G, t1, t2, t3, t4, t5, t6, t7, c1, c2, d1, d2):
     solution = fsolve(equations, initial_guess)
 
     # Extract rot from solution
+
     rot_solution = solution[0]
     J = 1 / (G * rot_solution)
-    return J
+
+    return [J,solution[1],solution[2]]
 
 
 
@@ -155,7 +157,7 @@ def get_torr_stiff_list(norm_wing_box_root, norm_stringers, end_third_spar, cond
     val_list = get_points_along_spanwise(norm_wing_box_root, norm_stringers, x, end_third_spar, trunctated=cond)[0]
     values = translate(val_list)
     if values[0] > 0:
-        tor_stiff = G * get_J_MS(values[0], values[1],values[2],values[3],values[4],G,values[5],values[6],values[7],values[8],values[9],values[10],values[11],values[12],values[13],values[14],values[15])
+        tor_stiff = G * get_J_MS(values[0], values[1],values[2],values[3],values[4],G,values[5],values[6],values[7],values[8],values[9],values[10],values[11],values[12],values[13],values[14],values[15])[0]
     else: 
         tor_stiff = G * get_J_SS(values[1], values[2],values[3],values[4],values[5],values[6],values[7],values[8],values[9])#[h1,h,a,b,c,d,t1,t2,t3,t4]
     return tor_stiff
