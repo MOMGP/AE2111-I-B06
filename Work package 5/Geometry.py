@@ -16,6 +16,8 @@ stringer_area = 2*10**(-4) #m^3
 
 
 
+
+
 geometry = []
 b = 53.57
 
@@ -27,18 +29,27 @@ def scaled_chord(spanwise_dist):
 
 
 def get_design(design_number):
+    # define variables for function
+    spar1 = 0
+    spar2 = 0
+    spar3 = 0
+    thickness_sides = 0
+    thickness_top_bottom = 0
+    #minimum weight design
     if design_number == 0:          #first design
         spar1 = 0.2
         spar2 = 0.35
         spar3 = 0.65
         thickness_sides = 0.008
         thickness_top_bottom = 0.014
+    #buckling design
     elif design_number == 1:        #second design
         spar1 = 0.2
         spar2 = 0.4
         spar3 = 0.7
         thickness_sides = 0.01
         thickness_top_bottom = 0.016
+    #ultimate load design
     elif design_number == 2:        #third design
         spar1= 0.2
         spar2 = 0.35
