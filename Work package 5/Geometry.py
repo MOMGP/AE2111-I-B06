@@ -1,5 +1,8 @@
-import numpy as np
+from operator import length_hint
 
+import numpy as np
+from numpy.ma.core import divide
+from pandas.core.interchange.from_dataframe import primitive_column_to_ndarray
 
 C_r = 7.63 #m
 taper = 0.3 
@@ -62,6 +65,55 @@ def get_design(design_number):
     geometry.append(end_second_cell)
     return geometry
 
+def weight(divided_geometry):
+    weight = 0
+    airfoil_geometry = np.load('Airfoil_geom.npy')  # get airfoil geometry
+    for i in range(len(divided_geometry)):
+        print(divided_geometry[i])
+        specific = divided_geometry[i][0]
+        if specific == "spar":
+
+            #get height
+            height = 0
+            for n in range(len(airfoil_geometry) - 1):  # input values for length 1
+                j = airfoil_geometry[n][0]
+                k = airfoil_geometry[n + 1][0]
+                if j <= divided_geometry[i][1][1] < k:
+                    l = (divided_geometry[i][1][1] - j) / (k - j)
+                    top = (1 - l) * airfoil_geometry[n][1] + l * airfoil_geometry[n + 1][1]
+                    bottom = (1 - l) * airfoil_geometry[n][2] + l * airfoil_geometry[n + 1][2]
+
+                    #scale height with chord
+                    height = (top-bottom)*scaled_chord((divided_geometry[i][1][0]+divided_geometry[i][2][0])/2)
+
+            #add spar weight
+            width = divided_geometry[i][2][0]-divided_geometry[i][1][0]
+            thickness = divided_geometry[i][3]
+            #weight += width * height * thickness * rho
+
+            #add stringer weight
+            #weight += stringer_area * width * rho * divided_geometry[i][4]
+
+        elif specific == "flange":
+
+            #calculate chord
+            average_chord = (scaled_chord(divided_geometry[i][1][0])+scaled_chord(divided_geometry[i][2][0]))/2
+            chord = (divided_geometry[i][2][1]-divided_geometry[i][1][1]) * average_chord
+
+            #add flange weight
+            width = divided_geometry[i][2][0] - divided_geometry[i][1][0]
+            thickness = divided_geometry[i][3]
+            weight += width * chord * thickness * rho
+
+            #add stringer weight
+            #weight += stringer_area * width * rho * divided_geometry[i][4]
+
+        elif specific == "skin":
+            #todo add skin weight
+            weight += 0
+    weight = 2*weight
+    return weight
+
 path_airfoil = "Airfoil_geom.npy"
 
 def centroid_z(type, x_over_c1, x_over_c2, y_end, thickness, top=False):
@@ -117,18 +169,4 @@ def I_xx(type, x_over_c1, x_over_c2, y_begin, y_end, Top=False): #Type can be 's
     else:
         print("centroid_z no valid type")
 
-        
 
-
-# Main Design Philosophy Minimum weight Buckling Ultimate load
-# Thickness top and bottom [m] 0.014 0.016 0.022
-# Thickness sides [m] 0.008 0.01 0.01
-# Number of stringers [-] 32 40 20
-# Mass [kg] 15568 20345 22631
-# Critical tip deflection [m] 8.01 6.78 7.98 1
-# Critical tip twist [deg] -9.93 -9.74 -9.69 2
-# Front spar [x1/c] 0.2 0.2 0.2
-# Middle spar [x2/c] 0.35 0.4 0.35
-# End spar [x3/c] 0.65 0.7 0.7
-# End of secondary cell 0.175b 0.175b 0.175b
-# Truncated Yes Yes Yes
