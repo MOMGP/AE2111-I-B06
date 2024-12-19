@@ -1,4 +1,5 @@
 from bending import moment_at_full_position
+from Geometry import centroid_z,I_xx
 
 spanwise_stress = []
 I_xx = []
