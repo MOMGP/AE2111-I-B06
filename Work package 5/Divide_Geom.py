@@ -41,3 +41,7 @@ def design(geometry, skin_thickness, stringers, ribs):
                 full_list.append(("skin", (float(span_pos[i]), geometry[0][2]), (float(span_pos[i+1]), 1),float(skin_thickness) ,False))
 
     return full_list
+
+def weight():
+    weight = 0
+    return weight
