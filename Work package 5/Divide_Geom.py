@@ -8,7 +8,7 @@ def design(geometry, skin_thickness, stringers, ribs):
     HLD_pos = [3,8.6,9,12.5]
 
     #add spars and flanges
-    span_pos = np.arange(0,b/2+b/(2*(ribs-1)),b/(2*(ribs-1)))
+    span_pos = np.arange(0,b/2+(b/2)/(ribs),(b/2)/(ribs-1))
     for i in range(len(span_pos)-1):
         if span_pos[i] >= geometry[2]: #check if double cell
             #add spars
@@ -28,7 +28,7 @@ def design(geometry, skin_thickness, stringers, ribs):
         else:
             #add spars
             for j in range(len(geometry[0])):
-                full_list.append(("spar", (float(span_pos[i]), geometry[0][j]),(float(span_pos[i+1]/(ribs-1)), geometry[0][j]), geometry[1][0], int(stringers[0])))
+                full_list.append(("spar", (float(span_pos[i]), geometry[0][j]),(float(span_pos[i+1]), geometry[0][j]), geometry[1][0], int(stringers[0])))
 
             #add flanges
             for j in range(len(geometry[0])-1):
