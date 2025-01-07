@@ -7,14 +7,17 @@ b = 53.57
 design_1 = get_design_final(1)
 part_split_1 = design(design_1[0], design_1[1], design_1[2], design_1[3])
 I_xx_1 = I_xx_global(part_split_1)
+print(I_xx_1)
 
 design_2 = get_design_final(2)
 part_split_2 = design(design_2[0], design_2[1], design_2[2], design_2[3])
 I_xx_2 = I_xx_global(part_split_2)
+print(I_xx_2)
 
 design_3 = get_design_final(3)
 part_split_3 = design(design_3[0], design_3[1], design_3[2], design_3[3])
 I_xx_3 = I_xx_global(part_split_3)
+print(I_xx_3)
 
 failure_stress = 349.2*(10**6) #Pa
 
@@ -22,6 +25,8 @@ def y_max(y):
     spars_coordinates = np.array(get_points(0.2, 0.4, 0.7, 1)) * scaled_chord(y)
     y_max = spars_coordinates[2,1]
     return y_max
+
+
 
 
 '''
