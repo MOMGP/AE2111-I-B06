@@ -1,5 +1,5 @@
 import numpy as np
-from Geometry import get_design, scaled_chord, I_xx_global
+from Geometry import get_design_final, scaled_chord, I_xx_global
 from Divide_Geom import design
 from get_points import get_points
 
@@ -13,6 +13,6 @@ index = np.argmin(filtered_designs, axis=0)
 
 # print(f"for ulti load {designs_ult[np.argmin(designs_ult, axis=0)[0]]}")
 
-design_1 = get_design(1)
-part_split = design(design_1, 0.0014, [30, 7, 4], 17)
-# print()
+design_1 = get_design_final(1)
+part_split = design(design_1[0], design_1[1], design_1[2], design_1[3])
+print(I_xx_global(part_split))
