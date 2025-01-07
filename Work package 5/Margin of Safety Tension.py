@@ -1,5 +1,9 @@
-from bending import moment_at_full_position
-from Geometry import centroid_z,I_xx
+from Geometry import get_design, I_xx_global
+from Divide_Geom import design
+
+
+design_1 = get_design(1)
+print(I_xx_global(design_1))
 
 spanwise_stress = []
 I_xx = []
