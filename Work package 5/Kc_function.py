@@ -19,6 +19,14 @@ def Kc(a,b):
     return value
 
 # print(Kc(3.4,5.6))
+def test_kc():
+    x = np.arange(0.4, 6, 0.05)
+    y = []
+    for i in x:
+        y.append(Kc(i, 1))
+    plt.plot(x,y)
+    plt.show()
+# test_kc()
 
 
     

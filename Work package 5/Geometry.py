@@ -1,5 +1,4 @@
 from operator import length_hint
-
 import numpy as np
 from matplotlib import pyplot as plt
 from numpy.ma.core import divide
@@ -20,6 +19,8 @@ stringer_area = 2*10**(-4) #m^3
 stringer_base = 0.037
 stringer_length = 0.052
 stringer_thickness = 0.0023
+norm_crosssectional_area = 0.0668583
+t_rib = 0.01
 
 
 
@@ -288,11 +289,37 @@ def I_xx(type, x_over_c1, x_over_c2, y_end, n_stringer, thickness, top=False): #
         return None
     return I_xx 
 
+def I_xx_global(design): #takes in the list of broken down parts #todo - this makes no sense - I need to only feed it parts in the same bay, otherwise it is adding the whole wing add
+    I_xx_sum=0
+    for part in design:
+        if part[0]=="spar":
+            I_xx_sum+=I_xx(part[0], part[1][1], part[1][1], part[2][0], part[4], part[3])
+        elif part[0]=="skin":
+            z_cent = centroid_z(part[0], part[1][1], part[2][1], part[2][0], 0, part[3], part[4])
+            I_xx_sum += I_xx(part[0], part[1][1], part[2][1], part[2][0], 0, part[3], part[4]) +z_cent**2*np.abs(part[2][1]-part[1][1])*scaled_chord(part[2][0])*part[3]
+        else:
+            z_cent = centroid_z(part[0], part[1][1], part[2][1], part[2][0], part[4], part[3], part[5])
+            I_xx_sum += I_xx(part[0], part[1][1], part[2][1], part[2][0], part[4], part[3], part[5]) + z_cent**2*np.abs(part[2][1]-part[1][1])*scaled_chord(part[2][0])*part[3]
+    return I_xx_sum
 
+def get_cross_sectional_area():
+    airfoil_geometry = np.load('Airfoil_geom.npy')
+    area_norm = 0
+    for i in range(len(airfoil_geometry)-1):
+        area_norm+=(airfoil_geometry[i+1][0]-airfoil_geometry[i][0])*0.5*(np.abs(airfoil_geometry[i][1]-airfoil_geometry[i][2])+np.abs(airfoil_geometry[i+1][1]-airfoil_geometry[i+1][2]))
+    return area_norm
 
-
-
-
+def get_extra_weight(skin_area, t_skin, stringer_count, n_ribs):
+    extra_weight = 0
+    bay_length = b/2/(n_ribs-1)
+    for rib in range(n_ribs):
+        pos = rib*bay_length
+        extra_weight+=norm_crosssectional_area*scaled_chord(pos)**2*t_rib*rho
+    extra_weight+=skin_area*t_skin*rho
+    extra_weight+=stringer_count*stringer_area*b/2*rho
+    
+    return extra_weight
+    
 
 
 # MAIN TESTING PLACE

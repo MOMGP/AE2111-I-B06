@@ -1,0 +1,2 @@
+import numpy as np
+print(len(np.load("Work package 4\\Bending_vals\\n_crit.npy")))
