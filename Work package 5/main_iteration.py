@@ -107,15 +107,15 @@ def get_margin_factors(geometry, t_skin, stringers, n_ribs):
                     from_type = design_breakdown[curr_part][0]
     return design_margins
 #longer list if iteration doesnt take all day
-skin_thickness = np.array([4, 3, 2.05, 1.8, 1.63, 1.4, 1.29, 1.1])*10**(-3) #these were never going to happen: 1.1, 1.02, 0.91, 0.81, 0.71
+skin_thickness = np.array([8, 6, 4, 3, 2.05, 1.8, 1.63, 1.4, 1.29, 1.1])*10**(-3) #these were never going to happen: 1.1, 1.02, 0.91, 0.81, 0.71
 
 #shorter list if iteration does take all day
 #skin_thickness = [2.05, 1.8, 1.4, 1.1, 0.81, 0.64, 0.51, 0.43]
 
-stringers_skin = np.arange(22,31,1) #is per surface, so total is *3 per half wing
+stringers_skin = np.arange(22,40,2) #is per surface, so total is *3 per half wing
 stringers_cell1 = np.arange(4,12,2) #is per surface, so total is *2 per half wing
 stringers_cell2 = np.arange(7,14,2) #is per surface, so total is *2 per half wing
-number_of_ribs = np.arange(10,18,1) #is per half wing, so total is *2
+number_of_ribs = np.arange(10,25,1) #is per half wing, so total is *2
 
 # stringers = [stringers_skin[0], stringers_cell1[0], stringers_cell2[0]]
 
@@ -161,17 +161,17 @@ for design_num in range(3):
                         mass_orig= get_mass(get_points_along_spanwise(root_geom, [], 0, thd_end, truncated)[0], get_points_along_spanwise(root_geom, [], thd_end, thd_end, truncated)[0], get_points_along_spanwise(root_geom, [], b/2, thd_end, truncated)[0], thd_end, [])
                         extra_mass = get_extra_weight(tot_skin_area, t_skin, (str_skin+str_c1+str_c2), n_ribs)*2
                         tot_mass = mass_orig+extra_mass
-                        if (margin_factors[0]>1 and margin_factors[1]>1):
+                        if (margin_factors[0]>1.5 and margin_factors[1]>1.5):
                             skip_skin_stringer=True
                             skip_c1_stringer=True
                             skip_c2_stringer=True
                             all_designs.append([tot_mass, design_num, t_skin, n_ribs, str_skin, str_c1, str_c2]) #todo - finish
-                        elif margin_factors[0]<1 and margin_factors[1]>1:
+                        elif margin_factors[0]<1.5 and margin_factors[1]>1.5:
                             skip_rib=True
-                        elif margin_factors[0]<0.85 or margin_factors[1]<0.85:
+                        elif margin_factors[0]<1.2 or margin_factors[1]<1.2:
                             skip_c1_stringer=True
                             skip_c2_stringer=True
                         print("for "+str([tot_mass, design_num, t_skin, n_ribs, str_skin, str_c1, str_c2, margin_factors[0], margin_factors[1]])+", margins are "+str(margin_factors)+" and mass is "+str(tot_mass))
-        np.save(f"Work package 5//Results//Design_{design_num}.npy", all_designs)       
+        np.save(f"Work package 5//Results//Design_ulti.npy", all_designs)       
   
 

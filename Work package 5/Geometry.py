@@ -53,14 +53,14 @@ def get_design(design_number):
         spar1 = 0.2
         spar2 = 0.4
         spar3 = 0.7
-        thickness_sides = 0.01
+        thickness_sides = 0.014
         thickness_top_bottom = 0.016
     #ultimate load design
     elif design_number == 2:        #third design
         spar1= 0.2
         spar2 = 0.35
         spar3 = 0.7
-        thickness_sides = 0.01
+        thickness_sides = 0.018
         thickness_top_bottom = 0.022
     geometry.append((spar1, spar2, spar3))
     geometry.append((thickness_sides, thickness_top_bottom))
@@ -291,7 +291,14 @@ def I_xx(type, x_over_c1, x_over_c2, y_end, n_stringer, thickness, top=False): #
 
 def I_xx_global(design): #takes in the list of broken down parts #todo - this makes no sense - I need to only feed it parts in the same bay, otherwise it is adding the whole wing add
     I_xx_sum=0
+    I_xx_list = []
+    prev_loc = 0
     for part in design:
+        if part[1][0]!=prev_loc:
+            I_xx_list.append([prev_loc, I_xx_sum])
+            I_xx_sum=0
+            prev_loc = part[1][0]
+
         if part[0]=="spar":
             I_xx_sum+=I_xx(part[0], part[1][1], part[1][1], part[2][0], part[4], part[3])
         elif part[0]=="skin":
@@ -300,7 +307,8 @@ def I_xx_global(design): #takes in the list of broken down parts #todo - this ma
         else:
             z_cent = centroid_z(part[0], part[1][1], part[2][1], part[2][0], part[4], part[3], part[5])
             I_xx_sum += I_xx(part[0], part[1][1], part[2][1], part[2][0], part[4], part[3], part[5]) + z_cent**2*np.abs(part[2][1]-part[1][1])*scaled_chord(part[2][0])*part[3]
-    return I_xx_sum
+    I_xx_list.append([prev_loc, I_xx_sum])
+    return I_xx_list
 
 def get_cross_sectional_area():
     airfoil_geometry = np.load('Airfoil_geom.npy')
@@ -316,12 +324,24 @@ def get_extra_weight(skin_area, t_skin, stringer_count, n_ribs):
         pos = rib*bay_length
         extra_weight+=norm_crosssectional_area*scaled_chord(pos)**2*t_rib*rho
     extra_weight+=skin_area*t_skin*rho
-    extra_weight+=stringer_count*stringer_area*b/2*rho
+    extra_weight+=stringer_count*stringer_area*b/2*rho*2
     
     return extra_weight
     
-
-
+def get_fuel_volume():
+    airfoil_geometry = np.load('Airfoil_geom.npy')
+    vol = 0
+    for i in range(len(airfoil_geometry)-1):
+        spar1 = 0.2
+        spar2 = 0.4
+        spar3 = 0.7
+        if airfoil_geometry[i][0]>=spar1 and airfoil_geometry[i][0]<=spar2:
+            vol+=(airfoil_geometry[i+1][0]-airfoil_geometry[i][0])*0.5*(np.abs(airfoil_geometry[i][1]-airfoil_geometry[i][2])+np.abs(airfoil_geometry[i+1][1]-airfoil_geometry[i+1][2]))*(scaled_chord(0)**2+scaled_chord(b/2)**2)*b/2
+        if airfoil_geometry[i][0]>=spar2 and airfoil_geometry[i][0]<=spar3:
+            vol+=(airfoil_geometry[i+1][0]-airfoil_geometry[i][0])*0.5*(np.abs(airfoil_geometry[i][1]-airfoil_geometry[i][2])+np.abs(airfoil_geometry[i+1][1]-airfoil_geometry[i+1][2]))*(scaled_chord(0)**2+scaled_chord(0.175*b)**2)*0.175*b
+    return vol
+# fuel_vol = get_fuel_volume()*2
+# print(fuel_vol)
 # MAIN TESTING PLACE
 # centroid_z_test("flange", 0.2, 0.35, 3, 4, 0.02, False)
 # centroid_z_test("flange", 0.2, 0.35, 3, 4, 0.02, True)
@@ -335,5 +355,4 @@ def get_extra_weight(skin_area, t_skin, stringer_count, n_ribs):
 # print(I_xx("flange", 0.2, 0.35, 0, 0, 0.02, False)) #checks out
 # print(I_xx("flange", 0.2, 0.35, 0, 1, 0, False)) #seems right
 "I_xx appears correct"
-
 
