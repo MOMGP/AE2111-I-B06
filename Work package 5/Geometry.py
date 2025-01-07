@@ -53,20 +53,55 @@ def get_design(design_number):
         spar1 = 0.2
         spar2 = 0.4
         spar3 = 0.7
-        thickness_sides = 0.014
+        thickness_sides = 0.01
         thickness_top_bottom = 0.016
     #ultimate load design
     elif design_number == 2:        #third design
         spar1= 0.2
         spar2 = 0.35
         spar3 = 0.7
-        thickness_sides = 0.018
+        thickness_sides = 0.01
         thickness_top_bottom = 0.022
+    elif design_number == 3:
+        spar1= 0.2
+        spar2 = 0.35
+        spar3 = 0.7
+        thickness_sides = 0.014
+        thickness_top_bottom = 0.016
+    
     geometry.append((spar1, spar2, spar3))
     geometry.append((thickness_sides, thickness_top_bottom))
     end_second_cell = 0.175*b
     geometry.append(end_second_cell)
     return geometry
+
+def get_design_final(num):
+    if num == 1: 
+        t_skin = 0.0014
+        stringers = [30, 7, 4]
+        n_ribs = 17
+        geom = [get_design(1)]
+        geom.append(t_skin)
+        geom.append(stringers)
+        geom.append(n_ribs)
+    if num==2: 
+        t_skin = 0.0011
+        stringers = [34, 7, 4]
+        n_ribs = 20
+        geom = [get_design(3)]
+        geom.append(t_skin)
+        geom.append(stringers)
+        geom.append(n_ribs)
+    if num==3:
+        t_skin = 0.0015
+        stringers= [30, 4, 7]
+        n_ribs = 18
+        geom = [get_design(2)]
+        geom.append(t_skin)
+        geom.append(stringers)
+        geom.append(n_ribs)
+
+
 
 def weight(divided_geometry):
     weight = 0
@@ -356,3 +391,6 @@ def get_fuel_volume():
 # print(I_xx("flange", 0.2, 0.35, 0, 1, 0, False)) #seems right
 "I_xx appears correct"
 
+
+design_1 = get_design(1)
+part_split = design(design_1, 0.0014, [30, 7, 4], 17)
