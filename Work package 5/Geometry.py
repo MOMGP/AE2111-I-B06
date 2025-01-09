@@ -339,6 +339,7 @@ def I_xx_global(design): #takes in the list of broken down parts #todo - this ma
             I_xx_sum+=I_xx(part[0], part[1][1], part[1][1], part[2][0], part[4], part[3])
         elif part[0]=="skin":
             z_cent = centroid_z(part[0], part[1][1], part[2][1], part[2][0], 0, part[3], part[4])
+            print(z_cent)
             I_xx_sum += I_xx(part[0], part[1][1], part[2][1], part[2][0], 0, part[3], part[4]) +z_cent**2*np.abs(part[2][1]-part[1][1])*scaled_chord(part[2][0])*part[3]
         else:
             z_cent = centroid_z(part[0], part[1][1], part[2][1], part[2][0], part[4], part[3], part[5])
