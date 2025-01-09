@@ -48,15 +48,15 @@ def linear_interpolation_Ks(a,b):
             return y_output
 # print(linear_interpolation())
 # Separate the data into x and y components
-x_values = [point[0] for point in points]
-y_values = [point[1] for point in points]
+# x_values = [point[0] for point in points]
+# y_values = [point[1] for point in points]
 
-# Plot the points and linear segments
-plt.figure(figsize=(8, 6))
-plt.plot(x_values, y_values, marker='o', linestyle='-', color='b', label='Linearized Data')
-plt.title('Linearized Curve from Data Points')
-plt.xlabel('a/b')
-plt.ylabel('$k_s$')
-plt.grid(True)
-plt.legend()
-plt.show()
+# # Plot the points and linear segments
+# plt.figure(figsize=(8, 6))
+# plt.plot(x_values, y_values, marker='o', linestyle='-', color='b', label='Linearized Data')
+# plt.title('Linearized Curve from Data Points')
+# plt.xlabel('a/b')
+# plt.ylabel('$k_s$')
+# plt.grid(True)
+# plt.legend()
+# plt.show()

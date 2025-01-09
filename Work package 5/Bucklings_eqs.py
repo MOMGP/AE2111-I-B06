@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from Kc_function import Kc
+from Ks_function import linear_interpolation_Ks
 
 #Parameters
 k_v = 1.5 # ASSUMED factor of average shear compared to max.
@@ -11,19 +12,18 @@ E = 72400000000 # youngs modulus
 v = 0.33 # poisson ratio for our material
 
 #For shear, only the webs are considered, not flanges :P 
-def max_shear(h1,t1,h2,t2,h3,t3,V,q1,q2):
-    tau_average = V / (h1 * t1 + h2 * t2 + h3 * t3)
+def max_shear(h1,t1,h2,t2,V,q1,q2):
+    tau_average = V / (h1 * t1 + h2 * t2)
     tau_max = tau_average * k_v + h1 * q1 + h2 * q2 #--> needed to super impose shear flow into the shear from normal force. assume 
     return tau_max  #check signs of q1 & q2 pls
 #Critical buckling from shear for the web
 def crit_web_shear(t,a,b):
-    #k_s = Ks(a,b)
+    k_s = linear_interpolation_Ks(a, b)
     crit_web_shear = math.pi ** 2 * k_s * E / (12 * (1 - v ** 2)) * (t / b) **2
     return crit_web_shear
 
 def crit_skin_stress(t,a,b): #Critical stress for skin buckling
     k_c = Kc(a,b)
-    print(k_c)
     crit_stress = math.pi ** 2 * k_c * E / (12 * (1 - v ** 2)) * (t / b) **2
     return crit_stress
 

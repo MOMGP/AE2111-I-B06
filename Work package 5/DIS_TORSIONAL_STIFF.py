@@ -19,7 +19,7 @@ import time
 #     a |                                   |                                        |
 #       |                                   |                                        |
 #       |                                   |                                        |
-#       |                                   |                                        |
+#       |                                   |b1                                        |
 #       -----------------------------------------------------------------------------
 #                     d1                                       d2
 #
@@ -209,17 +209,16 @@ factor = 0.35
 # plt.plot([0,1], [1,2])
 
 # plt.show()
-# print("I'm going to kms if you dont run this, BITCH")
-for i in x:
-    y.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
-y = np.array(y)
-y1 = []
-for i in x:
-    y1.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
-y1 = np.array(y1)
-plt.xlabel("Spanise position, y  [m]")
-plt.grid(True)
-plt.ylabel("Torsional Stiffness [$N⋅m^2$ rad$^{-1}$]")
-plt.plot(x,y)
-plt.savefig("Tor_stiff_design_point-D3.pdf", format="pdf")
-plt.show()
+# for i in x:
+#     y.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
+# y = np.array(y)
+# y1 = []
+# for i in x:
+#     y1.append(get_torr_stiff_list(root_geom, get_stringer_geom_norm, thd_end, truncated, i))
+# y1 = np.array(y1)
+# plt.xlabel("Spanise position, y  [m]")
+# plt.grid(True)
+# plt.ylabel("Torsional Stiffness [$N⋅m^2$ rad$^{-1}$]")
+# plt.plot(x,y)
+# plt.savefig("Tor_stiff_design_point-D3.pdf", format="pdf")
+# plt.show()
